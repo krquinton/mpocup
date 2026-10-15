@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // No Firebase Auth: access is controlled by the passcodes in admin.html (client-side only).
+    // Fine for an internal event tool; do not store anything highly sensitive here.
+    match /mpo-cup2026/{id}          { allow read, write: if true; }
+    match /mpo-cup2026-shirts/{id}   { allow read, write: if true; }
+    match /mpo-cup2026-finance/{id}  { allow read, write: if true; }
+    // Event settings doc (SET in firebase-init.js): adjust the path if yours differs
+    match /settings/{doc}            { allow read, write: if true; }
+  }
+}

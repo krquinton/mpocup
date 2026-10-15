@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3d2e">
+<title>MPO Cup 2026 – Player Portal</title>
+<style>
+:root{--bg:#0b3d2e;--bg2:#08291f;--card:#ffffff;--ink:#12261f;--mut:#5d7068;--mint:#8ff0c4;--line:#e3ece7;--ok:#1a9d5c;--warn:#d98a00;--bad:#c93a3a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh;color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+.brand{text-align:center;color:#fff;padding:24px 0 20px}
+.brand .tag{color:var(--mint);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+.brand h1{font-size:26px;margin-top:6px;line-height:1.15}
+.brand p{color:#b9d8cb;font-size:13px;margin-top:6px}
+.card{background:var(--card);border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.card h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+label{font-size:13px;color:var(--mut);display:block;margin-bottom:8px}
+#code{width:100%;font-size:30px;letter-spacing:.35em;text-align:center;text-transform:uppercase;padding:14px 8px;border:2px solid var(--line);border-radius:14px;font-weight:700;color:var(--bg);outline:none}
+#code:focus{border-color:var(--bg)}
+button{font:inherit;cursor:pointer}
+.btn{width:100%;margin-top:14px;background:var(--bg);color:#fff;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:700}
+.btn:disabled{opacity:.6}
+.btn.ghost{background:transparent;color:var(--mut);font-weight:600;margin-top:4px;font-size:14px}
+.err{color:var(--bad);font-size:14px;margin-top:10px;text-align:center;min-height:18px}
+.hide{display:none}
+.team{font-size:24px;font-weight:800;color:var(--bg);line-height:1.2}
+.sub{color:var(--mut);font-size:13px;margin-top:4px}
+.chip{display:inline-block;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;background:#e6f6ee;color:var(--ok);margin-top:10px}
+.chip.warn{background:#fff3da;color:var(--warn)}.chip.bad{background:#fde6e6;color:var(--bad)}.chip.gray{background:#eef2f0;color:var(--mut)}
+.player{padding:12px 0;border-top:1px solid var(--line)}
+.player:first-of-type{border-top:0;padding-top:0}
+.player .n{font-weight:700;font-size:17px}
+.player .d{font-size:13px;color:var(--mut);margin-top:3px}
+.player .d b{color:var(--ink);font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
+.row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:15px}
+.row span:first-child{color:var(--mut)}
+.row b{text-align:right}
+.total{border-top:2px solid var(--line);margin-top:6px;padding-top:12px;font-size:17px}
+.pay{padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.pay .top{display:flex;justify-content:space-between;font-weight:700}
+.pay .meta{color:var(--mut);font-size:12px;margin-top:2px}
+.hdr{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:10px 0 16px}
+.hdr small{color:var(--mint);letter-spacing:.15em;font-weight:700;font-size:11px}
+.hdr button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:99px;padding:8px 14px;font-size:13px}
+.codebox{font-family:ui-monospace,Menlo,monospace;letter-spacing:.2em;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="brand">
+      <div class="tag">Mindoro Pickleball Org.</div>
+      <h1>MPO Cup 2026<br>Player Portal</h1>
+      <p>Enter your 6-character team code</p>
+    </div>
+    <div class="card">
+      <label for="code">Team Code</label>
+      <input id="code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" placeholder="••••••">
+      <button class="btn" id="goBtn">Log in</button>
+      <div class="err" id="err"></div>
+    </div>
+    <p style="color:#b9d8cb;font-size:12px;text-align:center">Wala pang code? Check the email we sent after your registration was acknowledged.</p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hide">
+    <div class="hdr"><div><small>MPO CUP 2026</small></div><button id="outBtn">Log out</button></div>
+
+    <div class="card">
+      <h2>Team</h2>
+      <div class="team" id="teamName"></div>
+      <div class="sub" id="teamMeta"></div>
+      <span class="chip" id="statusChip"></span>
+    </div>
+
+    <div class="card">
+      <h2>Players</h2>
+      <div id="players"></div>
+    </div>
+
+    <div class="card">
+      <h2>Payment Details</h2>
+      <div id="payBox"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ====== CONFIG — paste the same firebaseConfig used in your registration/admin pages ====== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "mindoropickleballorg.firebaseapp.com",
+  projectId: "mindoropickleballorg",
+  storageBucket: "mindoropickleballorg.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const COLLECTION = "mpo-cup2026";
+/* ========================================================================================= */
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const $ = id => document.getElementById(id);
+const peso = n => "₱" + (Number(n)||0).toLocaleString("en-PH",{minimumFractionDigits:0,maximumFractionDigits:2});
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pick = (o,...k)=>{for(const x of k) if(o[x]!==undefined&&o[x]!==null&&o[x]!=="") return o[x]; return "";};
+
+function store(k,v){try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
+function recall(k){try{return localStorage.getItem(k)}catch(e){return null}}
+
+/* Tolerant field mapping — adjust here if your registration doc uses different field names */
+function getPlayers(d){
+  if(Array.isArray(d.players)&&d.players.length){
+    return d.players.map(p=>({name:pick(p,"name","fullName"),dupr:pick(p,"dupr","duprId","duprID")}));
+  }
+  return [1,2].map(i=>({
+    name:pick(d,`player${i}Name`,`p${i}Name`,`player${i}_name`,`name${i}`) || pick(d[`player${i}`]||{},"name","fullName"),
+    dupr:pick(d,`player${i}Dupr`,`player${i}DuprId`,`p${i}Dupr`,`dupr${i}`) || pick(d[`player${i}`]||{},"dupr","duprId","duprID")
+  })).filter(p=>p.name||p.dupr);
+}
+
+async function login(code){
+  code = code.trim().toUpperCase();
+  if(!/^[A-Z0-9]{6}$/.test(code)) throw new Error("Code must be 6 letters/numbers.");
+  const snap = await db.collection(COLLECTION).where("code","==",code).limit(1).get();
+  if(snap.empty) throw new Error("Code not found. Please check and try again.");
+  return snap.docs[0].data();
+}
+
+function render(d){
+  $("teamName").textContent = pick(d,"teamName","team","team_name") || "Your Team";
+  $("teamMeta").textContent = [pick(d,"category"), ].filter(Boolean).join(" • ");
+
+  const st = pick(d,"status") || "Submitted";
+  const chip = $("statusChip");
+  chip.textContent = st;
+  chip.className = "chip" + (/paid/i.test(st)&&!/unpaid/i.test(st)?"":/rejected/i.test(st)?" bad":/unpaid|partial/i.test(st)?" warn":" gray");
+
+  $("players").innerHTML = getPlayers(d).map((p,i)=>`
+    <div class="player">
+      <div class="n">${esc(p.name)||"Player "+(i+1)}</div>
+      <div class="d">DUPR ID: <b>${esc(p.dupr)||"—"}</b></div>
+    </div>`).join("") || '<div class="sub">No player details found.</div>';
+
+  const pays = Array.isArray(d.payments)?d.payments:[];
+  const paid = d.totalPaid!==undefined ? Number(d.totalPaid) : pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const due  = Number(pick(d,"amountDue","totalDue","fee","registrationFee"))||0;
+  const bal  = Math.max(due-paid,0);
+
+  let h = "";
+  if(due) h += `<div class="row"><span>Registration fee</span><b>${peso(due)}</b></div>`;
+  h += `<div class="row"><span>Total paid</span><b style="color:var(--ok)">${peso(paid)}</b></div>`;
+  if(due) h += `<div class="row total"><span>Balance</span><b style="color:${bal?"var(--warn)":"var(--ok)"}">${bal?peso(bal):"Fully paid"}</b></div>`;
+  if(pays.length){
+    h += '<div style="margin-top:14px">'+pays.map(p=>`
+      <div class="pay">
+        <div class="top"><span>${esc(p.mode||p.method||"Payment")}</span><span>${peso(p.amount)}</span></div>
+        <div class="meta">${[p.ref||p.reference?("Ref: "+esc(p.ref||p.reference)):"",esc(p.date||""),esc(p.notes||"")].filter(Boolean).join(" • ")}</div>
+      </div>`).join("")+'</div>';
+  } else if(!paid){
+    h += '<div class="sub" style="margin-top:8px">No payments recorded yet.</div>';
+  }
+  $("payBox").innerHTML = h;
+
+  $("login").classList.add("hide");
+  $("dash").classList.remove("hide");
+  window.scrollTo(0,0);
+}
+
+async function doLogin(code, silent){
+  const btn=$("goBtn"), err=$("err");
+  err.textContent=""; btn.disabled=true; btn.textContent="Checking…";
+  try{
+    const d = await login(code);
+    store("mpoCode", code.trim().toUpperCase());
+    render(d);
+  }catch(e){
+    if(!silent) err.textContent = e.message || "Something went wrong.";
+    store("mpoCode", null);
+  }finally{ btn.disabled=false; btn.textContent="Log in"; }
+}
+
+$("goBtn").onclick = ()=>doLogin($("code").value,false);
+$("code").addEventListener("keydown",e=>{if(e.key==="Enter")$("goBtn").click()});
+$("code").addEventListener("input",e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"")});
+$("outBtn").onclick = ()=>{
+  store("mpoCode",null); $("code").value="";
+  $("dash").classList.add("hide"); $("login").classList.remove("hide");
+};
+
+const saved = recall("mpoCode");
+if(saved){ $("code").value=saved; doLogin(saved,true); }
+</script>
+</body>
+</html>
