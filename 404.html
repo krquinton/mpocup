@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Not Found | MPO Cup 2026</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg1:#04271c; --bg2:#0b4a35; --mint:#8ff0c8; --mint-dim:#5fc9a0;
+    --text:#eafff6; --muted:#a9d9c6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--text);
+    background:radial-gradient(circle at 50% 0%,var(--bg2) 0%,var(--bg1) 70%);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;text-align:center;
+    padding-top:max(24px,env(safe-area-inset-top));
+    padding-bottom:max(24px,env(safe-area-inset-bottom));
+  }
+  .card{max-width:560px;width:100%}
+  .brand{
+    font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--mint);font-weight:700;margin-bottom:28px;
+  }
+  .code{
+    font-size:clamp(5.5rem,24vw,9rem);font-weight:900;line-height:1;
+    color:var(--mint);letter-spacing:-.04em;
+    display:flex;align-items:center;justify-content:center;gap:.04em;
+  }
+  .ball{
+    width:.78em;height:.78em;border-radius:50%;
+    background:var(--mint);position:relative;flex:none;
+    animation:bounce 1.6s ease-in-out infinite;
+  }
+  .ball::before{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 30%,var(--bg1) 0 6%,transparent 7%),
+      radial-gradient(circle at 70% 30%,var(--bg1) 0 6%,transparent 7%),
+      radial-gradient(circle at 50% 55%,var(--bg1) 0 6%,transparent 7%),
+      radial-gradient(circle at 28% 72%,var(--bg1) 0 6%,transparent 7%),
+      radial-gradient(circle at 72% 72%,var(--bg1) 0 6%,transparent 7%);
+  }
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14%)}}
+  @media (prefers-reduced-motion:reduce){.ball{animation:none}}
+  h1{font-size:clamp(1.4rem,5vw,2rem);margin:20px 0 10px;font-weight:800}
+  p{color:var(--muted);line-height:1.6;margin-bottom:30px}
+  .tag{color:var(--mint-dim);font-style:italic;margin-top:36px;font-size:.9rem}
+  .actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .btn{
+    display:inline-block;padding:13px 24px;border-radius:999px;
+    font-weight:700;text-decoration:none;font-size:.95rem;
+    border:2px solid var(--mint);transition:transform .15s,background .15s;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn.primary{background:var(--mint);color:var(--bg1)}
+  .btn.ghost{color:var(--mint)}
+  .btn.ghost:hover{background:rgba(143,240,200,.12)}
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand">MPO Cup 2026</div>
+    <div class="code" aria-label="404"><span>4</span><span class="ball" aria-hidden="true"></span><span>4</span></div>
+    <h1>Out of bounds!</h1>
+    <p>The page you're looking for doesn't exist or may have been moved. Let's get you back in the game.</p>
+    <div class="actions">
+      <a class="btn primary" href="/">Back to Home</a>
+      <a class="btn ghost" href="https://mindoropickleball.org">Register Your Team</a>
+    </div>
+    <div class="tag">Battle the Best. Claim the Crown.</div>
+  </main>
+</body>
+</html>

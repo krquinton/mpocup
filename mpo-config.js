@@ -2,7 +2,7 @@
 const MPO_CATS=["Low Intermediate Men's Doubles","Low Intermediate Women's Doubles","High Intermediate Men's Doubles","High Intermediate Women's Doubles","Advanced Open (All-Gender Doubles)"];
 const MPO_STATUSES=["Submitted","Confirmation-Sent","Confirmed-Unpaid","Confirmed-Partial","Confirmed-Paid","Rejected"];
 /* Paste the Google Apps Script web app URL (or any webhook) here. Empty = test mode (no email sent). */
-const MPO_WEBHOOK="https://script.google.com/macros/s/AKfycbyZUQQzajOl8e6XW0qmpJtdZGRK50Wrvm6j-PKvdNLXPeaa0iE4zwrwHJtuuTEJWrKw-Q/exec";
+const MPO_WEBHOOK="https://script.google.com/macros/s/AKfycbwCuKLVaaVol_X8_pQ8-WyVNZlIdmI4sNoXXCS7O_TrD0WNfZDdMq-0hd4ugWWaU_Y4/exec";
 const MPO_WEBHOOK_SECRET='somethinghaschangedwithinmesomethingisnotthesame';
 const MPO_PAY_MODES=["Cash","Bank transfer","GCash"];
 const MPO_SIZES=["XS","S","M","L","XL","2XL","Others"];
