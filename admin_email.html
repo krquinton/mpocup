@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>MPO Cup 2026 Admin</title><link rel="icon" href="logo.png"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;800&family=Barlow:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="style.css">
+<style>table{font-size:14px}th{text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}td{vertical-align:top}
+.tabs{display:flex;flex-wrap:wrap}.tabs button{background:none;border:0;color:var(--mute);font:600 1rem Barlow,sans-serif;padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent}.tabs button.on{color:var(--mint);border-color:var(--mint)}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}.stat small{color:var(--mute);display:block}.stat big{font:800 2rem 'Barlow Condensed'}
+.st-Submitted{color:#9db3d8}.st-Confirmation-Sent{color:#5ec8ff}.st-Confirmed-Unpaid{color:#ffb347}.st-Confirmed-Partial{color:#ffd23f}.st-Confirmed-Paid{color:#2ecc71}.st-Rejected{color:#ff5470}select.s{width:auto;padding:6px}
+.bar{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px}@media(max-width:760px){.bar{grid-template-columns:1fr}}
+.code{font:700 .95rem monospace;letter-spacing:.12em;color:var(--mint)}.acts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.sm{padding:5px 12px;font-size:.85rem}dialog{background:var(--panel);color:inherit;border:1px solid var(--line);border-radius:var(--r);max-width:440px;width:92%;padding:22px}dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog#ed{max-width:620px;max-height:90vh;overflow:auto}.cnt{text-align:center}.pn{color:var(--mute);font-size:.8rem}.sh{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:14px 0}
+.pl{font-size:.85rem;margin:8px 0}.pl div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:4px 0}.pl button,.lnk{background:none;border:0;color:#ff5470;cursor:pointer}.neg{color:#ff5470}.pos{color:#2ecc71}
+.fr{display:grid;grid-template-columns:190px 1fr;gap:10px;align-items:center;margin:8px 0}.ft{display:flex;height:22px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}.ft i{display:block;height:100%}@media(max-width:640px){.fr{grid-template-columns:1fr}}
+.badge{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mint)}h3.sec{margin:26px 0 8px}</style></head><body>
+<div id="gate" class="wrap" style="padding-top:100px;max-width:420px"><img src="logo.png" alt="MPO" style="height:90px"><h2 style="margin:12px 0 10px">Admin login</h2><form onsubmit="login(event)" style="padding:22px"><label for="pw">Passcode</label><input type="password" id="pw" autofocus><p><button class="btn">Enter</button></p><div id="ge"></div></form></div>
+<div id="app" hidden><nav><div class="wrap"><span class="brand"><img src="logo.png" alt="MPO" style="height:44px"><span>MPO admin</span></span><div class="links"><span id="who" class="badge"></span><a href="index.html">View site</a><a href="#" onclick="logout();return false">Log out</a></div></div></nav>
+<div class="wrap" style="padding:24px 24px 60px"><div class="tabs"><button class="on" id="t1" onclick="tab(1)">Registrations</button><button id="t3" onclick="tab(3)">Shirt Count</button><button id="t4" onclick="tab(4)">Payments</button><button id="t5" onclick="tab(5)">Finances</button><button id="t2" onclick="tab(2)">Event details</button></div>
+<div id="p1"><div class="stats" id="stats"></div><div class="bar"><select id="fc" onchange="draw()" aria-label="Category"><option value="">All categories</option></select><select id="fs" onchange="draw()" aria-label="Status"><option value="">All statuses</option></select><input id="q" placeholder="Search" oninput="draw()" aria-label="Search"><button class="btn ghost" onclick="csv()">Export CSV</button></div>
+<div id="list" class="panel" style="margin-top:16px"></div></div>
+<div id="p3" hidden><p style="margin-top:18px"><button class="btn ghost" onclick="shirtCsv()">Export shirt list (CSV)</button></p><div class="stats" id="shs"></div><h3>By size</h3><div id="shsz" class="panel" style="overflow-x:auto"></div>
+<h3 class="sec">Extra shirts &amp; merch</h3><form id="xf" class="panel" style="padding:16px;margin-bottom:16px"></form><div id="xl" class="panel" style="overflow-x:auto"></div></div>
+<div id="p4" hidden><div class="stats" id="pst"></div><div id="pmd" class="sh"></div><div id="ptl" class="panel" style="margin-top:12px;overflow-x:auto"></div></div>
+<div id="p5" hidden><div class="stats" id="fst"></div><div id="fbars" class="panel" style="padding:16px"></div><h3 class="sec">Budget vs actual by category</h3><div id="fcat" class="panel" style="overflow-x:auto"></div>
+<h3 class="sec">Add record</h3><form id="ff" class="panel" style="padding:16px;max-width:760px"></form><p><button class="btn ghost" onclick="finCsv()">Export finance records (CSV)</button></p><div id="fl"></div></div>
+<div id="p2" hidden><form id="sf" style="max-width:640px;margin-top:18px"></form></div></div></div>
+<dialog id="pd"><h3 style="margin-top:0">Payment</h3><p id="pdt" style="color:var(--mute);margin-top:0"></p><div id="pds"></div><div id="pdl" class="pl"></div>
+<label for="pm">Mode of payment</label><select id="pm"><option value="">— select —</option></select>
+<div class="row"><div><label for="pa">Amount (₱)</label><input id="pa" type="number" min="0"></div><div><label for="pt">Date</label><input id="pt" type="date"></div></div>
+<label for="pr">Reference no.</label><input id="pr" placeholder="GCash / bank ref, receipt no.">
+<label for="pn">Notes</label><textarea id="pn" rows="2" style="width:100%"></textarea><div id="pe"></div>
+<p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="payPaid()">Record payment</button><button class="btn ghost" onclick="paySoon()">Settle later</button><button class="btn ghost" onclick="$('pd').close()">Close</button></p></dialog>
+<dialog id="ed"><h3 style="margin-top:0">Edit registration</h3><p id="edt" style="color:var(--mute);margin-top:0"></p><form id="ef"></form></dialog><datalist id="szl"></datalist>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script><script src="firebase-init.js"></script><script src="mpo-config.js"></script>
+<script>
+const SHIRTS='mpo-cup2026-shirts',FIN='mpo-cup2026-finance',$=id=>document.getElementById(id),E=mpoEsc;const ADMIN_PASS='mpo2026admin',VIEW_PASS='mpo2026view'; // CHANGE BOTH before deploying
+
+let S=Object.assign({},MPO_DEF),rows=[],extras=[],fin=[],cur=null,ROLE='',started=false,editFin=null;const coding=new Set();
+const A=()=>ROLE==='admin',isConf=x=>['Confirmed-Paid','Confirmed-Partial','Confirmed-Unpaid'].includes(x.status),
+ peso=n=>'₱'+Number(n||0).toLocaleString('en-PH'),sum=(a,f)=>a.reduce((t,x)=>t+f(x),0),
+ paidOf=x=>sum(x.payments||[],p=>+p.amount||0),
+ dueOf=x=>(x.due!==undefined&&x.due!==''&&x.due!==null)?(+x.due||0):(+S.feeNum||0)*2,
+ statusFor=(x,t)=>t>0&&t>=dueOf(x)?'Confirmed-Paid':t>0?'Confirmed-Partial':'Confirmed-Unpaid',
+ today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Manila'}),
+ payLine=x=>{const p=paidOf(x),d=dueOf(x);return (isConf(x)||p)?`<br><span class="pn">${peso(p)} / ${peso(d)}${d>p?' · bal '+peso(d-p):''}</span>`:'';};
+/* ---- Login (client-side passcodes: admin can edit, viewer is read-only) ---- */
+function login(e){e.preventDefault();const p=$('pw').value;if(p===ADMIN_PASS)ROLE='admin';else if(p===VIEW_PASS)ROLE='viewer';else{$('ge').innerHTML='<div class="msg err">Wrong passcode.</div>';return;}sessionStorage.mpo=ROLE;start();}
+function logout(){sessionStorage.removeItem('mpo');location.reload();}
+function start(){if(started)return;started=true;$('gate').hidden=true;$('app').hidden=false;$('who').textContent=ROLE;
+ if(!A())['t2','t5'].forEach(i=>$(i).hidden=true);
+ if(A())buildSettings(S);/* show the form right away (defaults), filled with saved values once loaded */
+ $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=MPO_STATUSES.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
+ buildXF();buildFin();const er=id=>e=>$(id).innerHTML='<div class="msg err">'+E(e.message)+'</div>',all=()=>{draw();drawShirts();drawPay();drawFin();};
+ db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));all();backfill();},er('list'));
+ db.collection(SHIRTS).orderBy('createdAt','desc').onSnapshot(s=>{extras=s.docs.map(d=>({id:d.id,...d.data()}));drawShirts();drawPay();drawFin();},er('xl'));
+ if(A())db.collection(FIN).orderBy('createdAt','desc').onSnapshot(s=>{fin=s.docs.map(d=>({id:d.id,...d.data()}));drawFin();},er('fl'));
+ mpoSettings().then(s=>{S=s;if(A())buildSettings(s);all();}).catch(e=>{if(A())$('sf').insertAdjacentHTML('afterbegin','<div class="msg err">Could not load saved settings: '+E(e.message)+'. Showing defaults. Check the Firestore rules for the settings document.</div>');});}
+function tab(n){[1,2,3,4,5].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});}
+/* ---- Registrations ---- */
+function draw(){const c=$('fc').value,s=$('fs').value,q=$('q').value.toLowerCase(),cats=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
+ $('stats').innerHTML=cats.map(k=>{const r=rows.filter(x=>x.category===k),n=st=>r.filter(x=>x.status===st).length;
+  return `<div class="stat"><b>${E(k)}</b><br><big>${n('Confirmed-Paid')}</big> paid<small>${r.length} teams · Partial ${n('Confirmed-Partial')} · Unpaid ${n('Confirmed-Unpaid')} · Sent ${n('Confirmation-Sent')} · New ${n('Submitted')} · Rejected ${n('Rejected')}</small></div>`}).join('');
+ const v=rows.filter(x=>(!c||x.category===c)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('list').innerHTML=v.length?`<table><tr><th>Code</th><th>Team</th><th>Category</th><th>Players</th><th>Contact</th><th>Status</th>${A()?'<th></th>':''}</tr>`+v.map(x=>`<tr><td><span class="code">${E(x.code)}</span></td><td><b>${E(x.team)}</b><br><small>${x.createdAt?x.createdAt.toDate().toLocaleString():''}</small></td><td>${E(x.category)}</td><td>${E(x.p1)} (${E(x.c1)})<br>${E(x.p2)} (${E(x.c2)})</td><td>${E(x.phone)}<br>${E(x.email)}${x.notes?'<br><i>'+E(x.notes)+'</i>':''}</td><td>${A()?`<select class="s st-${E(x.status)}" onchange="setSt('${x.id}',this.value)">${MPO_STATUSES.map(t=>`<option ${t===x.status?'selected':''}>${t}</option>`).join('')}</select>`:`<span class="st-${E(x.status)}">${E(x.status)}</span>`}${payLine(x)}${x.payNotes?'<br><span class="pn">'+E(x.payNotes)+'</span>':''}${x.slotEmailAt&&x.slotEmailAt.toDate?'<br><span class="pn">✉ Slot email sent '+E(x.slotEmailAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}</td>${A()?`<td><div class="acts">${x.status==='Submitted'?`<button class="btn sm" onclick="ack('${x.id}')">Acknowledge</button>`:''}${x.status!=='Rejected'?`<button class="btn ghost sm" onclick="openPay('${x.id}')">${isConf(x)?'Payment':'Confirm'}</button>`:''}${isConf(x)?`<button class="btn ghost sm" onclick="sendSlot('${x.id}')">${x.slotEmailAt?'Resend slot email':'Send slot confirmation'}</button>`:''}<button class="btn ghost sm" onclick="openEdit('${x.id}')">Edit</button><button class="lnk" onclick="del('${x.id}')">Delete</button></div></td>`:''}</tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No registrations found.</p>';}
+const setSt=(id,s)=>db.collection(REG).doc(id).update({status:s});
+const del=id=>confirm('Delete this registration permanently?')&&db.collection(REG).doc(id).delete();
+async function backfill(){if(!A())return;for(const r of rows){if(r.code||coding.has(r.id))continue;coding.add(r.id);
+ try{await db.collection(REG).doc(r.id).update({code:await mpoGenCode(db.collection(REG))});}catch(e){coding.delete(r.id);console.error(e);}}}
+const HOOK_SECRET=typeof MPO_WEBHOOK_SECRET!=='undefined'?MPO_WEBHOOK_SECRET:'';
+async function callHook(payload){
+ const res=await fetch(MPO_WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({secret:HOOK_SECRET},payload))});
+ const j=await res.json();if(!j.ok)throw new Error(j.error||'The email script returned an error');return j;}
+const mailFields=async r=>({event:await mpoSettings(),code:r.code,team:r.team,category:r.category,p1:r.p1,p2:r.p2,email:r.email,phone:r.phone,due:dueOf(r),paid:paidOf(r),balance:Math.max(0,dueOf(r)-paidOf(r)),status:r.status});
+/* Acknowledge -> email with payment instructions (Apps Script action "acknowledge") */
+async function ack(id){const r=rows.find(x=>x.id===id);if(!r)return;
+ if(!MPO_WEBHOOK){alert("TEST MODE: this will send the acknowledgement email (payment instructions) to the registrant.");return setSt(id,'Confirmation-Sent');}
+ if(!r.code)return alert('This registration has no code yet. Wait a moment for it to generate, then try again.');
+ if(!confirm('Send acknowledgement + payment instructions to '+r.email+'?'))return;
+ try{await callHook(Object.assign({action:'acknowledge'},await mailFields(r)));await setSt(id,'Confirmation-Sent');alert('Email sent to '+r.email);}
+ catch(e){alert('Email failed: '+e.message+'. Status not changed.');}}
+/* Send slot confirmation -> player portal link + code (Apps Script action "confirmSlot") */
+async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r)return;
+ if(!isConf(r))return alert('Confirm this registration first (record a payment or settle later).');
+ if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the slot confirmation, player portal link and 6-character code to '+r.email+'.');
+ if(!r.code)return alert('This registration has no code yet. Wait a moment for it to generate, then try again.');
+ const bal=Math.max(0,dueOf(r)-paidOf(r));
+ if(!confirm((r.slotEmailAt?'RESEND slot confirmation':'Send slot confirmation')+' to '+r.email+'?\n\nStatus: '+r.status+(bal>0?'\nUnpaid balance: '+peso(bal):'')))return;
+ try{await callHook(Object.assign({action:'confirmSlot'},await mailFields(r)));
+  await db.collection(REG).doc(r.id).update({slotEmailAt:firebase.firestore.FieldValue.serverTimestamp()});alert('Slot confirmation sent to '+r.email);}
+ catch(e){alert('Email failed: '+e.message+'. Check the Apps Script Executions log before retrying.');}}
+function csv(){const h=['code','team','category','p1','c1','p2','c2','phone','email','status','due','paid','balance','payNotes','notes'];
+ const t=[h.join(',')].concat(rows.map(r=>({...r,due:dueOf(r),paid:paidOf(r),balance:dueOf(r)-paidOf(r)})).map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-registrations.csv';a.click();}
+/* ---- Payments ---- */
+function renderPay(){const p=paidOf(cur),d=dueOf(cur),b=d-p;
+ $('pds').innerHTML=`<div class="sh"><div class="stat"><small>Due</small><big>${peso(d)}</big></div><div class="stat"><small>Paid</small><big>${peso(p)}</big></div><div class="stat"><small>Balance</small><big class="${b>0?'neg':'pos'}">${peso(Math.max(0,b))}</big></div></div>`;
+ $('pdl').innerHTML=(cur.payments||[]).map((x,i)=>`<div><span>${E(x.date)} · ${E(x.mode)} · <b>${peso(x.amount)}</b>${x.ref?' · ref '+E(x.ref):''}${x.notes?' · '+E(x.notes):''}</span><button onclick="delPay(${i})" aria-label="Delete payment">✕</button></div>`).join('');}
+function openPay(id){cur=rows.find(r=>r.id===id);if(!cur)return;$('pdt').textContent=cur.team+' · '+(cur.code||'');renderPay();$('pm').value='';$('pa').value=Math.max(0,dueOf(cur)-paidOf(cur))||'';$('pt').value=today();$('pr').value='';$('pn').value=cur.payNotes||'';$('pe').innerHTML='';$('pd').showModal();}
+async function payPaid(){const amt=+$('pa').value;if(!$('pm').value||!(amt>0)){$('pe').innerHTML='<div class="msg err">Select a mode of payment and enter an amount, or choose "Settle later".</div>';return;}
+ const pays=[...(cur.payments||[]),{mode:$('pm').value,amount:amt,date:$('pt').value||today(),ref:$('pr').value.trim(),notes:$('pn').value.trim()}];
+ await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});$('pd').close();}
+async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur))});$('pd').close();}
+async function delPay(i){if(!confirm('Delete this payment record?'))return;const pays=(cur.payments||[]).filter((_,k)=>k!==i),u={payments:pays};
+ if(isConf(cur))u.status=statusFor(cur,sum(pays,p=>+p.amount||0));await db.collection(REG).doc(cur.id).update(u);cur.payments=pays;if(u.status)cur.status=u.status;renderPay();}
+/* ---- Edit registration ---- */
+const KNOWN=[['team','Team'],['category','Category'],['p1','Player 1'],['c1','Player 1 club'],['p2','Player 2'],['c2','Player 2 club'],['phone','Phone'],['email','Email'],['notes','Notes'],['due','Amount due override (₱, blank = default)']],
+ SKIP=['id','createdAt','editedAt','code','status','payments','payNotes','payAt','payMode','slotEmailAt'],isSz=k=>/size|^s[12]$|^sz|shirt/i.test(k);
+function openEdit(id){const x=rows.find(r=>r.id===id);if(!x)return;cur=x;$('edt').textContent=(x.code||'')+' · changes overwrite the original submission';$('szl').innerHTML=MPO_SIZES.map(s=>`<option value="${s}">`).join('');
+ const keys=KNOWN.map(k=>k[0]),lab=Object.fromEntries(KNOWN),extra=Object.keys(x).filter(k=>!keys.includes(k)&&!SKIP.includes(k)&&(typeof x[k]==='string'||typeof x[k]==='number')).sort();
+ $('ef').innerHTML=[...keys,...extra].map(k=>{const v=x[k]??'',l=E(lab[k]||k);
+  if(k==='category')return `<label>${l}</label><select name="${k}">${[...new Set([...MPO_CATS,v].filter(Boolean))].map(c=>`<option ${c===v?'selected':''}>${E(c)}</option>`).join('')}</select>`;
+  if(k==='notes')return `<label>${l}</label><textarea name="${k}" rows="2" style="width:100%">${E(v)}</textarea>`;
+  return `<label>${l}</label><input name="${k}" value="${E(v)}" ${isSz(k)?'list="szl"':''} ${k==='due'?'type="number" min="0"':''}>`;}).join('')+'<div id="ee"></div><p style="display:flex;gap:8px"><button class="btn">Save changes</button><button type="button" class="btn ghost" onclick="$(\'ed\').close()">Cancel</button></p>';
+ $('ef').onsubmit=async ev=>{ev.preventDefault();const f=new FormData($('ef')),u={};
+  for(const [k,v0] of f.entries()){const v=String(v0).trim(),o=x[k];
+   if(k==='due'){if(v===''){if(o!==undefined)u.due=firebase.firestore.FieldValue.delete();}else if(+v!==+o)u.due=+v;continue;}
+   if(typeof o==='number'){if(v!==''&&+v!==o)u[k]=+v;continue;}
+   if(v!==String(o??''))u[k]=v;}
+  if(!Object.keys(u).length){$('ed').close();return;}
+  u.editedAt=firebase.firestore.FieldValue.serverTimestamp();
+  try{await db.collection(REG).doc(x.id).update(u);$('ed').close();}catch(e){$('ee').innerHTML='<div class="msg err">'+E(e.message)+'</div>';}};
+ $('ed').showModal();}
+/* ---- Shirt count ---- */
+const SZ=(x,n)=>String(x['size'+n]||x['s'+n]||x['sz'+n]||x['shirt'+n]||x['p'+n+'size']||'').trim();
+const szKey=v=>{const u=String(v||'').trim().toUpperCase();return !u?'—':MPO_SIZES.includes(u)?u:'Others';},tot=e=>(+e.price||0)*(+e.qty||1);
+function drawShirts(){const conf=rows.filter(isConf),cols=[...MPO_SIZES,'—'],M={};MPO_SHIRT_TYPES.forEach(t=>{M[t]={};cols.forEach(c=>M[t][c]=0);});
+ let auto=0;conf.forEach(x=>[1,2].forEach(n=>{auto++;M['Tournament Shirt'][szKey(SZ(x,n))]++;}));
+ extras.forEach(e=>{M[e.type]&&(M[e.type][szKey(e.size)]+=(+e.qty||1));});
+ const tt=t=>sum(cols,c=>M[t][c]),exT=sum(extras.filter(e=>e.type==='Tournament Shirt'),e=>+e.qty||1);
+ $('shs').innerHTML=MPO_SHIRT_TYPES.map(t=>`<div class="stat"><b>${t}</b><br><big>${tt(t)}</big>${t==='Tournament Shirt'?`<small>${auto} from ${conf.length} confirmed teams · ${exT} extra</small>`:t==='Organizer Shirt'?'<small>free · manual entries</small>':'<small>for sale · manual entries</small>'}</div>`).join('')+`<div class="stat"><b>All shirts</b><br><big>${sum(MPO_SHIRT_TYPES,tt)}</big><small>total to order</small></div>`;
+ $('shsz').innerHTML='<table><tr><th>Type</th>'+cols.map(c=>`<th class="cnt">${c==='—'?'No size':c}</th>`).join('')+'<th class="cnt">Total</th></tr>'+MPO_SHIRT_TYPES.map(t=>`<tr><td>${t}</td>`+cols.map(c=>`<td class="cnt">${M[t][c]||''}</td>`).join('')+`<td class="cnt"><b>${tt(t)}</b></td></tr>`).join('')+'</table>';
+ $('xl').innerHTML=extras.length?'<table><tr><th>Name</th><th>Class</th><th>Type</th><th>Size</th><th>Qty</th><th>Price each</th><th>Total</th><th>Payment</th><th>Notes</th>'+(A()?'<th></th>':'')+'</tr>'+extras.map(e=>`<tr><td>${E(e.name)}</td><td>${E(e.cls)}</td><td>${E(e.type)}</td><td>${E(e.size)}</td><td>${E(e.qty||1)}</td><td>${e.price?peso(e.price):''}</td><td>${tot(e)?peso(tot(e)):''}</td><td>${A()?`<select class="s" onchange="db.collection(SHIRTS).doc('${e.id}').update({pay:this.value})">${MPO_SHIRT_PAY.map(p=>`<option ${p===e.pay?'selected':''}>${p}</option>`).join('')}</select>`:E(e.pay)}</td><td>${E(e.notes)}</td>${A()?`<td><button class="lnk" onclick="delX('${e.id}')">Delete</button></td>`:''}</tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No extra shirts yet.</p>';}
+function xType(){const f=$('xf').elements,org=f.type.value==='Organizer Shirt';f.price.readOnly=org;if(org){f.price.value=0;f.pay.value='Waived';}}
+function buildXF(){if(!A()){$('xf').hidden=true;return;}const o=a=>a.map(v=>`<option>${v}</option>`).join('');
+ $('xf').innerHTML=`<div class="row"><div><label>Name</label><input name="name" required></div><div><label>Classification</label><select name="cls">${o(MPO_CLASSES)}</select></div></div>
+ <div class="row"><div><label>Type</label><select name="type" onchange="xType()">${o(MPO_SHIRT_TYPES)}</select></div><div><label>Size</label><select name="size" onchange="this.nextElementSibling.hidden=this.value!=='Others'">${o(MPO_SIZES)}</select><input name="sizeOther" placeholder="Specify size" hidden style="margin-top:6px"></div></div>
+ <div class="row"><div><label>Qty</label><input type="number" name="qty" min="1" value="1"></div><div><label>Price each (₱) — Organizer shirts are free</label><input type="number" name="price" min="0" step="any" value="0"></div></div>
+ <div class="row"><div><label>Payment status</label><select name="pay">${o(MPO_SHIRT_PAY)}</select></div><div><label>Notes</label><input name="notes"></div></div><p><button class="btn">Add shirt</button></p><div id="xe"></div>`;
+ $('xf').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('xf')));d.qty=Math.max(1,+d.qty||1);if(d.size==='Others'){if(!d.sizeOther.trim())return alert('Please specify the size.');d.size='Others: '+d.sizeOther.trim();}delete d.sizeOther;
+  d.price=d.type==='Organizer Shirt'?0:(+d.price||0);if(d.type==='Organizer Shirt')d.pay='Waived';d.createdAt=firebase.firestore.FieldValue.serverTimestamp();$('xe').innerHTML='';
+  try{await db.collection(SHIRTS).add(d);$('xf').reset();$('xf').querySelector('[name=sizeOther]').hidden=true;xType();}catch(err){$('xe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+const delX=id=>confirm('Delete this shirt record?')&&db.collection(SHIRTS).doc(id).delete();
+function shirtCsv(){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"',out=[];
+ rows.filter(isConf).forEach(x=>[1,2].forEach(n=>out.push([x['p'+n],'Tournament Shirt',SZ(x,n)])));
+ extras.forEach(e=>{for(let i=0;i<(+e.qty||1);i++)out.push([e.name,e.type,e.size]);});
+ out.sort((p,r)=>String(p[1]).localeCompare(r[1])||String(p[0]).localeCompare(r[0]));
+ const t=[['name','type','size'].join(',')].concat(out.map(r=>r.map(q).join(','))).join('\n');
+ const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));l.download='mpo-cup-2026-shirts.csv';l.click();}
+/* ---- Payments tab ---- */
+function recvals(){const conf=rows.filter(isConf),pipe=rows.filter(x=>x.status==='Submitted'||x.status==='Confirmation-Sent'),rej=rows.filter(x=>x.status==='Rejected');
+ return {conf,pipe,rej,exp:sum(conf,dueOf),col:sum(rows.filter(x=>x.status!=='Rejected'),paidOf),rec:sum(conf,x=>Math.max(0,dueOf(x)-paidOf(x))),pipeAmt:sum(pipe,dueOf),
+  shU:sum(extras.filter(e=>e.pay==='Unpaid'),tot),shP:sum(extras.filter(e=>e.pay==='Paid'),tot),refund:sum(rej,paidOf)};}
+function drawPay(){const v=recvals(),card=(t,n,s,c)=>`<div class="stat"><b>${t}</b><br><big class="${c||''}">${peso(n)}</big><small>${s}</small></div>`;
+ $('pst').innerHTML=(+S.feeNum?'':'<div class="msg err" style="grid-column:1/-1">Set "Fee per player" in Event details to compute amounts due.</div>')+
+  card('Receivable',v.rec+v.shU,`teams ${peso(v.rec)} · shirts/merch ${peso(v.shU)}`,'neg')+card('Collected',v.col+v.shP,`teams ${peso(v.col)} · shirts/merch ${peso(v.shP)}`,'pos')+card('Expected (confirmed)',v.exp,v.conf.length+' confirmed teams')+card('Pipeline (not yet confirmed)',v.pipeAmt,v.pipe.length+' teams')+(v.refund?card('Paid by rejected teams',v.refund,'review for refund','neg'):'');
+ const M={};MPO_PAY_MODES.forEach(m=>M[m]=0);rows.forEach(r=>(r.payments||[]).forEach(p=>M[p.mode]=(M[p.mode]||0)+(+p.amount||0)));
+ $('pmd').innerHTML=Object.keys(M).map(m=>`<div class="stat"><small>${E(m)}</small><big>${peso(M[m])}</big></div>`).join('');
+ const L=[...v.conf].sort((p,q)=>(dueOf(q)-paidOf(q))-(dueOf(p)-paidOf(p)));
+ $('ptl').innerHTML=L.length?'<table><tr><th>Code</th><th>Team</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th>'+(A()?'<th></th>':'')+'</tr>'+L.map(x=>{const b=dueOf(x)-paidOf(x);return `<tr><td><span class="code">${E(x.code)}</span></td><td>${E(x.team)}</td><td>${peso(dueOf(x))}</td><td>${peso(paidOf(x))}</td><td class="${b>0?'neg':'pos'}">${b>0?peso(b):b<0?'+'+peso(-b)+' over':'—'}</td><td class="st-${E(x.status)}">${E(x.status)}</td>${A()?`<td><button class="btn ghost sm" onclick="openPay('${x.id}')">Payment</button></td>`:''}</tr>`;}).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No confirmed teams yet.</p>';}
+/* ---- Finances ---- */
+function finForm(){const k=$('fk').value;$('fpl').textContent=k==='pledge'?'Pledged by (sponsor / donor)':'Paid to / supplier';$('fcw').hidden=k==='pledge';$('fsw').hidden=k!=='pledge';}
+function buildFin(){if(!A()){$('ff').hidden=true;return;}const o=a=>a.map(v=>`<option>${E(v)}</option>`).join('');
+ $('ff').innerHTML=`<div class="row"><div><label>Type</label><select name="kind" id="fk" onchange="finForm()"><option value="actual">Actual expense</option><option value="projected">Projected expense</option><option value="pledge">Pledge</option></select></div><div><label>Date</label><input type="date" name="date"></div></div>
+ <div class="row"><div><label>Item / description</label><input name="desc" required></div><div><label id="fpl">Paid to / supplier</label><input name="party"></div></div>
+ <div class="row"><div id="fcw"><label>Category</label><select name="cat">${o(MPO_FIN_CATS)}</select></div><div id="fsw" hidden><label>Status</label><select name="pst">${o(MPO_PLEDGE_STATUS)}</select></div><div><label>Amount (₱)</label><input type="number" name="amount" min="0" step="any" required></div></div>
+ <label>Notes / reference</label><input name="notes"><p><button class="btn" id="fbtn">Add record</button> <button type="button" class="btn ghost" id="fcx" hidden onclick="cancelFin()">Cancel edit</button></p><div id="fe"></div>`;
+ $('ff').elements.date.value=today();
+ $('ff').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('ff')));d.amount=+d.amount||0;if(d.kind==='pledge')delete d.cat;else delete d.pst;
+  $('fe').innerHTML='';try{if(editFin)await db.collection(FIN).doc(editFin).update(d);else{d.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection(FIN).add(d);}cancelFin();}catch(err){$('fe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+function cancelFin(){editFin=null;$('ff').reset();$('ff').elements.date.value=today();finForm();$('fbtn').textContent='Add record';$('fcx').hidden=true;}
+function editF(id){const r=fin.find(x=>x.id===id);if(!r)return;editFin=id;const f=$('ff').elements;['kind','date','desc','party','cat','pst','amount','notes'].forEach(k=>{if(r[k]!==undefined)f[k].value=r[k];});finForm();$('fbtn').textContent='Save changes';$('fcx').hidden=false;$('ff').scrollIntoView({behavior:'smooth'});}
+const delF=id=>confirm('Delete this record?')&&db.collection(FIN).doc(id).delete();
+function drawFin(){if(!A()||!$('fst'))return;const v=recvals(),act=fin.filter(x=>x.kind==='actual'),prj=fin.filter(x=>x.kind==='projected'),pl=fin.filter(x=>x.kind==='pledge'),
+ plR=sum(pl.filter(x=>x.pst==='Received'),x=>+x.amount||0),plP=sum(pl.filter(x=>x.pst!=='Received'),x=>+x.amount||0),
+ col=v.col+v.shP+plR,pipe=v.rec+v.pipeAmt+v.shU+plP,actT=sum(act,x=>+x.amount||0),prjT=sum(prj,x=>+x.amount||0),
+ cats=[...new Set([...MPO_FIN_CATS,...act.concat(prj).map(x=>x.cat).filter(Boolean)])],by=(a,k)=>sum(a.filter(x=>x.cat===k),x=>+x.amount||0),
+ remain=sum(cats,k=>Math.max(0,by(prj,k)-by(act,k))),outlook=actT+remain,netNow=col-actT,netProj=col+pipe-outlook,
+ card=(t,n,s,c)=>`<div class="stat"><b>${t}</b><br><big class="${c||''}">${peso(n)}</big><small>${s}</small></div>`;
+ $('fst').innerHTML=card('Income collected',col,`teams ${peso(v.col)} · shirts/merch ${peso(v.shP)} · pledges received ${peso(plR)}`,'pos')+card('Pipeline income',pipe,`receivable ${peso(v.rec)} · unconfirmed teams ${peso(v.pipeAmt)} · shirts/merch ${peso(v.shU)} · pledges ${peso(plP)}`)+card('Actual expenses',actT,act.length+' records','neg')+card('Projected expenses (budget)',prjT,`${peso(remain)} still to spend`)+card('Net now (collected − actual)',netNow,'cash position',netNow<0?'neg':'pos')+card('Net if all comes in',netProj,'collected + pipeline − expected expenses',netProj<0?'neg':'pos');
+ const mx=Math.max(1,col+pipe,outlook),bar=(l,t,s)=>`<div class="fr"><span>${l} <b>${peso(t)}</b></span><div class="ft">${s.map(([n,c,tt])=>`<i style="width:${n/mx*100}%;background:${c}" title="${tt}: ${peso(n)}"></i>`).join('')}</div></div>`;
+ $('fbars').innerHTML=bar('Income',col+pipe,[[col,'var(--mint)','Collected'],[pipe,'rgba(61,220,151,.35)','Pipeline']])+bar('Expenses',outlook,[[actT,'#ff5470','Actual'],[remain,'rgba(255,84,112,.35)','Projected, not yet spent']])+'<small class="pn">Solid = collected / spent. Faded = pipeline / still projected. Payments from rejected teams are not counted as income.</small>';
+ $('fcat').innerHTML='<table><tr><th>Category</th><th>Projected</th><th>Actual</th><th>Variance</th></tr>'+cats.map(k=>{const p=by(prj,k),a=by(act,k),d=p-a;return p||a?`<tr><td>${E(k)}</td><td>${peso(p)}</td><td>${peso(a)}</td><td class="${d<0?'neg':'pos'}">${d<0?'over '+peso(-d):peso(d)+' left'}</td></tr>`:'';}).join('')+`<tr><td><b>Total</b></td><td><b>${peso(prjT)}</b></td><td><b>${peso(actT)}</b></td><td></td></tr></table>`;
+ const tbl=(t,a,pledge)=>`<h3 class="sec">${t}</h3><div class="panel" style="overflow-x:auto">${a.length?`<table><tr><th>Date</th><th>Item</th><th>${pledge?'Pledged by':'Category'}</th>${pledge?'<th>Status</th>':'<th>Paid to</th>'}<th>Amount</th><th>Notes</th><th></th></tr>`+a.map(x=>`<tr><td>${E(x.date)}</td><td>${E(x.desc)}</td><td>${E(pledge?x.party:x.cat)}</td><td>${pledge?`<select class="s" onchange="db.collection(FIN).doc('${x.id}').update({pst:this.value})">${MPO_PLEDGE_STATUS.map(s=>`<option ${s===x.pst?'selected':''}>${s}</option>`).join('')}</select>`:E(x.party)}</td><td>${peso(x.amount)}</td><td>${E(x.notes)}</td><td><button class="btn ghost sm" onclick="editF('${x.id}')">Edit</button> <button class="lnk" onclick="delF('${x.id}')">Delete</button></td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">None yet.</p>'}</div>`;
+ $('fl').innerHTML=tbl('Pledges',pl,true)+tbl('Actual expenses',act)+tbl('Projected expenses',prj);}
+function finCsv(){const h=['kind','date','desc','cat','party','amount','pst','notes'],t=[h.join(',')].concat(fin.map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-finances.csv';a.click();}
+/* ---- Event details ---- */
+const FIELDS=[['date','Event dates'],['venue','Venue'],['fee','Registration fee (display text)'],['feeNum','Fee per player (₱, number only)'],['slots','Slots per category'],['contact','Contact person'],['phone','Contact number'],['email','Contact email']];
+function buildSettings(s){$('sf').innerHTML=FIELDS.map(([k,l])=>`<label>${l}</label><input name="${k}" value="${E(s[k])}">`).join('')+
+ `<div class="row"><div><label>Registration opens</label><input type="date" name="open" value="${E(s.open)}"></div><div><label>Last day of registration</label><input type="date" name="close" value="${E(s.close)}"></div></div>
+ <label>Registration mode</label><select name="mode"><option value="auto" ${s.mode==='auto'?'selected':''}>Automatic (by the dates above)</option><option value="open" ${s.mode==='open'?'selected':''}>Force open</option><option value="closed" ${s.mode==='closed'?'selected':''}>Force closed</option></select>
+ <p><button class="btn">Save details</button> <span id="sm" aria-live="polite"></span></p>`;
+ $('sf').onsubmit=async e=>{e.preventDefault();const sd=Object.fromEntries(new FormData($('sf')));await mpoSave(sd);S=Object.assign({},S,sd);drawPay();draw();drawFin();$('sm').textContent='Saved.';};}
+if(['admin','viewer'].includes(sessionStorage.mpo)){ROLE=sessionStorage.mpo;start();}
+</script></body></html>
