@@ -106,9 +106,10 @@ dialog#ed{max-width:960px;width:96%;max-height:92vh;overflow:auto;padding:0}
 .or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:.8rem;margin:14px 0 4px}.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
 .chip{display:inline-block;background:#e6f2ec;color:#0a3d2e;border-radius:99px;padding:2px 9px;font-size:.75rem;font-weight:600;margin:2px 3px 2px 0}.chip.off{background:#eceff1;color:#64748b}
 dialog#du{max-width:640px;width:96%;max-height:92vh;overflow:auto;padding:0}
+.nadd input[readonly]{background:#f1f5f3!important;color:#4b5d56!important}
 </style></head><body class="adm">
 <div id="gate" class="wrap" style="padding-top:100px;max-width:420px"><img src="logo.png" alt="MPO" style="height:90px"><h2 style="margin:12px 0 10px">Admin login</h2><form onsubmit="login(event)" style="padding:22px"><div class="gg"><button type="button" class="btn ghost" id="gbtn" onclick="googleLogin()"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Sign in with Google</button><div class="or">or use passcode</div></div><label for="pw">Passcode</label><input type="password" id="pw" autofocus><p><button class="btn">Enter</button></p><div id="ge"></div></form></div>
-<div id="app" hidden><aside id="sb"><div class="sbh"><img src="logo.png" alt="MPO"><div><b>MPO CUP 2026</b><small>Admin</small></div></div><button class="nb on" id="t0" onclick="tab(0)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></button><button class="nb" id="t1" onclick="tab(1)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>Registrations</span></button><button class="nb" id="t3" onclick="tab(3)"><svg viewBox="0 0 24 24"><path d="M8 3l-5 4 3 4 2-1v11h10V10l2 1 3-4-5-4a4 4 0 0 1-8 0z"/></svg><span>Shirt Count</span></button><button class="nb" id="t4" onclick="tab(4)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Payments</span></button><button class="nb" id="t5" onclick="tab(5)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Finances</span></button><button class="nb" id="t2" onclick="tab(2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Event details</span></button><button class="nb" id="t6" onclick="tab(6)" hidden><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button><div class="sbf"><a href="index.html" data-tip="View site"><i>↗</i><span>View site</span></a><a href="#" onclick="logout();return false" data-tip="Log out"><i>⎋</i><span>Log out</span></a></div></aside><div id="ov" onclick="menu(0)"></div><div id="mn"><header class="top"><button id="hb" onclick="hbClick()" aria-label="Toggle menu">☰</button><h1 id="pt0">Dashboard</h1><button type="button" id="stg" class="btn ghost sm" onclick="togStats()" hidden>Hide numbers</button><span id="who" class="badge"></span></header><div class="wrap"><div id="p0"><div class="stats ds" id="dst"></div><div class="dgrid"><div class="panel" style="padding:18px"><h3 class="dh">Status overview</h3><div id="dnut"></div></div><div class="panel" style="padding:18px"><h3 class="dh">Registrations per category</h3><div id="dcat"></div></div></div></div>
+<div id="app" hidden><aside id="sb"><div class="sbh"><img src="logo.png" alt="MPO"><div><b>MPO CUP 2026</b><small>Admin</small></div></div><button class="nb on" id="t0" onclick="tab(0)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></button><button class="nb" id="t1" onclick="tab(1)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>Registrations</span></button><button class="nb" id="t3" onclick="tab(3)"><svg viewBox="0 0 24 24"><path d="M8 3l-5 4 3 4 2-1v11h10V10l2 1 3-4-5-4a4 4 0 0 1-8 0z"/></svg><span>Shirt Count</span></button><button class="nb" id="t4" onclick="tab(4)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Payments</span></button><button class="nb" id="t5" onclick="tab(5)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Finances</span></button><button class="nb" id="t2" onclick="tab(2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Event details</span></button><button class="nb" id="t6" onclick="tab(6)" hidden><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button><button class="nb" id="t7" onclick="tab(7)" hidden><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg><span>Audit Log</span></button><div class="sbf"><a href="index.html" data-tip="View site"><i>↗</i><span>View site</span></a><a href="#" onclick="logout();return false" data-tip="Log out"><i>⎋</i><span>Log out</span></a></div></aside><div id="ov" onclick="menu(0)"></div><div id="mn"><header class="top"><button id="hb" onclick="hbClick()" aria-label="Toggle menu">☰</button><h1 id="pt0">Dashboard</h1><button type="button" id="stg" class="btn ghost sm" onclick="togStats()" hidden>Hide numbers</button><span id="who" class="badge"></span></header><div class="wrap"><div id="p0"><div class="stats ds" id="dst"></div><div class="dgrid"><div class="panel" style="padding:18px"><h3 class="dh">Status overview</h3><div id="dnut"></div></div><div class="panel" style="padding:18px"><h3 class="dh">Registrations per category</h3><div id="dcat"></div></div></div></div>
 <div id="p1" hidden><div class="stats" id="stats"></div><div class="bar"><select id="fc" onchange="draw()" aria-label="Category"><option value="">All categories</option></select><select id="fs" onchange="draw()" aria-label="Status"><option value="">All statuses</option></select><input id="q" placeholder="Search" oninput="draw()" aria-label="Search"><button class="btn ghost" onclick="csv()">Export CSV</button></div>
 <div id="list" class="panel" style="margin-top:16px"></div></div>
 <div id="p3" hidden><p style="margin-top:18px"><button class="btn ghost" onclick="shirtCsv()">Export shirt list (CSV)</button></p><div class="stats" id="shs"></div><h3>By size</h3><div id="shsz" class="panel" style="overflow-x:auto"></div>
@@ -117,7 +118,8 @@ dialog#du{max-width:640px;width:96%;max-height:92vh;overflow:auto;padding:0}
 <div id="p5" hidden><div class="stats" id="fst"></div><div id="fbars" class="panel" style="padding:16px"></div><h3 class="sec">Budget vs actual by category</h3><div id="fcat" class="panel" style="overflow-x:auto"></div>
 <h3 class="sec">Add record</h3><form id="ff" class="panel" style="padding:16px;max-width:760px"></form><p><button class="btn ghost" onclick="finCsv()">Export finance records (CSV)</button></p><div id="fl"></div></div>
 <div id="p2" hidden><form id="sf" style="max-width:640px;margin-top:18px"></form></div>
-<div id="p6" hidden><div class="panel" style="padding:16px;margin-top:14px"><h3 class="dh" style="margin-bottom:6px">Superadmins</h3><p class="pn" id="sup" style="margin:0"></p><p class="pn" style="margin:6px 0 0">Superadmins can sign in with Google, see every tab and manage users.</p></div><p style="margin:14px 0 8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" onclick="openUser()">+ Add user</button><span class="pn">Role and tab access are saved per Google account. Passcode logins are unchanged.</span></p><div id="ul" class="panel" style="overflow-x:auto"></div></div></div></div></div>
+<div id="p7" hidden><div class="bar" style="margin-top:14px"><select id="aa" onchange="drawAudit()" aria-label="Action"></select><select id="au" onchange="drawAudit()" aria-label="User"></select><input id="aq" placeholder="Search" oninput="drawAudit()" aria-label="Search"><button class="btn ghost" onclick="auditCsv()">Export CSV</button></div><p class="pn" id="aun" style="margin:8px 0 0"></p><div id="al" class="panel" style="margin-top:10px;overflow-x:auto"></div></div>
+<div id="p6" hidden><div class="panel" style="padding:16px;margin-top:14px"><h3 class="dh" style="margin-bottom:6px">Superadmins</h3><p class="pn" id="sup" style="margin:0"></p><p class="pn" style="margin:6px 0 0">Superadmins can sign in with Google, see every tab and manage users. They are fixed in the page code and Firestore rules.</p></div><p style="margin:14px 0 8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" onclick="openUser()">+ Add user</button><span class="pn">Role and tab access are saved per Google account. Passcode logins are unchanged.</span></p><div id="ul" class="panel" style="overflow-x:auto"></div></div></div></div></div>
 <dialog id="pd"><h3 style="margin-top:0">Payment</h3><p id="pdt" style="color:var(--mute);margin-top:0"></p><div id="pds"></div><div id="pdl" class="pl"></div>
 <label for="pm">Mode of payment</label><select id="pm"><option value="">— select —</option></select>
 <div class="row"><div><label for="pa">Amount (₱)</label><input id="pa" type="number" min="0"></div><div><label for="pt">Date</label><input id="pt" type="date"></div></div>
@@ -134,7 +136,7 @@ const SUPER_EMAILS=['ton.quinton@gmail.com','mindoropickleballorg@gmail.com'],US
 const TAB_DEFS=[['dash',0,'Dashboard'],['reg',1,'Registrations'],['shirts',3,'Shirt Count'],['pay',4,'Payments'],['fin',5,'Finances'],['set',2,'Settings']],TAB_ADMIN_ONLY=['fin','set'],
  ROLE_TABS={admin:['dash','reg','shirts','pay','fin','set'],viewer:['dash','reg','shirts','pay']},TIDX=Object.fromEntries(TAB_DEFS.map(([k,i])=>[k,i])),TLAB=Object.fromEntries(TAB_DEFS.map(([k,i,l])=>[k,l]));
 
-let AUTHUSER=null,ISSUPER=false,ALLOW=null,ALLOW_KEYS=null,users=[],S=Object.assign({},MPO_DEF),rows=[],extras=[],fin=[],cur=null,ROLE='',started=false,editFin=null;const coding=new Set();
+let audit=[],AUTHNAME='',AUTHUSER=null,ISSUPER=false,ALLOW=null,ALLOW_KEYS=null,users=[],S=Object.assign({},MPO_DEF),rows=[],extras=[],fin=[],cur=null,ROLE='',started=false,editFin=null;const coding=new Set();
 const A=()=>ROLE==='admin',isConf=x=>['Confirmed-Paid','Confirmed-Partial','Confirmed-Unpaid'].includes(x.status),
  peso=n=>'₱'+Number(n||0).toLocaleString('en-PH'),sum=(a,f)=>a.reduce((t,x)=>t+f(x),0),
  paidOf=x=>sum(x.payments||[],p=>+p.amount||0),
@@ -144,14 +146,15 @@ const A=()=>ROLE==='admin',isConf=x=>['Confirmed-Paid','Confirmed-Partial','Conf
  payLine=x=>{const p=paidOf(x),d=dueOf(x);return (isConf(x)||p)?`<br><span class="pn">${peso(p)} / ${peso(d)}${d>p?' · bal '+peso(d-p):''}</span>`:'';};
 /* ---- Login (client-side passcodes: admin can edit, viewer is read-only) ---- */
 function login(e){e.preventDefault();const p=$('pw').value;if(p===ADMIN_PASS)ROLE='admin';else if(p===VIEW_PASS)ROLE='viewer';else{$('ge').innerHTML='<div class="msg err">Wrong passcode.</div>';return;}sessionStorage.mpo=ROLE;start();}
-async function logout(){sessionStorage.removeItem('mpo');try{if(typeof firebase.auth==='function')await firebase.auth().signOut();}catch(e){}location.reload();}
-function start(){if(started)return;started=true;$('gate').hidden=true;$('app').hidden=false;$('who').textContent=(ISSUPER?'superadmin':ROLE)+(AUTHUSER?' · '+AUTHUSER.email:'');
+async function logout(){try{await logA('logout','','');}catch(e){}sessionStorage.removeItem('mpoLg');sessionStorage.removeItem('mpo');try{if(typeof firebase.auth==='function')await firebase.auth().signOut();}catch(e){}location.reload();}
+function start(){if(started)return;started=true;$('gate').hidden=true;$('app').hidden=false;$('who').textContent=(ISSUPER?'superadmin':ROLE)+(AUTHUSER?' · '+AUTHUSER.email:'');if(!sessionStorage.mpoLg){sessionStorage.mpoLg='1';logA('login','',AUTHUSER?'Google sign-in':'Passcode ('+ROLE+')');}
  applyAccess();
  if(A())buildSettings(S);/* show the form right away (defaults), filled with saved values once loaded */
  $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=MPO_STATUSES.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
  buildXF();buildFin();const er=id=>e=>$(id).innerHTML='<div class="msg err">'+E(e.message)+'</div>',all=()=>{drawDash();draw();drawShirts();drawPay();drawFin();drawNotes();};
  db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));all();backfill();backfillGeo();},er('list'));
  db.collection(SHIRTS).orderBy('createdAt','desc').onSnapshot(s=>{extras=s.docs.map(d=>({id:d.id,...d.data()}));drawShirts();drawPay();drawFin();},er('xl'));
+ if(ISSUPER)db.collection(AUDIT).orderBy('ts','desc').limit(500).onSnapshot(s=>{audit=s.docs.map(d=>({id:d.id,...d.data()}));drawAudit();},e=>{$('al').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules (audit log) first.</div>';});
  if(ISSUPER)db.collection(USERS).onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));drawUsers();},e=>{$('ul').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules first.</div>';});
  if(A())db.collection(FIN).orderBy('createdAt','desc').onSnapshot(s=>{fin=s.docs.map(d=>({id:d.id,...d.data()}));drawFin();},er('fl'));
  mpoSettings().then(s=>{S=s;if(A())buildSettings(s);all();}).catch(e=>{if(A())$('sf').insertAdjacentHTML('afterbegin','<div class="msg err">Could not load saved settings: '+E(e.message)+'. Showing defaults. Check the Firestore rules for the settings document.</div>');});}
@@ -161,8 +164,19 @@ const ib=(ic,tip,fn,cls)=>`<button type="button" class="ib ${cls||''}" data-tip=
 (function(){const t=document.createElement('div');t.id='tt';document.body.appendChild(t);
  const show=e=>{const b=e.target.closest&&e.target.closest('[data-tip]');if(!b)return;t.textContent=b.dataset.tip;const r=b.getBoundingClientRect(),w=t.offsetWidth,h=t.offsetHeight;t.style.left=Math.max(6,Math.min(innerWidth-w-6,r.left+r.width/2-w/2))+'px';t.style.top=(r.top-h-8<6?r.bottom+8:r.top-h-8)+'px';t.style.opacity=1;},hide=()=>{t.style.opacity=0;};
  document.addEventListener('mouseover',show);document.addEventListener('focusin',show);document.addEventListener('mouseout',hide);document.addEventListener('focusout',hide);document.addEventListener('scroll',hide,true);document.addEventListener('click',hide);})();
-function tab(n){if(ALLOW&&!ALLOW.has(n))return;[0,1,2,3,4,5,6].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});$('pt0').textContent=$('t'+n).querySelector('span').textContent;menu(0);$('stg').hidden=n!==1;scrollTo(0,0);}
+function tab(n){if(ALLOW&&!ALLOW.has(n))return;[0,1,2,3,4,5,6,7].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});$('pt0').textContent=$('t'+n).querySelector('span').textContent;menu(0);$('stg').hidden=n!==1;scrollTo(0,0);}
 function menu(o){$('app').classList.toggle('mo',!!o);}
+
+/* ---- Audit trail: every important action is written to mpo-cup2026-audit (read: superadmins only; entries can't be edited/deleted) ---- */
+const AUDIT='mpo-cup2026-audit',tgt=r=>r?((r.team||'')+(r.code?' ('+r.code+')':'')):'',
+ fmtV=v=>v===undefined||v===null||v===''?'(blank)':'"'+String(v)+'"',
+ vn=v=>JSON.stringify(['p1','p2'].map(p=>{const o=(v||{})[p]||{};return ['rating','rel','level','by'].map(k=>String(o[k]??''));}));
+function diffStr(x,u){return Object.keys(u).filter(k=>!['editedAt','decisionAt','detEditedAt','c1','c2'].includes(k)).map(k=>{
+ if(k==='vouch')return vn(x.vouch)!==vn(u.vouch)?'vouching updated':'';
+ if(u[k]!==null&&typeof u[k]==='object')return k+': '+fmtV(x[k])+' → (removed)';
+ return String(x[k]??'')!==String(u[k]??'')?k+': '+fmtV(x[k])+' → '+fmtV(u[k]):'';}).filter(Boolean).join('; ');}
+function logA(action,target,detail,tid){try{const cu=typeof firebase.auth==='function'?firebase.auth().currentUser:null,em=cu&&cu.email?cu.email.toLowerCase():'';
+ return db.collection(AUDIT).add({ts:firebase.firestore.FieldValue.serverTimestamp(),actorEmail:em,actorName:AUTHUSER?AUTHNAME:('Passcode '+(ROLE||'')),method:AUTHUSER?'google':'passcode',role:ISSUPER?'superadmin':(ROLE||''),action,target:target||'',targetId:tid||'',detail:String(detail||'').slice(0,800)}).catch(e=>console.warn('audit log failed:',e.message));}catch(e){return Promise.resolve();}}
 /* ---- Dashboard ---- */
 const DCOL={'Submitted':'#4f63d2','Confirmation-Sent':'#0ea5c6','Confirmed-Unpaid':'#f97316','Confirmed-Partial':'#eab308','Confirmed-Paid':'#16a34a','Rejected':'#e11d48'},DST=Object.keys(DCOL),DLB=t=>t.replace(/-/g,' ');let DC=[];
 function goReg(i,t){tab(1);$('fc').value=i<0?'':(DC[i]||'');$('fs').value=t||'';draw();}
@@ -179,8 +193,8 @@ function draw(){const c=$('fc').value,s=$('fs').value,q=$('q').value.toLowerCase
   return `<div class="stat cs"><b class="ct">${E(k)}</b><div class="cbig ${conf>=slots?'full':''}">${conf}<span>/${slots}</span></div><div class="cteams">${r.length} team${r.length===1?'':'s'}</div><div class="cln">Confirmed - <b>${conf}</b></div><div class="cdet">Paid ${n('Confirmed-Paid')} · Partial ${n('Confirmed-Partial')} · Unpaid ${n('Confirmed-Unpaid')}</div><div class="cln">Pending - <b>${pend}</b></div><div class="cln">Rejected - <b>${rej}</b></div></div>`}).join('');
  const v=rows.filter(x=>(!c||x.category===c)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
  $('list').innerHTML=v.length?`<table><tr><th>Code</th><th>Team</th><th>Category</th><th>Players</th><th>Contact</th><th>Status</th><th></th></tr>`+v.map(x=>`<tr><td><span class="code">${E(x.code)}</span></td><td><b>${E(x.team)}</b><br><small>${x.createdAt?x.createdAt.toDate().toLocaleString():''}</small></td><td>${E(x.category)}${x.finalCategory&&x.finalCategory!==x.category?'<br><span class="pn">Final: <b>'+E(x.finalCategory)+'</b></span>':''}</td><td>${E(x.p1)} (${E(x.c1)})<br>${E(x.p2)} (${E(x.c2)})</td><td>${E(x.phone)}<br>${E(x.email)}${x.notes?'<br><i>'+E(x.notes)+'</i>':''}</td><td>${A()?`<select class="s st-${E(x.status)}" onchange="setSt('${x.id}',this.value)">${MPO_STATUSES.map(t=>`<option ${t===x.status?'selected':''}>${t}</option>`).join('')}</select>`:`<span class="st-${E(x.status)}">${E(x.status)}</span>`}${payLine(x)}${decBadge(x)}${x.payNotes?'<br><span class="pn">'+E(x.payNotes)+'</span>':''}${x.ackAt&&x.ackAt.toDate?'<br><span class="pn">✉ Acknowledged '+E(x.ackAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.payInstrAt&&x.payInstrAt.toDate?'<br><span class="pn">✉ Payment instructions sent '+E(x.payInstrAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.slotEmailAt&&x.slotEmailAt.toDate?'<br><span class="pn">✉ Slot email sent '+E(x.slotEmailAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}</td><td><div class="acts">${ib('eye','View details (vouching, notes, decision)',`openDet('${x.id}')`,'pri')}${A()?`${ib('edit','Edit registration',`openEdit('${x.id}')`)}${ib('trash','Delete registration',`del('${x.id}')`,'dng')}${x.status==='Submitted'?ib('mail','Acknowledge (send confirmation email)',`ack('${x.id}')`,'pri'):''}${x.status!=='Submitted'&&x.status!=='Rejected'?ib('send',x.payInstrAt?'Resend payment instructions':'Send payment instructions',`sendPay('${x.id}')`,x.payInstrAt?'done':''):''}${x.status!=='Rejected'?ib(isConf(x)?'card':'check',isConf(x)?'Payments (record / view)':'Confirm slot & record payment',`openPay('${x.id}')`):''}${isConf(x)?ib('cal',x.slotEmailAt?'Resend slot confirmation email':'Send slot confirmation email',`sendSlot('${x.id}')`,x.slotEmailAt?'done':''):''}`:''}</div></td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No registrations found.</p>';}
-const setSt=(id,s)=>db.collection(REG).doc(id).update({status:s});
-const del=id=>confirm('Delete this registration permanently?')&&db.collection(REG).doc(id).delete();
+const setSt=(id,s)=>{const r=rows.find(x=>x.id===id),o=r?r.status:'';return db.collection(REG).doc(id).update({status:s}).then(()=>logA('status_change',tgt(r),o+' → '+s,id));};
+const del=id=>{if(!confirm('Delete this registration permanently?'))return;const r=rows.find(x=>x.id===id);return db.collection(REG).doc(id).delete().then(()=>logA('registration_deleted',tgt(r),(r&&r.email)||'',id));};
 async function backfill(){if(!A())return;for(const r of rows){if(r.code||coding.has(r.id))continue;coding.add(r.id);
  try{await db.collection(REG).doc(r.id).update({code:await mpoGenCode(db.collection(REG))});}catch(e){coding.delete(r.id);console.error(e);}}}
 const HOOK_SECRET=typeof MPO_WEBHOOK_SECRET!=='undefined'?MPO_WEBHOOK_SECRET:'';
@@ -190,7 +204,7 @@ async function callHook(payload){
 const mailFields=async r=>({event:await mpoSettings(),code:r.code,team:r.team,category:r.category,p1:r.p1,p2:r.p2,email:r.email,phone:r.phone,due:dueOf(r),paid:paidOf(r),balance:Math.max(0,dueOf(r)-paidOf(r)),status:r.status});
 /* Acknowledge -> "Registration received" email only (Apps Script action "acknowledge") */
 async function ack(id){const r=rows.find(x=>x.id===id);if(!r)return;
- const mark=()=>db.collection(REG).doc(id).update({status:'Confirmation-Sent',ackAt:firebase.firestore.FieldValue.serverTimestamp()});
+ const mark=()=>db.collection(REG).doc(id).update({status:'Confirmation-Sent',ackAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>logA('acknowledged',tgt(r),'Acknowledgement to '+r.email,id));
  if(!MPO_WEBHOOK){alert("TEST MODE: this will send the 'Registration received' acknowledgement email to the registrant (no payment details).");return mark();}
  if(!confirm('Send acknowledgement ("registration received") to '+r.email+'?'))return;
  try{await callHook(Object.assign({action:'acknowledge'},await mailFields(r)));await mark();alert('Acknowledgement sent to '+r.email);}
@@ -202,7 +216,7 @@ async function sendPay(id){const r=rows.find(x=>x.id===id);if(!r)return;
  const bal=Math.max(0,dueOf(r)-paidOf(r));
  if(!confirm((r.payInstrAt?'RESEND payment instructions':'Send payment instructions')+' to '+r.email+'?\n\nAmount due: '+peso(dueOf(r))+(paidOf(r)?'\nBalance: '+peso(bal):'')))return;
  try{await callHook(Object.assign({action:'paymentInstructions'},await mailFields(r)));
-  await db.collection(REG).doc(r.id).update({payInstrAt:firebase.firestore.FieldValue.serverTimestamp()});alert('Payment instructions sent to '+r.email);}
+  await db.collection(REG).doc(r.id).update({payInstrAt:firebase.firestore.FieldValue.serverTimestamp()});logA('payment_instructions_sent',tgt(r),r.email,r.id);alert('Payment instructions sent to '+r.email);}
  catch(e){alert('Email failed: '+e.message);}}
 /* Send slot confirmation -> player portal link + code (Apps Script action "confirmSlot") */
 async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r)return;
@@ -212,7 +226,7 @@ async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r)return;
  const bal=Math.max(0,dueOf(r)-paidOf(r));
  if(!confirm((r.slotEmailAt?'RESEND slot confirmation':'Send slot confirmation')+' to '+r.email+'?\n\nStatus: '+r.status+(bal>0?'\nUnpaid balance: '+peso(bal):'')))return;
  try{await callHook(Object.assign({action:'confirmSlot'},await mailFields(r)));
-  await db.collection(REG).doc(r.id).update({slotEmailAt:firebase.firestore.FieldValue.serverTimestamp()});alert('Slot confirmation sent to '+r.email);}
+  await db.collection(REG).doc(r.id).update({slotEmailAt:firebase.firestore.FieldValue.serverTimestamp()});logA('slot_email_sent',tgt(r),r.email,r.id);alert('Slot confirmation sent to '+r.email);}
  catch(e){alert('Email failed: '+e.message+'. Check the Apps Script Executions log before retrying.');}}
 function csv(){const h=['code','team','category','p1','c1','p2','c2','phone','email','status','due','paid','balance','payNotes','notes','municipality','province','decision','finalCategory'];
  const t=[h.join(',')].concat(rows.map(r=>({...r,due:dueOf(r),paid:paidOf(r),balance:dueOf(r)-paidOf(r)})).map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
@@ -229,7 +243,7 @@ function addrOf(x){const a1=x.address1||x.c1||'',a2=x.address2||x.c2||'';return 
 function openDet(id){const x=rows.find(r=>r.id===id);if(!x)return;curDet=id;detDirty=false;const ro=!A(),dis=ro?'disabled':'';
  const P=[1,2].map(n=>({n,name:x['p'+n],age:x['age'+n],dupr:x['dupr'+n]})),V=x.vouch||{},cats=[...new Set([...MPO_CATS,x.category,x.finalCategory].filter(Boolean))];
  $('dtt').firstChild.textContent='Team details · '+(x.team||'');$('dts').textContent=(x.code||'')+' · registered '+(x.createdAt&&x.createdAt.toDate?x.createdAt.toDate().toLocaleString('en-PH'):'');
- let nm='';try{nm=localStorage.mpoName||'';}catch(e){}
+ let nm=AUTHUSER?AUTHNAME:'';if(!AUTHUSER){try{nm=localStorage.mpoName||'';}catch(e){}}
  $('dtc').innerHTML=`<h4>Team Information</h4>
  <div class="tg"><div><small>Team name</small><b>${E(x.team)}</b></div><div><small>Contact number</small><b>${E(x.phone)}</b></div><div><small>Address</small><b>${addrOf(x)}</b></div><div><small>Email</small><b>${E(x.email)}</b></div><div><small>Initial category</small><b>${E(x.category)}</b></div></div>
  <div class="tg" style="margin-top:14px"><div><label for="d_mun">Municipality</label><input id="d_mun" data-f="municipality" value="${E(x.municipality||'')}" ${dis}></div><div><label for="d_prov">Province</label><input id="d_prov" data-f="province" value="${E(x.province||'')}" ${dis}></div></div>
@@ -241,7 +255,7 @@ function openDet(id){const x=rows.find(r=>r.id===id);if(!x)return;curDet=id;detD
  <p class="pn" style="margin:6px 0 0">* Not part of the original registration data.</p>
  <h4>Notes</h4>${x.notes?`<div class="regn"><b>Note from registrant:</b> ${E(x.notes)}</div>`:''}
  <div id="dtn"></div>
- ${ro?'':`<div class="nadd"><div><label for="nn">Your name</label><input id="nn" value="${E(nm)}" placeholder="Name"></div><div><label for="nt">Note</label><textarea id="nt" rows="1" placeholder="Write a note…"></textarea></div><div><label>&nbsp;</label><button type="button" class="btn" onclick="addNote()">Add Notes +</button></div></div><div id="ne"></div><p class="pn" style="margin:6px 0 0">Notes are append-only: saved right away and can't be edited or deleted.</p>`}
+ ${ro?'':`<div class="nadd"><div><label for="nn">Your name</label><input id="nn" value="${E(nm)}" placeholder="Name" ${AUTHUSER?'readonly':''}></div><div><label for="nt">Note</label><textarea id="nt" rows="1" placeholder="Write a note…"></textarea></div><div><label>&nbsp;</label><button type="button" class="btn" onclick="addNote()">Add Notes +</button></div></div><div id="ne"></div><p class="pn" style="margin:6px 0 0">Notes are append-only: saved right away and can't be edited or deleted.</p>`}
  <h4>Final MPO Decision</h4>
  <div class="tg"><div><label for="d_dec">Decision</label><select id="d_dec" data-f="decision" ${dis}><option value="">— Pending —</option>${DECS.map(d=>`<option ${d===x.decision?'selected':''}>${d}</option>`).join('')}</select></div>
  <div><label for="d_fc">Final category</label><select id="d_fc" data-f="finalCategory" ${dis}><option value="">— Same as initial —</option>${cats.map(c=>`<option ${c===x.finalCategory?'selected':''}>${E(c)}</option>`).join('')}</select></div></div>
@@ -253,7 +267,7 @@ function drawNotes(){const el=$('dtn');if(!el||!curDet||!$('dt').open)return;con
 async function addNote(){if(!A()||!curDet)return;const nm=$('nn').value.trim(),tx=$('nt').value.trim();
  if(!nm||!tx){$('ne').innerHTML='<div class="msg err">Enter your name and a note.</div>';return;}
  try{localStorage.mpoName=nm;}catch(e){}
- try{await db.collection(REG).doc(curDet).update({notesLog:firebase.firestore.FieldValue.arrayUnion({ts:Date.now(),name:nm,text:tx})});$('nt').value='';$('ne').innerHTML='';}
+ try{await db.collection(REG).doc(curDet).update({notesLog:firebase.firestore.FieldValue.arrayUnion(Object.assign({ts:Date.now(),name:nm,text:tx},AUTHUSER?{email:String(AUTHUSER.email).toLowerCase()}:{}))});logA('note_added',tgt(rows.find(r=>r.id===curDet)),tx.slice(0,300),curDet);$('nt').value='';$('ne').innerHTML='';}
  catch(e){$('ne').innerHTML='<div class="msg err">'+E(e.message)+'</div>';}}
 const dget=n=>{const el=$('dt').querySelector('[data-f="'+n+'"]');return el?el.value.trim():'';};
 async function saveDet(){if(!A()||!curDet)return;const x=rows.find(r=>r.id===curDet);if(!x)return;
@@ -261,7 +275,7 @@ async function saveDet(){if(!A()||!curDet)return;const x=rows.find(r=>r.id===cur
  const u={vouch,municipality:dget('municipality'),province:dget('province'),decision:dget('decision'),finalCategory:dget('finalCategory'),detEditedAt:firebase.firestore.FieldValue.serverTimestamp()};
  if(u.decision!==(x.decision||''))u.decisionAt=firebase.firestore.FieldValue.serverTimestamp();
  $('dtsv').disabled=true;$('dtst').textContent='Saving…';
- try{await db.collection(REG).doc(curDet).update(u);detDirty=false;$('dt').close();}
+ try{await db.collection(REG).doc(curDet).update(u);{const d=diffStr(x,u);if(d)logA('details_saved',tgt(x),d,x.id);}detDirty=false;$('dt').close();}
  catch(e){$('dtsv').disabled=false;$('dtst').innerHTML='<span class="neg">Could not save: '+E(e.message)+'</span>';}}
 function closeDet(){if(detDirty&&!confirm('You have unsaved changes. Close anyway?'))return;detDirty=false;$('dt').close();}
 $('dt').addEventListener('cancel',e=>{e.preventDefault();closeDet();});
@@ -274,10 +288,10 @@ function renderPay(){const p=paidOf(cur),d=dueOf(cur),b=d-p;
 function openPay(id){cur=rows.find(r=>r.id===id);if(!cur)return;$('pdt').textContent=cur.team+' · '+(cur.code||'');renderPay();$('pm').value='';$('pa').value=Math.max(0,dueOf(cur)-paidOf(cur))||'';$('pt').value=today();$('pr').value='';$('pn').value=cur.payNotes||'';$('pe').innerHTML='';$('pd').showModal();}
 async function payPaid(){const amt=+$('pa').value;if(!$('pm').value||!(amt>0)){$('pe').innerHTML='<div class="msg err">Select a mode of payment and enter an amount, or choose "Settle later".</div>';return;}
  const pays=[...(cur.payments||[]),{mode:$('pm').value,amount:amt,date:$('pt').value||today(),ref:$('pr').value.trim(),notes:$('pn').value.trim()}];
- await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});$('pd').close();}
-async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur))});$('pd').close();}
+ await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});logA('payment_recorded',tgt(cur),peso(amt)+' · '+pays[pays.length-1].mode+(pays[pays.length-1].ref?' · ref '+pays[pays.length-1].ref:'')+' → status '+statusFor(cur,sum(pays,p=>+p.amount||0)),cur.id);$('pd').close();}
+async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur))});logA('slot_confirmed_pay_later',tgt(cur),$('pn').value.trim(),cur.id);$('pd').close();}
 async function delPay(i){if(!confirm('Delete this payment record?'))return;const pays=(cur.payments||[]).filter((_,k)=>k!==i),u={payments:pays};
- if(isConf(cur))u.status=statusFor(cur,sum(pays,p=>+p.amount||0));await db.collection(REG).doc(cur.id).update(u);cur.payments=pays;if(u.status)cur.status=u.status;renderPay();}
+ if(isConf(cur))u.status=statusFor(cur,sum(pays,p=>+p.amount||0));await db.collection(REG).doc(cur.id).update(u);{const g=(cur.payments||[])[i];logA('payment_deleted',tgt(cur),g?peso(g.amount)+' · '+g.mode+(g.ref?' · ref '+g.ref:''):'',cur.id);}cur.payments=pays;if(u.status)cur.status=u.status;renderPay();}
 /* ---- Edit registration ---- */
 const KNOWN=[['team','Team'],['category','Category'],['p1','Player 1'],['c1','Player 1 club'],['p2','Player 2'],['c2','Player 2 club'],['phone','Phone'],['email','Email'],['municipality','Municipality'],['province','Province'],['notes','Notes'],['due','Amount due override (₱, blank = default)']],
  SKIP=['vouch','notesLog','decision','decisionAt','finalCategory','detEditedAt','id','createdAt','editedAt','code','status','payments','payNotes','payAt','payMode','slotEmailAt','ackAt','payInstrAt'],isSz=k=>/size|^s[12]$|^sz|shirt/i.test(k);
@@ -322,7 +336,7 @@ async function saveEdit(){const x=rows.find(r=>r.id===edId);if(!x)return;const u
  if(!Object.keys(u).length){edDirty=false;$('ed').close();return;}
  u.editedAt=firebase.firestore.FieldValue.serverTimestamp();
  $('edsv').disabled=true;$('eds').textContent='Saving…';
- try{await db.collection(REG).doc(x.id).update(u);edDirty=false;$('ed').close();}
+ try{await db.collection(REG).doc(x.id).update(u);{const d=diffStr(x,u);if(d)logA('registration_edited',tgt(x),d,x.id);}edDirty=false;$('ed').close();}
  catch(e){$('edsv').disabled=false;$('eds').innerHTML='<span class="neg">Could not save: '+E(e.message)+'</span>';}}
 function closeEd(){if(edDirty&&!confirm('You have unsaved changes. Close anyway?'))return;edDirty=false;$('ed').close();}
 $('ed').addEventListener('cancel',e=>{e.preventDefault();closeEd();});
@@ -345,8 +359,8 @@ function buildXF(){if(!A()){$('xf').hidden=true;return;}const o=a=>a.map(v=>`<op
  <div class="row"><div><label>Payment status</label><select name="pay">${o(MPO_SHIRT_PAY)}</select></div><div><label>Notes</label><input name="notes"></div></div><p><button class="btn">Add shirt</button></p><div id="xe"></div>`;
  $('xf').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('xf')));d.qty=Math.max(1,+d.qty||1);if(d.size==='Others'){if(!d.sizeOther.trim())return alert('Please specify the size.');d.size='Others: '+d.sizeOther.trim();}delete d.sizeOther;
   d.price=d.type==='Organizer Shirt'?0:(+d.price||0);if(d.type==='Organizer Shirt')d.pay='Waived';d.createdAt=firebase.firestore.FieldValue.serverTimestamp();$('xe').innerHTML='';
-  try{await db.collection(SHIRTS).add(d);$('xf').reset();$('xf').querySelector('[name=sizeOther]').hidden=true;xType();}catch(err){$('xe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
-const delX=id=>confirm('Delete this shirt record?')&&db.collection(SHIRTS).doc(id).delete();
+  try{await db.collection(SHIRTS).add(d);logA('shirt_added','Extra shirt / merch',[d.name,d.type,d.size,'qty '+d.qty].filter(Boolean).join(' · '));$('xf').reset();$('xf').querySelector('[name=sizeOther]').hidden=true;xType();}catch(err){$('xe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+const delX=id=>{if(!confirm('Delete this shirt record?'))return;const e=extras.find(x=>x.id===id);return db.collection(SHIRTS).doc(id).delete().then(()=>logA('shirt_deleted','Extra shirt / merch',e?[e.name,e.type,e.size].filter(Boolean).join(' · '):'',id));};
 function shirtCsv(){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"',out=[];
  rows.filter(isConf).forEach(x=>[1,2].forEach(n=>out.push([x['p'+n],'Tournament Shirt',SZ(x,n)])));
  extras.forEach(e=>{for(let i=0;i<(+e.qty||1);i++)out.push([e.name,e.type,e.size]);});
@@ -373,10 +387,10 @@ function buildFin(){if(!A()){$('ff').hidden=true;return;}const o=a=>a.map(v=>`<o
  <label>Notes / reference</label><input name="notes"><p><button class="btn" id="fbtn">Add record</button> <button type="button" class="btn ghost" id="fcx" hidden onclick="cancelFin()">Cancel edit</button></p><div id="fe"></div>`;
  $('ff').elements.date.value=today();
  $('ff').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('ff')));d.amount=+d.amount||0;if(d.kind==='pledge')delete d.cat;else delete d.pst;
-  $('fe').innerHTML='';try{if(editFin)await db.collection(FIN).doc(editFin).update(d);else{d.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection(FIN).add(d);}cancelFin();}catch(err){$('fe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+  $('fe').innerHTML='';try{if(editFin)await db.collection(FIN).doc(editFin).update(d);else{d.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection(FIN).add(d);}logA(editFin?'finance_edited':'finance_added','Finance · '+d.kind,[d.desc,peso(d.amount)].filter(Boolean).join(' · '),editFin||'');cancelFin();}catch(err){$('fe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
 function cancelFin(){editFin=null;$('ff').reset();$('ff').elements.date.value=today();finForm();$('fbtn').textContent='Add record';$('fcx').hidden=true;}
 function editF(id){const r=fin.find(x=>x.id===id);if(!r)return;editFin=id;const f=$('ff').elements;['kind','date','desc','party','cat','pst','amount','notes'].forEach(k=>{if(r[k]!==undefined)f[k].value=r[k];});finForm();$('fbtn').textContent='Save changes';$('fcx').hidden=false;$('ff').scrollIntoView({behavior:'smooth'});}
-const delF=id=>confirm('Delete this record?')&&db.collection(FIN).doc(id).delete();
+const delF=id=>{if(!confirm('Delete this record?'))return;const r=fin.find(x=>x.id===id);return db.collection(FIN).doc(id).delete().then(()=>logA('finance_deleted','Finance · '+(r?r.kind:''),r?[r.desc,peso(r.amount)].filter(Boolean).join(' · '):'',id));};
 function drawFin(){if(!A()||!$('fst'))return;const v=recvals(),act=fin.filter(x=>x.kind==='actual'),prj=fin.filter(x=>x.kind==='projected'),pl=fin.filter(x=>x.kind==='pledge'),
  plR=sum(pl.filter(x=>x.pst==='Received'),x=>+x.amount||0),plP=sum(pl.filter(x=>x.pst!=='Received'),x=>+x.amount||0),
  col=v.col+v.shP+plR,pipe=v.rec+v.pipeAmt+v.shU+plP,actT=sum(act,x=>+x.amount||0),prjT=sum(prj,x=>+x.amount||0),
@@ -397,7 +411,7 @@ function buildSettings(s){$('sf').innerHTML=FIELDS.map(([k,l])=>`<label>${l}</la
  `<div class="row"><div><label>Registration opens</label><input type="date" name="open" value="${E(s.open)}"></div><div><label>Last day of registration</label><input type="date" name="close" value="${E(s.close)}"></div></div>
  <label>Registration mode</label><select name="mode"><option value="auto" ${s.mode==='auto'?'selected':''}>Automatic (by the dates above)</option><option value="open" ${s.mode==='open'?'selected':''}>Force open</option><option value="closed" ${s.mode==='closed'?'selected':''}>Force closed</option></select>
  <p><button class="btn">Save details</button> <span id="sm" aria-live="polite"></span></p>`;
- $('sf').onsubmit=async e=>{e.preventDefault();const sd=Object.fromEntries(new FormData($('sf')));await mpoSave(sd);S=Object.assign({},S,sd);drawPay();draw();drawFin();$('sm').textContent='Saved.';};}
+ $('sf').onsubmit=async e=>{e.preventDefault();const sd=Object.fromEntries(new FormData($('sf')));const ch=Object.keys(sd).filter(k=>String(S[k]??'')!==String(sd[k]??'')).map(k=>k+': '+fmtV(S[k])+' → '+fmtV(sd[k]));await mpoSave(sd);if(ch.length)logA('settings_saved','Event settings',ch.join('; '));S=Object.assign({},S,sd);drawPay();draw();drawFin();$('sm').textContent='Saved.';};}
 
 /* ---- Google sign-in (runs alongside the passcode login) ---- */
 async function googleLogin(){$('ge').innerHTML='';if(typeof firebase.auth!=='function'){$('ge').innerHTML='<div class="msg err">Google sign-in is not available (Firebase Auth did not load).</div>';return;}
@@ -408,18 +422,18 @@ async function googleLogin(){$('ge').innerHTML='';if(typeof firebase.auth!=='fun
 if(typeof firebase.auth==='function')firebase.auth().onAuthStateChanged(async u=>{if(!u||started)return;const em=String(u.email||'').toLowerCase(),
  deny=m=>{$('ge').innerHTML='<div class="msg err">'+m+'</div>';firebase.auth().signOut();};
  if(!u.email||u.isAnonymous)return deny('Please sign in with a Google account.');
- if(SUPER_EMAILS.includes(em)){ROLE='admin';ISSUPER=true;AUTHUSER=u;start();return;}
+ if(SUPER_EMAILS.includes(em)){ROLE='admin';ISSUPER=true;AUTHUSER=u;AUTHNAME=u.displayName||u.email;start();return;}
  try{const d=await db.collection(USERS).doc(em).get();
   if(!d.exists||d.data().active===false)return deny(E(u.email)+' is not authorized for this admin. Ask a superadmin to add it, or use the passcode.');
   const x=d.data();ROLE=x.role==='admin'?'admin':'viewer';
-  ALLOW_KEYS=(Array.isArray(x.tabs)&&x.tabs.length?x.tabs:ROLE_TABS[ROLE]).filter(k=>ROLE==='admin'||!TAB_ADMIN_ONLY.includes(k));AUTHUSER=u;start();
+  ALLOW_KEYS=(Array.isArray(x.tabs)&&x.tabs.length?x.tabs:ROLE_TABS[ROLE]).filter(k=>ROLE==='admin'||!TAB_ADMIN_ONLY.includes(k));AUTHUSER=u;AUTHNAME=x.name||u.displayName||u.email;start();
  }catch(e){deny('Could not check access: '+E(e.message)+'. Make sure the updated Firestore rules are published.');}});
 
 /* ---- Access: which tabs this login can open ---- */
 function applyAccess(){const keys=ISSUPER?null:(ALLOW_KEYS||(A()?ROLE_TABS.admin:ROLE_TABS.viewer));
- ALLOW=ISSUPER?new Set([0,1,2,3,4,5,6]):new Set(keys.map(k=>TIDX[k]).filter(i=>i!==undefined));
- [0,1,2,3,4,5,6].forEach(i=>{const b=$('t'+i);if(b)b.hidden=!ALLOW.has(i);});
- const first=[0,1,3,4,5,2,6].find(i=>ALLOW.has(i));if(first!==undefined&&first!==0)tab(first);}
+ ALLOW=ISSUPER?new Set([0,1,2,3,4,5,6,7]):new Set(keys.map(k=>TIDX[k]).filter(i=>i!==undefined));
+ [0,1,2,3,4,5,6,7].forEach(i=>{const b=$('t'+i);if(b)b.hidden=!ALLOW.has(i);});
+ const first=[0,1,3,4,5,2,6,7].find(i=>ALLOW.has(i));if(first!==undefined&&first!==0)tab(first);}
 /* ---- Users tab (superadmin only) ---- */
 function drawUsers(){if(!$('ul'))return;$('sup').textContent=SUPER_EMAILS.join('  ·  ');
  $('ul').innerHTML=users.length?`<table><tr><th>User</th><th>Role</th><th>Tabs</th><th>Status</th><th></th></tr>`+users.map(u=>{const tabs=(Array.isArray(u.tabs)&&u.tabs.length?u.tabs:ROLE_TABS[u.role]||[]);
@@ -437,9 +451,20 @@ async function saveUser(){if(!ISSUPER)return;const em=$('u_em').value.trim().toL
  if(SUPER_EMAILS.includes(em))return er('This account is already a superadmin.');
  const tabs=[...document.querySelectorAll('#u_tabs [data-tab]')].filter(c=>c.checked&&!c.disabled).map(c=>c.dataset.tab);
  if(!tabs.length)return er('Select at least one tab.');
- try{await db.collection(USERS).doc(em).set({email:em,name:$('u_nm').value.trim(),role:$('u_role').value,active:$('u_act').checked,tabs,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:AUTHUSER.email},{merge:true});$('du').close();}
+ try{await db.collection(USERS).doc(em).set({email:em,name:$('u_nm').value.trim(),role:$('u_role').value,active:$('u_act').checked,tabs,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:AUTHUSER.email},{merge:true});logA('user_saved',em,'role '+$('u_role').value+'; '+($('u_act').checked?'active':'disabled')+'; tabs: '+tabs.map(k=>TLAB[k]).join(', '),em);$('du').close();}
  catch(e){er(e.message);}}
-async function delUser(id){if(!ISSUPER||!confirm('Remove '+id+'? They will no longer be able to sign in with Google.'))return;try{await db.collection(USERS).doc(id).delete();}catch(e){alert(e.message);}}
+async function delUser(id){if(!ISSUPER||!confirm('Remove '+id+'? They will no longer be able to sign in with Google.'))return;try{await db.collection(USERS).doc(id).delete();logA('user_removed',id,'',id);}catch(e){alert(e.message);}}
+
+/* ---- Audit Log tab (superadmin only) ---- */
+const aTime=x=>x.ts&&x.ts.toDate?x.ts.toDate().toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'medium'}):'…',aWho=x=>x.actorEmail||x.actorName||'?',aAct=a=>String(a||'').replace(/_/g,' ');
+function drawAudit(){if(!$('al'))return;const fa=$('aa').value,fu=$('au').value,q=$('aq').value.toLowerCase(),acts=[...new Set(audit.map(x=>x.action))].sort(),us=[...new Set(audit.map(aWho))].sort();
+ $('aa').innerHTML='<option value="">All actions</option>'+acts.map(a=>`<option value="${E(a)}" ${a===fa?'selected':''}>${E(aAct(a))}</option>`).join('');
+ $('au').innerHTML='<option value="">All users</option>'+us.map(a=>`<option value="${E(a)}" ${a===fu?'selected':''}>${E(a)}</option>`).join('');
+ const v=audit.filter(x=>(!fa||x.action===fa)&&(!fu||aWho(x)===fu)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('aun').textContent='Showing '+v.length+' of the latest '+audit.length+' entries (max 500). Entries are permanent and cannot be edited or deleted.';
+ $('al').innerHTML=v.length?`<table><tr><th style="white-space:nowrap">Time (PH)</th><th>User</th><th>Action</th><th>Target</th><th>Details</th></tr>`+v.map(x=>`<tr><td style="white-space:nowrap">${E(aTime(x))}</td><td><b>${E(x.actorName||'')}</b><br><small>${E(x.actorEmail||'passcode login')} · ${E(x.role||'')}</small></td><td><span class="chip">${E(aAct(x.action))}</span></td><td>${E(x.target||'')}</td><td style="white-space:pre-wrap;word-break:break-word">${E(x.detail||'')}</td></tr>`).join('')+'</table>':'<p class="pn" style="padding:12px">No entries yet.</p>';}
+function auditCsv(){const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"',t=[['time','name','email','method','role','action','target','targetId','detail'].join(',')].concat(audit.map(x=>[aTime(x),x.actorName,x.actorEmail,x.method,x.role,x.action,x.target,x.targetId,x.detail].map(q).join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-audit-log.csv';a.click();}
 /* ---- sidebar collapse + hide registration numbers (remembered in this browser) ---- */
 function sbTips(){const c=document.body.classList.contains('sbc');document.querySelectorAll('.nb').forEach(b=>{if(c)b.dataset.tip=b.querySelector('span').textContent;else delete b.dataset.tip;});}
 function hbClick(){if(innerWidth>=960){document.body.classList.toggle('sbc');try{localStorage.mpoSb=document.body.classList.contains('sbc')?'1':'';}catch(e){}sbTips();}else menu(1);}

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Superadmins (must be signed in with a verified Google account).
+    // Keep this list identical to SUPER_EMAILS in backend.html.
+    function isSuper() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+             'ton.quinton@gmail.com',
+             'mindoropickleballorg@gmail.com'
+           ];
+    }
+
+    // ---- UNCHANGED: current rules (passcodes in backend.html, client-side only) ----
+    match /mpo-cup2026/{id}          { allow read, write: if true; }
+    match /mpo-cup2026-shirts/{id}   { allow read, write: if true; }
+    match /mpo-cup2026-finance/{id}  { allow read, write: if true; }
+    // Event settings doc (SET in firebase-init.js = mpo-cup2026-settings/event)
+    match /mpo-cup2026-settings/{doc} { allow read, write: if true; }
+
+    // ---- NEW: users + roles + tab access (doc id = lower-case Google email) ----
+    // Only superadmins can list/create/edit/delete users.
+    // A signed-in user can read ONLY their own doc (to get their role and tabs).
+    match /mpo-cup2026-users/{email} {
+      allow read: if isSuper()
+        || (request.auth != null
+            && request.auth.token.email_verified == true
+            && request.auth.token.email.lower() == email);
+      allow write: if isSuper();
+    }
+
+    // ---- NEW: audit log (who did what). Superadmins can read; nobody can edit or delete entries. ----
+    // Signed-in users can only write entries under their own verified email; passcode logins
+    // (not signed in) can only write entries with an empty actorEmail.
+    match /mpo-cup2026-audit/{id} {
+      allow read: if isSuper();
+      allow create: if (request.auth == null && request.resource.data.actorEmail == '')
+        || (request.auth != null
+            && request.auth.token.email_verified == true
+            && request.resource.data.actorEmail == request.auth.token.email.lower());
+      allow update, delete: if false;
+    }
+
+    // ---- UNCHANGED: Queue / courts tool (index.html) ----
+    match /{col}/{doc=**} {
+      allow read, write: if col.matches('ccpc-queue-.*');
+    }
+  }
+}
