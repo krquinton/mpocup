@@ -1,0 +1,451 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>MPO Cup 2026 Admin</title><link rel="icon" href="logo.png"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;800&family=Barlow:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="style.css">
+<style>table{font-size:14px}th{text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}td{vertical-align:top}
+.tabs{display:flex;flex-wrap:wrap}.tabs button{background:none;border:0;color:var(--mute);font:600 1rem Barlow,sans-serif;padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent}.tabs button.on{color:var(--mint);border-color:var(--mint)}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}.stat small{color:var(--mute);display:block}.stat big{font:800 2rem 'Barlow Condensed'}
+.st-Submitted{color:#9db3d8}.st-Confirmation-Sent{color:#5ec8ff}.st-Confirmed-Unpaid{color:#ffb347}.st-Confirmed-Partial{color:#ffd23f}.st-Confirmed-Paid{color:#2ecc71}.st-Rejected{color:#ff5470}select.s{width:auto;padding:6px}
+.bar{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px}@media(max-width:760px){.bar{grid-template-columns:1fr}}
+.code{font:700 .95rem monospace;letter-spacing:.12em;color:var(--mint)}.acts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.sm{padding:5px 12px;font-size:.85rem}dialog{background:var(--panel);color:inherit;border:1px solid var(--line);border-radius:var(--r);max-width:440px;width:92%;padding:22px}dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog#ed{max-width:620px;max-height:90vh;overflow:auto}.cnt{text-align:center}.pn{color:var(--mute);font-size:.8rem}.sh{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:14px 0}
+.pl{font-size:.85rem;margin:8px 0}.pl div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:4px 0}.pl button,.lnk{background:none;border:0;color:#ff5470;cursor:pointer}.neg{color:#ff5470}.pos{color:#2ecc71}
+.fr{display:grid;grid-template-columns:190px 1fr;gap:10px;align-items:center;margin:8px 0}.ft{display:flex;height:22px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}.ft i{display:block;height:100%}@media(max-width:640px){.fr{grid-template-columns:1fr}}
+.badge{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mint)}h3.sec{margin:26px 0 8px}
+/* ===== Dashboard layout: deep-green sidebar + light content ===== */
+body.adm{--bg:#f3f6f5;--panel:#fff;--line:#dfe7e3;--mute:#64748b;--mint:#0b7a4b;--r:14px;background:var(--bg);color:#1e2a26}
+.adm h1,.adm h2,.adm h3{color:#12332a}.adm .btn{background:#0b7a4b;color:#fff;border:1px solid #0b7a4b}.adm .btn.ghost{background:#fff;color:#0b7a4b;border-color:#b9d3c8}
+.adm input,.adm select,.adm textarea{background:#fff;color:#1e2a26;border:1px solid #cfdad5;border-radius:10px}
+.adm .panel,.adm .stat,.adm dialog{background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(16,50,40,.06)}.adm dialog{color:#1e2a26}
+.adm table{width:100%;border-collapse:collapse}.adm th{color:#4b5d56;background:#f4f8f6;text-align:left;padding:10px}.adm td{padding:10px;border-top:1px solid var(--line)}
+.adm .ft{background:#e8efec}.adm .stat big{color:#12332a}.adm .pos{color:#16a34a}.adm .neg{color:#e11d48}.adm .pl button,.adm .lnk{color:#e11d48}
+.adm .st-Submitted{color:#4f63d2}.adm .st-Confirmation-Sent{color:#0a8fae}.adm .st-Confirmed-Unpaid{color:#d9680b}.adm .st-Confirmed-Partial{color:#a87b00}.adm .st-Confirmed-Paid{color:#16a34a}.adm .st-Rejected{color:#e11d48}
+#gate{margin:0 auto}#gate img{background:#0a3d2e;padding:10px;border-radius:14px}#gate form{background:#fff;border:1px solid var(--line);border-radius:14px}
+#app:not([hidden]){display:flex;min-height:100vh}
+#sb{width:250px;flex:none;background:#0a3d2e;color:#d8efe5;display:flex;flex-direction:column;padding:18px 12px;position:fixed;inset:0 auto 0 0;z-index:30;transform:translateX(-100%);transition:transform .25s;overflow-y:auto}
+.mo #sb{transform:none}#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25}.mo #ov{display:block}
+.sbh{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:12px}.sbh img{height:42px}.sbh b{font:800 1.15rem 'Barlow Condensed',sans-serif;letter-spacing:.04em;color:#fff;line-height:1.1}.sbh small{display:block;font:500 .75rem Barlow,sans-serif;color:#8fd1b3}
+.nb{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-radius:10px;color:#cfe8dc;font:600 .95rem Barlow,sans-serif;padding:11px 12px;margin:2px 0;cursor:pointer;text-align:left}.nb:hover{background:rgba(255,255,255,.08)}.nb.on{background:#17a06a;color:#fff}.nb[hidden]{display:none}
+.nb svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sbf{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}.sbf a{display:block;color:#cfe8dc;padding:9px 12px;border-radius:10px;text-decoration:none;font:600 .9rem Barlow,sans-serif}.sbf a:hover{background:rgba(255,255,255,.08)}
+#mn{flex:1;min-width:0}.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid var(--line);padding:12px 20px}.top h1{margin:0;font:800 1.4rem 'Barlow Condensed',sans-serif;letter-spacing:.03em;flex:1}
+#hb{background:none;border:1px solid var(--line);border-radius:10px;font-size:1.2rem;padding:4px 11px;cursor:pointer;color:#0a3d2e}
+#mn .wrap{max-width:1250px;margin:0 auto}
+@media(min-width:960px){#sb{transform:none}#mn{margin-left:250px}#hb{display:none}#ov{display:none!important}}
+.ds{margin-top:0}.ds .stat{display:flex;align-items:center;gap:14px;cursor:pointer;transition:box-shadow .15s}.ds .stat:hover{box-shadow:0 4px 14px rgba(16,50,40,.14)}
+.dic{width:46px;height:46px;border-radius:50%;flex:none;position:relative}.dic::after{content:'';position:absolute;inset:15px;border-radius:50%;background:rgba(255,255,255,.92)}
+.dgrid{display:grid;gap:16px;grid-template-columns:1fr}@media(min-width:1100px){.dgrid{grid-template-columns:minmax(320px,.8fr) 1.4fr}}
+.dh{margin:0 0 14px;font:700 1.05rem Barlow,sans-serif}
+.dn{display:flex;gap:22px;align-items:center;flex-wrap:wrap}.ring{width:170px;height:170px;border-radius:50%;display:grid;place-items:center;flex:none}.ring>div{width:106px;height:106px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring big{font:800 2rem 'Barlow Condensed',sans-serif;line-height:1}.ring small{color:var(--mute)}
+.lg{flex:1;min-width:170px;font-size:.88rem}.lg div{display:flex;align-items:center;gap:8px;padding:4px 0}.lg i,.cl i{width:10px;height:10px;border-radius:50%;flex:none;display:inline-block}.lg span{margin-left:auto;font-weight:700}.lg em{color:var(--mute);font-style:normal;min-width:42px;text-align:right}
+.cr{padding:12px 0;border-top:1px solid var(--line)}.cr:first-child{border-top:0;padding-top:0}.cr .ch{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}.cr .ch b{cursor:pointer}.cr .ch span{color:var(--mute);font-size:.88rem}
+.sbar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:#e8efec}.sbar i{display:block;height:100%;cursor:pointer}.cl{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;font-size:.8rem;color:var(--mute)}.cl span{display:inline-flex;align-items:center;gap:5px}
+
+/* ===== Visibility + width fixes ===== */
+.adm .btn.ghost,.adm button.ghost{background:#fff!important;color:#0a3d2e!important;border:1.5px solid #0a3d2e!important;font-weight:600}
+.adm .btn.ghost:hover,.adm .btn.ghost:focus-visible{background:#e6f2ec!important;color:#0a3d2e!important}
+.adm .btn:not(.ghost){background:#0a3d2e!important;color:#fff!important;border:1.5px solid #0a3d2e!important}.adm .btn:not(.ghost):hover{background:#0b7a4b!important;border-color:#0b7a4b!important}
+.adm select{appearance:none;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230a3d2e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center!important;color:#1e2a26!important;border:1.5px solid #6f8a7e!important;padding-right:30px!important;font-weight:500}
+.adm select:focus,.adm input:focus,.adm textarea:focus{outline:2px solid #17a06a;outline-offset:1px}
+.adm option{background:#fff;color:#1e2a26}.adm input,.adm textarea{border:1.5px solid #6f8a7e!important;color:#1e2a26!important}.adm ::placeholder{color:#7b8b85}
+.adm select.s{font-weight:700;border-left-width:6px!important}
+.adm select.st-Submitted{border-left-color:#4f63d2!important}.adm select.st-Confirmation-Sent{border-left-color:#0ea5c6!important}.adm select.st-Confirmed-Unpaid{border-left-color:#f97316!important}.adm select.st-Confirmed-Partial{border-left-color:#eab308!important}.adm select.st-Confirmed-Paid{border-left-color:#16a34a!important}.adm select.st-Rejected{border-left-color:#e11d48!important}
+#mn .wrap{max-width:none!important;margin:0!important;padding:14px 16px 40px!important}.top{padding:10px 16px}.stats{margin:0 0 12px}.adm td,.adm th{padding:8px 10px}
+
+/* icon action buttons + tooltip */
+.adm .ib{width:34px;height:34px;display:inline-flex!important;align-items:center;justify-content:center;border-radius:9px!important;border:1.5px solid #0a3d2e!important;background:#fff!important;color:#0a3d2e!important;cursor:pointer;padding:0!important;margin:0;line-height:1}
+.ib svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm .ib:hover,.adm .ib:focus-visible{background:#e6f2ec!important}.adm .ib.pri{background:#0a3d2e!important;color:#fff!important}.adm .ib.pri:hover{background:#0b7a4b!important}
+.adm .ib.done{background:#dff3e8!important;border-color:#16a34a!important;color:#0b6b3a!important}.adm .ib.dng{border-color:#e11d48!important;color:#e11d48!important}.adm .ib.dng:hover{background:#ffe9ee!important}
+.adm .acts{flex-direction:row;flex-wrap:wrap;gap:6px;max-width:132px}
+#tt{position:fixed;z-index:9999;background:#12332a;color:#fff;font:600 .78rem Barlow,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .12s;max-width:240px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+
+/* ===== View Details modal ===== */
+.adm .acts{max-width:128px}
+dialog#dt{max-width:1060px;width:96%;max-height:92vh;overflow:auto;padding:0}
+.dth{position:sticky;top:0;z-index:3;background:#fff;display:flex;gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}.dth h3{margin:0;flex:1;font-size:1.25rem}.dth small{display:block;color:var(--mute);font-weight:500;font-size:.8rem}
+.dtb{padding:2px 20px 18px}.dtb h4{margin:22px 0 10px;font:800 1.05rem 'Barlow Condensed',sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#12332a;border-bottom:2px solid #17a06a;padding-bottom:4px}
+.tg{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.tg small,.dtb label{display:block;color:var(--mute);font:600 .72rem Barlow,sans-serif;text-transform:uppercase;letter-spacing:.06em;margin:0 0 3px}.tg b{font-weight:600;word-break:break-word}
+.dtw{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:10px}.dtw table{min-width:720px;margin:0}.dtw th{white-space:nowrap}.dtw input{width:100%;box-sizing:border-box}.dtw .nm{font-weight:600}.dtw td{vertical-align:top}.dtw input{height:40px}.cc{display:flex;align-items:center;min-height:40px}.dtw a.code{text-decoration:underline}.dtw a.code:hover{color:#0a3d2e}
+.rr{display:flex;gap:6px;align-items:center}.rr input{width:92px!important}.rr span{color:var(--mute)}
+.dtf2{position:sticky;bottom:0;z-index:3;background:#fff;border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.dtf2 .grow{flex:1;color:var(--mute);font-size:.82rem}
+.nadd{display:grid;gap:10px;grid-template-columns:200px 1fr auto;align-items:end;margin-top:12px}.nadd textarea{width:100%;box-sizing:border-box}@media(max-width:700px){.nadd{grid-template-columns:1fr}}
+.regn{background:#f4f8f6;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.88rem;margin-top:8px}
+.dec{display:inline-block;margin-top:4px;font:700 .7rem Barlow,sans-serif;text-transform:uppercase;letter-spacing:.07em;padding:2px 9px;border-radius:99px;border:1.5px solid}
+.dec-Accepted{color:#16a34a;border-color:#16a34a;background:#e8f7ee}.dec-For-Verification{color:#b45309;border-color:#f59e0b;background:#fff4de}.dec-Rejected{color:#e11d48;border-color:#e11d48;background:#ffe9ee}
+.dsel{max-width:340px}
+@media(max-width:700px){dialog#dt{width:100%;max-width:100%;height:100vh;max-height:100vh;border-radius:0}}
+
+dialog#ed{max-width:960px;width:96%;max-height:92vh;overflow:auto;padding:0}
+.eg{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.eg input,.eg select,.eg textarea{width:100%;box-sizing:border-box;height:40px}.eg textarea{height:auto}
+.pcs{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}.pc{border:1px solid var(--line);border-radius:12px;padding:14px;background:#f9fbfa}.pc h5{margin:0 0 10px;font:800 1rem 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#0b7a4b}
+.vh{grid-column:1/-1;margin-top:6px;padding-top:10px;border-top:1px dashed #cfdad5;font:700 .75rem Barlow,sans-serif;text-transform:uppercase;letter-spacing:.07em;color:#4b5d56}
+.dtb label.ck{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.9rem;color:#1e2a26;margin:2px 0 8px}.ck input{width:auto!important;height:auto!important}
+.full{grid-column:1/-1}
+@media(max-width:700px){dialog#ed{width:100%;max-width:100%;height:100vh;max-height:100vh;border-radius:0}.pcs{grid-template-columns:1fr}}
+
+/* ===== round 3 ===== */
+.nadd{align-items:start!important}.nadd input{height:40px;width:100%;box-sizing:border-box}.nadd textarea{height:40px;min-height:40px;resize:vertical}.nadd .btn{height:40px;margin:0;white-space:nowrap}
+.eg select{font-size:.8rem;padding-left:8px;padding-right:26px!important;text-overflow:ellipsis}.eg input,.eg textarea{font-size:.88rem}
+.eg>.s2{grid-column:span 2}@media(max-width:700px){.eg>.s2{grid-column:auto}}
+.pc .eg{grid-template-columns:repeat(12,minmax(0,1fr))}.pc .eg>*{grid-column:1/-1}.pc .eg>.c3{grid-column:span 3}.pc .eg>.c4{grid-column:span 4}.pc .eg>.c6{grid-column:span 6}.pc .eg>.c9{grid-column:span 9}
+.pc .eg input[type=number]{padding-left:8px;padding-right:4px}
+.stats{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important}
+.cs .ct{display:block;font:700 1rem Barlow,sans-serif;color:#12332a;margin-bottom:6px}
+.cs .cbig{font:800 3.6rem 'Barlow Condensed',sans-serif;line-height:1;color:#12332a}.cs .cbig span{font-size:2.2rem;color:var(--mute);font-weight:700}.cs .cbig.full{color:#e11d48}
+.cs .cteams{font:800 1.6rem 'Barlow Condensed',sans-serif;margin:6px 0 10px;color:#0b7a4b}
+.cs .cln{font-size:.95rem;padding:3px 0;border-top:1px solid var(--line)}.cs .cln b{font-weight:800}.cs .cdet{font-size:.8rem;color:var(--mute);padding:0 0 4px}
+
+/* ===== round 4: collapsible sidebar, hide numbers, Google login ===== */
+#stats.off{display:none!important}#stg[hidden]{display:none!important}
+.sbf a i{font-style:normal;display:inline-block;width:19px;text-align:center;margin-right:10px}
+@media(min-width:960px){#hb{display:inline-block!important}#sb,#mn{transition:width .2s,margin-left .2s}
+ body.sbc #sb{width:68px;padding:18px 8px}body.sbc #mn{margin-left:68px}
+ body.sbc .nb span,body.sbc .sbh>div,body.sbc .sbf a span{display:none}
+ body.sbc .nb{justify-content:center;padding:11px 0}body.sbc .sbh{justify-content:center;padding:4px 0 14px}body.sbc .sbf a{text-align:center;padding:9px 0}body.sbc .sbf a i{margin:0}}
+.gg{margin-bottom:6px}.gg .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px}.gg svg{width:18px;height:18px}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:.8rem;margin:14px 0 4px}.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
+.chip{display:inline-block;background:#e6f2ec;color:#0a3d2e;border-radius:99px;padding:2px 9px;font-size:.75rem;font-weight:600;margin:2px 3px 2px 0}.chip.off{background:#eceff1;color:#64748b}
+dialog#du{max-width:640px;width:96%;max-height:92vh;overflow:auto;padding:0}
+</style></head><body class="adm">
+<div id="gate" class="wrap" style="padding-top:100px;max-width:420px"><img src="logo.png" alt="MPO" style="height:90px"><h2 style="margin:12px 0 10px">Admin login</h2><form onsubmit="login(event)" style="padding:22px"><div class="gg"><button type="button" class="btn ghost" id="gbtn" onclick="googleLogin()"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Sign in with Google</button><div class="or">or use passcode</div></div><label for="pw">Passcode</label><input type="password" id="pw" autofocus><p><button class="btn">Enter</button></p><div id="ge"></div></form></div>
+<div id="app" hidden><aside id="sb"><div class="sbh"><img src="logo.png" alt="MPO"><div><b>MPO CUP 2026</b><small>Admin</small></div></div><button class="nb on" id="t0" onclick="tab(0)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></button><button class="nb" id="t1" onclick="tab(1)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>Registrations</span></button><button class="nb" id="t3" onclick="tab(3)"><svg viewBox="0 0 24 24"><path d="M8 3l-5 4 3 4 2-1v11h10V10l2 1 3-4-5-4a4 4 0 0 1-8 0z"/></svg><span>Shirt Count</span></button><button class="nb" id="t4" onclick="tab(4)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Payments</span></button><button class="nb" id="t5" onclick="tab(5)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Finances</span></button><button class="nb" id="t2" onclick="tab(2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Event details</span></button><button class="nb" id="t6" onclick="tab(6)" hidden><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button><div class="sbf"><a href="index.html" data-tip="View site"><i>↗</i><span>View site</span></a><a href="#" onclick="logout();return false" data-tip="Log out"><i>⎋</i><span>Log out</span></a></div></aside><div id="ov" onclick="menu(0)"></div><div id="mn"><header class="top"><button id="hb" onclick="hbClick()" aria-label="Toggle menu">☰</button><h1 id="pt0">Dashboard</h1><button type="button" id="stg" class="btn ghost sm" onclick="togStats()" hidden>Hide numbers</button><span id="who" class="badge"></span></header><div class="wrap"><div id="p0"><div class="stats ds" id="dst"></div><div class="dgrid"><div class="panel" style="padding:18px"><h3 class="dh">Status overview</h3><div id="dnut"></div></div><div class="panel" style="padding:18px"><h3 class="dh">Registrations per category</h3><div id="dcat"></div></div></div></div>
+<div id="p1" hidden><div class="stats" id="stats"></div><div class="bar"><select id="fc" onchange="draw()" aria-label="Category"><option value="">All categories</option></select><select id="fs" onchange="draw()" aria-label="Status"><option value="">All statuses</option></select><input id="q" placeholder="Search" oninput="draw()" aria-label="Search"><button class="btn ghost" onclick="csv()">Export CSV</button></div>
+<div id="list" class="panel" style="margin-top:16px"></div></div>
+<div id="p3" hidden><p style="margin-top:18px"><button class="btn ghost" onclick="shirtCsv()">Export shirt list (CSV)</button></p><div class="stats" id="shs"></div><h3>By size</h3><div id="shsz" class="panel" style="overflow-x:auto"></div>
+<h3 class="sec">Extra shirts &amp; merch</h3><form id="xf" class="panel" style="padding:16px;margin-bottom:16px"></form><div id="xl" class="panel" style="overflow-x:auto"></div></div>
+<div id="p4" hidden><div class="stats" id="pst"></div><div id="pmd" class="sh"></div><div id="ptl" class="panel" style="margin-top:12px;overflow-x:auto"></div></div>
+<div id="p5" hidden><div class="stats" id="fst"></div><div id="fbars" class="panel" style="padding:16px"></div><h3 class="sec">Budget vs actual by category</h3><div id="fcat" class="panel" style="overflow-x:auto"></div>
+<h3 class="sec">Add record</h3><form id="ff" class="panel" style="padding:16px;max-width:760px"></form><p><button class="btn ghost" onclick="finCsv()">Export finance records (CSV)</button></p><div id="fl"></div></div>
+<div id="p2" hidden><form id="sf" style="max-width:640px;margin-top:18px"></form></div>
+<div id="p6" hidden><div class="panel" style="padding:16px;margin-top:14px"><h3 class="dh" style="margin-bottom:6px">Superadmins</h3><p class="pn" id="sup" style="margin:0"></p><p class="pn" style="margin:6px 0 0">Superadmins can sign in with Google, see every tab and manage users. They are fixed in the page code and Firestore rules.</p></div><p style="margin:14px 0 8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" onclick="openUser()">+ Add user</button><span class="pn">Role and tab access are saved per Google account. Passcode logins are unchanged.</span></p><div id="ul" class="panel" style="overflow-x:auto"></div></div></div></div></div>
+<dialog id="pd"><h3 style="margin-top:0">Payment</h3><p id="pdt" style="color:var(--mute);margin-top:0"></p><div id="pds"></div><div id="pdl" class="pl"></div>
+<label for="pm">Mode of payment</label><select id="pm"><option value="">— select —</option></select>
+<div class="row"><div><label for="pa">Amount (₱)</label><input id="pa" type="number" min="0"></div><div><label for="pt">Date</label><input id="pt" type="date"></div></div>
+<label for="pr">Reference no.</label><input id="pr" placeholder="GCash / bank ref, receipt no.">
+<label for="pn">Notes</label><textarea id="pn" rows="2" style="width:100%"></textarea><div id="pe"></div>
+<p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="payPaid()">Record payment</button><button class="btn ghost" onclick="paySoon()">Settle later</button><button class="btn ghost" onclick="$('pd').close()">Close</button></p></dialog>
+<dialog id="ed"><div class="dth"><h3 id="edh">Edit registration<small id="edt"></small></h3><button type="button" class="btn ghost sm" onclick="closeEd()">Close</button></div><div class="dtb" id="edc"></div><div class="dtf2" id="edf"></div></dialog><datalist id="szl"></datalist><dialog id="du"><div class="dth"><h3 id="duh">Add user</h3><button type="button" class="btn ghost sm" onclick="$('du').close()">Close</button></div><div class="dtb" id="duc"></div><div class="dtf2"><span class="grow" id="dus"></span><button type="button" class="btn ghost" onclick="$('du').close()">Cancel</button><button type="button" class="btn" onclick="saveUser()">Save user</button></div></dialog>
+<datalist id="lvl"><option value="Low Intermediate"><option value="High Intermediate"><option value="Advanced"></datalist>
+<dialog id="dt"><div class="dth"><h3 id="dtt">Team details<small id="dts"></small></h3><button type="button" class="btn ghost sm" onclick="closeDet()">Close</button></div><div class="dtb" id="dtc"></div><div class="dtf2" id="dtfoot"></div></dialog>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script><script src="firebase-init.js"></script><script src="mpo-config.js"></script>
+<script>
+const SHIRTS='mpo-cup2026-shirts',FIN='mpo-cup2026-finance',$=id=>document.getElementById(id),E=mpoEsc;const ADMIN_PASS='mpo2026admin',VIEW_PASS='mpo2026view'; // CHANGE BOTH before deploying
+const SUPER_EMAILS=['ton.quinton@gmail.com','mindoropickleballorg@gmail.com'],USERS='mpo-cup2026-users'; // superadmins always get in via Google; other users are managed in the Users tab. Passcodes above keep working until we remove them.
+const TAB_DEFS=[['dash',0,'Dashboard'],['reg',1,'Registrations'],['shirts',3,'Shirt Count'],['pay',4,'Payments'],['fin',5,'Finances'],['set',2,'Settings']],TAB_ADMIN_ONLY=['fin','set'],
+ ROLE_TABS={admin:['dash','reg','shirts','pay','fin','set'],viewer:['dash','reg','shirts','pay']},TIDX=Object.fromEntries(TAB_DEFS.map(([k,i])=>[k,i])),TLAB=Object.fromEntries(TAB_DEFS.map(([k,i,l])=>[k,l]));
+
+let AUTHUSER=null,ISSUPER=false,ALLOW=null,ALLOW_KEYS=null,users=[],S=Object.assign({},MPO_DEF),rows=[],extras=[],fin=[],cur=null,ROLE='',started=false,editFin=null;const coding=new Set();
+const A=()=>ROLE==='admin',isConf=x=>['Confirmed-Paid','Confirmed-Partial','Confirmed-Unpaid'].includes(x.status),
+ peso=n=>'₱'+Number(n||0).toLocaleString('en-PH'),sum=(a,f)=>a.reduce((t,x)=>t+f(x),0),
+ paidOf=x=>sum(x.payments||[],p=>+p.amount||0),
+ dueOf=x=>(x.due!==undefined&&x.due!==''&&x.due!==null)?(+x.due||0):(+S.feeNum||0)*2,
+ statusFor=(x,t)=>t>0&&t>=dueOf(x)?'Confirmed-Paid':t>0?'Confirmed-Partial':'Confirmed-Unpaid',
+ today=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Manila'}),
+ payLine=x=>{const p=paidOf(x),d=dueOf(x);return (isConf(x)||p)?`<br><span class="pn">${peso(p)} / ${peso(d)}${d>p?' · bal '+peso(d-p):''}</span>`:'';};
+/* ---- Login (client-side passcodes: admin can edit, viewer is read-only) ---- */
+function login(e){e.preventDefault();const p=$('pw').value;if(p===ADMIN_PASS)ROLE='admin';else if(p===VIEW_PASS)ROLE='viewer';else{$('ge').innerHTML='<div class="msg err">Wrong passcode.</div>';return;}sessionStorage.mpo=ROLE;start();}
+async function logout(){sessionStorage.removeItem('mpo');try{if(typeof firebase.auth==='function')await firebase.auth().signOut();}catch(e){}location.reload();}
+function start(){if(started)return;started=true;$('gate').hidden=true;$('app').hidden=false;$('who').textContent=(ISSUPER?'superadmin':ROLE)+(AUTHUSER?' · '+AUTHUSER.email:'');
+ applyAccess();
+ if(A())buildSettings(S);/* show the form right away (defaults), filled with saved values once loaded */
+ $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=MPO_STATUSES.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
+ buildXF();buildFin();const er=id=>e=>$(id).innerHTML='<div class="msg err">'+E(e.message)+'</div>',all=()=>{drawDash();draw();drawShirts();drawPay();drawFin();drawNotes();};
+ db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));all();backfill();backfillGeo();},er('list'));
+ db.collection(SHIRTS).orderBy('createdAt','desc').onSnapshot(s=>{extras=s.docs.map(d=>({id:d.id,...d.data()}));drawShirts();drawPay();drawFin();},er('xl'));
+ if(ISSUPER)db.collection(USERS).onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));drawUsers();},e=>{$('ul').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules first.</div>';});
+ if(A())db.collection(FIN).orderBy('createdAt','desc').onSnapshot(s=>{fin=s.docs.map(d=>({id:d.id,...d.data()}));drawFin();},er('fl'));
+ mpoSettings().then(s=>{S=s;if(A())buildSettings(s);all();}).catch(e=>{if(A())$('sf').insertAdjacentHTML('afterbegin','<div class="msg err">Could not load saved settings: '+E(e.message)+'. Showing defaults. Check the Firestore rules for the settings document.</div>');});}
+const IC={eye:'<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',send:'<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/>',edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>'};
+const ib=(ic,tip,fn,cls)=>`<button type="button" class="ib ${cls||''}" data-tip="${tip}" aria-label="${tip}" onclick="${fn}"><svg viewBox="0 0 24 24">${IC[ic]}</svg></button>`;
+/* hover tooltip for any [data-tip] element */
+(function(){const t=document.createElement('div');t.id='tt';document.body.appendChild(t);
+ const show=e=>{const b=e.target.closest&&e.target.closest('[data-tip]');if(!b)return;t.textContent=b.dataset.tip;const r=b.getBoundingClientRect(),w=t.offsetWidth,h=t.offsetHeight;t.style.left=Math.max(6,Math.min(innerWidth-w-6,r.left+r.width/2-w/2))+'px';t.style.top=(r.top-h-8<6?r.bottom+8:r.top-h-8)+'px';t.style.opacity=1;},hide=()=>{t.style.opacity=0;};
+ document.addEventListener('mouseover',show);document.addEventListener('focusin',show);document.addEventListener('mouseout',hide);document.addEventListener('focusout',hide);document.addEventListener('scroll',hide,true);document.addEventListener('click',hide);})();
+function tab(n){if(ALLOW&&!ALLOW.has(n))return;[0,1,2,3,4,5,6].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});$('pt0').textContent=$('t'+n).querySelector('span').textContent;menu(0);$('stg').hidden=n!==1;scrollTo(0,0);}
+function menu(o){$('app').classList.toggle('mo',!!o);}
+/* ---- Dashboard ---- */
+const DCOL={'Submitted':'#4f63d2','Confirmation-Sent':'#0ea5c6','Confirmed-Unpaid':'#f97316','Confirmed-Partial':'#eab308','Confirmed-Paid':'#16a34a','Rejected':'#e11d48'},DST=Object.keys(DCOL),DLB=t=>t.replace(/-/g,' ');let DC=[];
+function goReg(i,t){tab(1);$('fc').value=i<0?'':(DC[i]||'');$('fs').value=t||'';draw();}
+function drawDash(){if(!$('dst'))return;DC=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
+ const n=(t,l)=>(l||rows).filter(x=>x.status===t).length,tot=rows.length;
+ $('dst').innerHTML=`<div class="stat" onclick="goReg(-1,'')"><span class="dic" style="background:#0b7a4b"></span><div><small>Total registrations</small><big>${tot}</big></div></div>`+DST.map(t=>`<div class="stat" onclick="goReg(-1,'${t}')"><span class="dic" style="background:${DCOL[t]}"></span><div><small>${DLB(t)}</small><big>${n(t)}</big></div></div>`).join('');
+ let a=0;const seg=DST.map(t=>{const p=tot?n(t)/tot*100:0,r=DCOL[t]+' '+a+'% '+(a+p)+'%';a+=p;return r}).join(',');
+ $('dnut').innerHTML=`<div class="dn"><div class="ring" style="background:${tot?'conic-gradient('+seg+')':'#e8efec'}"><div><big>${tot}</big><small>teams</small></div></div><div class="lg">${DST.map(t=>`<div><i style="background:${DCOL[t]}"></i>${DLB(t)}<span>${n(t)}</span><em>${tot?Math.round(n(t)/tot*100):0}%</em></div>`).join('')}</div></div>`;
+ $('dcat').innerHTML=DC.map((k,i)=>{const r=rows.filter(x=>x.category===k),ct=r.length;
+  return `<div class="cr"><div class="ch"><b onclick="goReg(${i},'')">${E(k)}</b><span>${ct} team${ct===1?'':'s'}</span></div><div class="sbar">${DST.map(t=>n(t,r)?`<i title="${DLB(t)}: ${n(t,r)}" style="width:${n(t,r)/ct*100}%;background:${DCOL[t]}" onclick="goReg(${i},'${t}')"></i>`:'').join('')}</div><div class="cl">${ct?DST.filter(t=>n(t,r)).map(t=>`<span><i style="background:${DCOL[t]}"></i>${DLB(t)} ${n(t,r)}</span>`).join(''):'<span>No registrations yet</span>'}</div></div>`}).join('')||'<p class="pn">No categories.</p>';}
+/* ---- Registrations ---- */
+function draw(){const c=$('fc').value,s=$('fs').value,q=$('q').value.toLowerCase(),cats=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
+ $('stats').innerHTML=cats.map(k=>{const r=rows.filter(x=>x.category===k),n=st=>r.filter(x=>x.status===st).length,conf=r.filter(isConf).length,slots=parseInt(String(S.slots||'').replace(/\D/g,''))||24,rej=n('Rejected'),pend=r.length-conf-rej;
+  return `<div class="stat cs"><b class="ct">${E(k)}</b><div class="cbig ${conf>=slots?'full':''}">${conf}<span>/${slots}</span></div><div class="cteams">${r.length} team${r.length===1?'':'s'}</div><div class="cln">Confirmed - <b>${conf}</b></div><div class="cdet">Paid ${n('Confirmed-Paid')} · Partial ${n('Confirmed-Partial')} · Unpaid ${n('Confirmed-Unpaid')}</div><div class="cln">Pending - <b>${pend}</b></div><div class="cln">Rejected - <b>${rej}</b></div></div>`}).join('');
+ const v=rows.filter(x=>(!c||x.category===c)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('list').innerHTML=v.length?`<table><tr><th>Code</th><th>Team</th><th>Category</th><th>Players</th><th>Contact</th><th>Status</th><th></th></tr>`+v.map(x=>`<tr><td><span class="code">${E(x.code)}</span></td><td><b>${E(x.team)}</b><br><small>${x.createdAt?x.createdAt.toDate().toLocaleString():''}</small></td><td>${E(x.category)}${x.finalCategory&&x.finalCategory!==x.category?'<br><span class="pn">Final: <b>'+E(x.finalCategory)+'</b></span>':''}</td><td>${E(x.p1)} (${E(x.c1)})<br>${E(x.p2)} (${E(x.c2)})</td><td>${E(x.phone)}<br>${E(x.email)}${x.notes?'<br><i>'+E(x.notes)+'</i>':''}</td><td>${A()?`<select class="s st-${E(x.status)}" onchange="setSt('${x.id}',this.value)">${MPO_STATUSES.map(t=>`<option ${t===x.status?'selected':''}>${t}</option>`).join('')}</select>`:`<span class="st-${E(x.status)}">${E(x.status)}</span>`}${payLine(x)}${decBadge(x)}${x.payNotes?'<br><span class="pn">'+E(x.payNotes)+'</span>':''}${x.ackAt&&x.ackAt.toDate?'<br><span class="pn">✉ Acknowledged '+E(x.ackAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.payInstrAt&&x.payInstrAt.toDate?'<br><span class="pn">✉ Payment instructions sent '+E(x.payInstrAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.slotEmailAt&&x.slotEmailAt.toDate?'<br><span class="pn">✉ Slot email sent '+E(x.slotEmailAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}</td><td><div class="acts">${ib('eye','View details (vouching, notes, decision)',`openDet('${x.id}')`,'pri')}${A()?`${ib('edit','Edit registration',`openEdit('${x.id}')`)}${ib('trash','Delete registration',`del('${x.id}')`,'dng')}${x.status==='Submitted'?ib('mail','Acknowledge (send confirmation email)',`ack('${x.id}')`,'pri'):''}${x.status!=='Submitted'&&x.status!=='Rejected'?ib('send',x.payInstrAt?'Resend payment instructions':'Send payment instructions',`sendPay('${x.id}')`,x.payInstrAt?'done':''):''}${x.status!=='Rejected'?ib(isConf(x)?'card':'check',isConf(x)?'Payments (record / view)':'Confirm slot & record payment',`openPay('${x.id}')`):''}${isConf(x)?ib('cal',x.slotEmailAt?'Resend slot confirmation email':'Send slot confirmation email',`sendSlot('${x.id}')`,x.slotEmailAt?'done':''):''}`:''}</div></td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No registrations found.</p>';}
+const setSt=(id,s)=>db.collection(REG).doc(id).update({status:s});
+const del=id=>confirm('Delete this registration permanently?')&&db.collection(REG).doc(id).delete();
+async function backfill(){if(!A())return;for(const r of rows){if(r.code||coding.has(r.id))continue;coding.add(r.id);
+ try{await db.collection(REG).doc(r.id).update({code:await mpoGenCode(db.collection(REG))});}catch(e){coding.delete(r.id);console.error(e);}}}
+const HOOK_SECRET=typeof MPO_WEBHOOK_SECRET!=='undefined'?MPO_WEBHOOK_SECRET:'';
+async function callHook(payload){
+ const res=await fetch(MPO_WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({secret:HOOK_SECRET},payload))});
+ const j=await res.json();if(!j.ok)throw new Error(j.error||'The email script returned an error');return j;}
+const mailFields=async r=>({event:await mpoSettings(),code:r.code,team:r.team,category:r.category,p1:r.p1,p2:r.p2,email:r.email,phone:r.phone,due:dueOf(r),paid:paidOf(r),balance:Math.max(0,dueOf(r)-paidOf(r)),status:r.status});
+/* Acknowledge -> "Registration received" email only (Apps Script action "acknowledge") */
+async function ack(id){const r=rows.find(x=>x.id===id);if(!r)return;
+ const mark=()=>db.collection(REG).doc(id).update({status:'Confirmation-Sent',ackAt:firebase.firestore.FieldValue.serverTimestamp()});
+ if(!MPO_WEBHOOK){alert("TEST MODE: this will send the 'Registration received' acknowledgement email to the registrant (no payment details).");return mark();}
+ if(!confirm('Send acknowledgement ("registration received") to '+r.email+'?'))return;
+ try{await callHook(Object.assign({action:'acknowledge'},await mailFields(r)));await mark();alert('Acknowledgement sent to '+r.email);}
+ catch(e){alert('Email failed: '+e.message+'. Status not changed.');}}
+/* Send payment instructions -> separate button (Apps Script action "paymentInstructions") */
+async function sendPay(id){const r=rows.find(x=>x.id===id);if(!r)return;
+ if(r.status==='Rejected')return;
+ if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the payment instructions to '+r.email+'.');
+ const bal=Math.max(0,dueOf(r)-paidOf(r));
+ if(!confirm((r.payInstrAt?'RESEND payment instructions':'Send payment instructions')+' to '+r.email+'?\n\nAmount due: '+peso(dueOf(r))+(paidOf(r)?'\nBalance: '+peso(bal):'')))return;
+ try{await callHook(Object.assign({action:'paymentInstructions'},await mailFields(r)));
+  await db.collection(REG).doc(r.id).update({payInstrAt:firebase.firestore.FieldValue.serverTimestamp()});alert('Payment instructions sent to '+r.email);}
+ catch(e){alert('Email failed: '+e.message);}}
+/* Send slot confirmation -> player portal link + code (Apps Script action "confirmSlot") */
+async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r)return;
+ if(!isConf(r))return alert('Confirm this registration first (record a payment or settle later).');
+ if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the slot confirmation, player portal link and 6-character code to '+r.email+'.');
+ if(!r.code)return alert('This registration has no code yet. Wait a moment for it to generate, then try again.');
+ const bal=Math.max(0,dueOf(r)-paidOf(r));
+ if(!confirm((r.slotEmailAt?'RESEND slot confirmation':'Send slot confirmation')+' to '+r.email+'?\n\nStatus: '+r.status+(bal>0?'\nUnpaid balance: '+peso(bal):'')))return;
+ try{await callHook(Object.assign({action:'confirmSlot'},await mailFields(r)));
+  await db.collection(REG).doc(r.id).update({slotEmailAt:firebase.firestore.FieldValue.serverTimestamp()});alert('Slot confirmation sent to '+r.email);}
+ catch(e){alert('Email failed: '+e.message+'. Check the Apps Script Executions log before retrying.');}}
+function csv(){const h=['code','team','category','p1','c1','p2','c2','phone','email','status','due','paid','balance','payNotes','notes','municipality','province','decision','finalCategory'];
+ const t=[h.join(',')].concat(rows.map(r=>({...r,due:dueOf(r),paid:paidOf(r),balance:dueOf(r)-paidOf(r)})).map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-registrations.csv';a.click();}
+
+/* ---- View Details modal: vouching, notes (append-only), final decision ---- */
+const DECS=['Accepted','For Verification','Rejected'],geoing=new Set();let curDet=null,detDirty=false;
+const decBadge=x=>x.decision?`<br><span class="dec dec-${E(x.decision).replace(/ /g,'-')}">${E(x.decision)}</span>`:'';
+async function backfillGeo(){if(!A())return;for(const r of rows){if((r.municipality!==undefined&&r.province!==undefined)||geoing.has(r.id))continue;geoing.add(r.id);
+ try{const u={};if(r.municipality===undefined)u.municipality='';if(r.province===undefined)u.province='';await db.collection(REG).doc(r.id).update(u);}catch(e){geoing.delete(r.id);console.error(e);}}}
+const duprLink=id=>{const v=String(id??'').trim();return /^[A-Za-z0-9]{6}$/.test(v)?`<a class="code" href="https://dashboard.dupr.com/dashboard/player/${encodeURIComponent(v)}" target="_blank" rel="noopener">${E(v)}</a>`:E(v);};
+const fmtTs=t=>new Date(t).toLocaleString('en-PH',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'});
+function addrOf(x){const a1=x.address1||x.c1||'',a2=x.address2||x.c2||'';return x.addressSame===false&&a2&&a2!==a1?`${E(x.p1)}: ${E(a1)}<br>${E(x.p2)}: ${E(a2)}`:E(a1);}
+function openDet(id){const x=rows.find(r=>r.id===id);if(!x)return;curDet=id;detDirty=false;const ro=!A(),dis=ro?'disabled':'';
+ const P=[1,2].map(n=>({n,name:x['p'+n],age:x['age'+n],dupr:x['dupr'+n]})),V=x.vouch||{},cats=[...new Set([...MPO_CATS,x.category,x.finalCategory].filter(Boolean))];
+ $('dtt').firstChild.textContent='Team details · '+(x.team||'');$('dts').textContent=(x.code||'')+' · registered '+(x.createdAt&&x.createdAt.toDate?x.createdAt.toDate().toLocaleString('en-PH'):'');
+ let nm='';try{nm=localStorage.mpoName||'';}catch(e){}
+ $('dtc').innerHTML=`<h4>Team Information</h4>
+ <div class="tg"><div><small>Team name</small><b>${E(x.team)}</b></div><div><small>Contact number</small><b>${E(x.phone)}</b></div><div><small>Address</small><b>${addrOf(x)}</b></div><div><small>Email</small><b>${E(x.email)}</b></div><div><small>Initial category</small><b>${E(x.category)}</b></div></div>
+ <div class="tg" style="margin-top:14px"><div><label for="d_mun">Municipality</label><input id="d_mun" data-f="municipality" value="${E(x.municipality||'')}" ${dis}></div><div><label for="d_prov">Province</label><input id="d_prov" data-f="province" value="${E(x.province||'')}" ${dis}></div></div>
+ <div class="dtw"><table><tr><th>#</th><th>Player name</th><th>Age</th><th>DUPR ID</th></tr>${P.map(p=>`<tr><td>${p.n}</td><td class="nm">${E(p.name)}</td><td>${E(p.age)}</td><td>${duprLink(p.dupr)}</td></tr>`).join('')}</table></div>
+ <h4>Player Vouching System</h4>
+ <div class="dtw"><table><tr><th>Player name</th><th>DUPR ID</th><th>DUPR rating (reliability)*</th><th>Vouched skill level*</th><th>Vouched by*</th></tr>${P.map(p=>{const v=V['p'+p.n]||{};return `<tr><td><div class="cc nm">${E(p.name)}</div></td><td><div class="cc">${duprLink(p.dupr)}</div></td>
+  <td><div class="rr"><input data-f="vr${p.n}" type="number" step="0.001" min="0" max="8" placeholder="Rating" value="${E(v.rating??'')}" ${dis} aria-label="DUPR rating ${p.n}"><span>(</span><input data-f="vl${p.n}" type="number" step="1" min="0" max="100" placeholder="Rel. %" value="${E(v.rel??'')}" ${dis} aria-label="Reliability ${p.n}"><span>%)</span></div></td>
+  <td><input data-f="vs${p.n}" list="lvl" placeholder="Skill level" value="${E(v.level||'')}" ${dis}></td><td><input data-f="vb${p.n}" placeholder="Name" value="${E(v.by||'')}" ${dis}></td></tr>`;}).join('')}</table></div>
+ <p class="pn" style="margin:6px 0 0">* Not part of the original registration data.</p>
+ <h4>Notes</h4>${x.notes?`<div class="regn"><b>Note from registrant:</b> ${E(x.notes)}</div>`:''}
+ <div id="dtn"></div>
+ ${ro?'':`<div class="nadd"><div><label for="nn">Your name</label><input id="nn" value="${E(nm)}" placeholder="Name"></div><div><label for="nt">Note</label><textarea id="nt" rows="1" placeholder="Write a note…"></textarea></div><div><label>&nbsp;</label><button type="button" class="btn" onclick="addNote()">Add Notes +</button></div></div><div id="ne"></div><p class="pn" style="margin:6px 0 0">Notes are append-only: saved right away and can't be edited or deleted.</p>`}
+ <h4>Final MPO Decision</h4>
+ <div class="tg"><div><label for="d_dec">Decision</label><select id="d_dec" data-f="decision" ${dis}><option value="">— Pending —</option>${DECS.map(d=>`<option ${d===x.decision?'selected':''}>${d}</option>`).join('')}</select></div>
+ <div><label for="d_fc">Final category</label><select id="d_fc" data-f="finalCategory" ${dis}><option value="">— Same as initial —</option>${cats.map(c=>`<option ${c===x.finalCategory?'selected':''}>${E(c)}</option>`).join('')}</select></div></div>
+ ${x.decisionAt&&x.decisionAt.toDate?`<p class="pn" style="margin:8px 0 0">Decision last changed ${E(x.decisionAt.toDate().toLocaleString('en-PH'))}</p>`:''}`;
+ $('dtfoot').innerHTML=ro?'<span class="grow">View only</span>':'<span class="grow" id="dtst"></span><button type="button" class="btn ghost" onclick="closeDet()">Cancel</button><button type="button" class="btn" id="dtsv" onclick="saveDet()">Save</button>';
+ $('dt').showModal();drawNotes();}
+function drawNotes(){const el=$('dtn');if(!el||!curDet||!$('dt').open)return;const x=rows.find(r=>r.id===curDet);if(!x)return;const L=[...(x.notesLog||[])].sort((a,b)=>b.ts-a.ts);
+ el.innerHTML=L.length?`<div class="dtw"><table><tr><th style="width:170px">Timestamp</th><th style="width:150px">Name</th><th>Note</th></tr>${L.map(n=>`<tr><td>${E(fmtTs(n.ts))}</td><td class="nm">${E(n.name)}</td><td style="white-space:pre-wrap">${E(n.text)}</td></tr>`).join('')}</table></div>`:'<p class="pn" style="margin:8px 0 0">No notes yet.</p>';}
+async function addNote(){if(!A()||!curDet)return;const nm=$('nn').value.trim(),tx=$('nt').value.trim();
+ if(!nm||!tx){$('ne').innerHTML='<div class="msg err">Enter your name and a note.</div>';return;}
+ try{localStorage.mpoName=nm;}catch(e){}
+ try{await db.collection(REG).doc(curDet).update({notesLog:firebase.firestore.FieldValue.arrayUnion({ts:Date.now(),name:nm,text:tx})});$('nt').value='';$('ne').innerHTML='';}
+ catch(e){$('ne').innerHTML='<div class="msg err">'+E(e.message)+'</div>';}}
+const dget=n=>{const el=$('dt').querySelector('[data-f="'+n+'"]');return el?el.value.trim():'';};
+async function saveDet(){if(!A()||!curDet)return;const x=rows.find(r=>r.id===curDet);if(!x)return;
+ const vouch={};[1,2].forEach(n=>vouch['p'+n]={rating:dget('vr'+n),rel:dget('vl'+n),level:dget('vs'+n),by:dget('vb'+n)});
+ const u={vouch,municipality:dget('municipality'),province:dget('province'),decision:dget('decision'),finalCategory:dget('finalCategory'),detEditedAt:firebase.firestore.FieldValue.serverTimestamp()};
+ if(u.decision!==(x.decision||''))u.decisionAt=firebase.firestore.FieldValue.serverTimestamp();
+ $('dtsv').disabled=true;$('dtst').textContent='Saving…';
+ try{await db.collection(REG).doc(curDet).update(u);detDirty=false;$('dt').close();}
+ catch(e){$('dtsv').disabled=false;$('dtst').innerHTML='<span class="neg">Could not save: '+E(e.message)+'</span>';}}
+function closeDet(){if(detDirty&&!confirm('You have unsaved changes. Close anyway?'))return;detDirty=false;$('dt').close();}
+$('dt').addEventListener('cancel',e=>{e.preventDefault();closeDet();});
+['input','change'].forEach(ev=>$('dt').addEventListener(ev,e=>{if(e.target.dataset&&e.target.dataset.f)detDirty=true;}));
+$('dt').addEventListener('close',()=>{curDet=null;});
+/* ---- Payments ---- */
+function renderPay(){const p=paidOf(cur),d=dueOf(cur),b=d-p;
+ $('pds').innerHTML=`<div class="sh"><div class="stat"><small>Due</small><big>${peso(d)}</big></div><div class="stat"><small>Paid</small><big>${peso(p)}</big></div><div class="stat"><small>Balance</small><big class="${b>0?'neg':'pos'}">${peso(Math.max(0,b))}</big></div></div>`;
+ $('pdl').innerHTML=(cur.payments||[]).map((x,i)=>`<div><span>${E(x.date)} · ${E(x.mode)} · <b>${peso(x.amount)}</b>${x.ref?' · ref '+E(x.ref):''}${x.notes?' · '+E(x.notes):''}</span><button onclick="delPay(${i})" aria-label="Delete payment">✕</button></div>`).join('');}
+function openPay(id){cur=rows.find(r=>r.id===id);if(!cur)return;$('pdt').textContent=cur.team+' · '+(cur.code||'');renderPay();$('pm').value='';$('pa').value=Math.max(0,dueOf(cur)-paidOf(cur))||'';$('pt').value=today();$('pr').value='';$('pn').value=cur.payNotes||'';$('pe').innerHTML='';$('pd').showModal();}
+async function payPaid(){const amt=+$('pa').value;if(!$('pm').value||!(amt>0)){$('pe').innerHTML='<div class="msg err">Select a mode of payment and enter an amount, or choose "Settle later".</div>';return;}
+ const pays=[...(cur.payments||[]),{mode:$('pm').value,amount:amt,date:$('pt').value||today(),ref:$('pr').value.trim(),notes:$('pn').value.trim()}];
+ await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});$('pd').close();}
+async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur))});$('pd').close();}
+async function delPay(i){if(!confirm('Delete this payment record?'))return;const pays=(cur.payments||[]).filter((_,k)=>k!==i),u={payments:pays};
+ if(isConf(cur))u.status=statusFor(cur,sum(pays,p=>+p.amount||0));await db.collection(REG).doc(cur.id).update(u);cur.payments=pays;if(u.status)cur.status=u.status;renderPay();}
+/* ---- Edit registration ---- */
+const KNOWN=[['team','Team'],['category','Category'],['p1','Player 1'],['c1','Player 1 club'],['p2','Player 2'],['c2','Player 2 club'],['phone','Phone'],['email','Email'],['municipality','Municipality'],['province','Province'],['notes','Notes'],['due','Amount due override (₱, blank = default)']],
+ SKIP=['vouch','notesLog','decision','decisionAt','finalCategory','detEditedAt','id','createdAt','editedAt','code','status','payments','payNotes','payAt','payMode','slotEmailAt','ackAt','payInstrAt'],isSz=k=>/size|^s[12]$|^sz|shirt/i.test(k);
+let edDirty=false,edId=null;
+const EDCOV=['team','category','phone','email','municipality','province','p1','p2','age1','age2','gender1','gender2','dupr1','dupr2','shirt1','shirt2','address1','address2','club1','club2','c1','c2','notes','due','decision','finalCategory'];
+function openEdit(id){const x=rows.find(r=>r.id===id);if(!x)return;cur=x;edId=id;edDirty=false;
+ const V=x.vouch||{},cats=[...new Set([...MPO_CATS,x.category].filter(Boolean))],val=k=>E(x[k]??''),
+ f=(k,l,t,ex)=>`<div><label for="e_${k}">${l}</label><input id="e_${k}" data-e="${k}" type="${t||'text'}" value="${val(k)}" ${ex||''}></div>`,
+ sel=(k,l,o,bl)=>`<div><label for="e_${k}">${l}</label><select id="e_${k}" data-e="${k}">${bl!==undefined?`<option value="">${bl}</option>`:''}${o.map(v=>`<option ${v===x[k]?'selected':''}>${E(v)}</option>`).join('')}</select></div>`,
+ vf=(n,k,l,t,ex)=>`<div><label for="e_v${k}${n}">${l}</label><input id="e_v${k}${n}" data-ev="${k}${n}" type="${t||'text'}" ${ex||''} value="${E((V['p'+n]||{})[k]??'')}"></div>`,
+ W=(h,c)=>h.replace('<div>','<div class="'+c+'">'),
+ ck=(k,l,init)=>`<label class="ck"><input type="checkbox" data-e="${k}" data-init="${init?1:0}" ${init?'checked':''} onchange="edTog()"> ${l}</label>`,
+ aS=x.addressSame===true||(x.addressSame===undefined&&!x.address2),cS=x.clubSame===true||(x.clubSame===undefined&&!x.club2),
+ pc=n=>`<div class="pc"><h5>Player ${n}</h5><div class="eg">${W(f('p'+n,'Name'),'c9')}${W(f('age'+n,'Age','number','min="0" max="120"'),'c3')}${W(sel('gender'+n,'Gender',[...new Set(['Male','Female',x['gender'+n]].filter(Boolean))],'—'),'c4')}${W(f('dupr'+n,'DUPR ID'),'c4')}${W(sel('shirt'+n,'Shirt size',[...new Set([...MPO_SIZES,x['shirt'+n]].filter(Boolean))],'—'),'c4')}
+  <div class="vh">Vouching</div>${W(vf(n,'rating','DUPR rating','number','step="0.001" min="0" max="8"'),'c6')}${W(vf(n,'rel','Reliability %','number','step="1" min="0" max="100"'),'c6')}${W(vf(n,'level','Vouched skill level','text','list="lvl"'),'c6')}${W(vf(n,'by','Vouched by'),'c6')}</div></div>`,
+ ex=Object.keys(x).filter(k=>!EDCOV.includes(k)&&!SKIP.includes(k)&&(typeof x[k]==='string'||typeof x[k]==='number')).sort();
+ $('edh').firstChild.textContent='Edit registration · '+(x.team||'');$('edt').textContent=(x.code||'')+' · changes overwrite the original submission';
+ $('edc').innerHTML=`<h4>Team</h4><div class="eg">${f('team','Team name')}${W(sel('category','Initial category',cats),'s2')}${f('phone','Contact number','tel')}${f('email','Email','email')}${f('municipality','Municipality')}${f('province','Province')}</div>
+ <h4>Players &amp; Vouching</h4><div class="pcs">${pc(1)}${pc(2)}</div>
+ <h4>Address &amp; Club</h4><div class="eg"><div class="full">${ck('addressSame','Same address for both players',aS)}</div>${f('address1','Address (team / Player 1)')}<div id="e_a2w">${f('address2','Address (Player 2)')}</div>
+ <div class="full">${ck('clubSame','Same club / association for both players',cS)}</div>${f('club1','Club (team / Player 1)')}<div id="e_c2w">${f('club2','Club (Player 2)')}</div></div>
+ <h4>Decision, Payment &amp; Notes</h4><div class="eg">${sel('decision','Final MPO decision',DECS,'— Pending —')}${W(sel('finalCategory','Final category',cats,'— Same as initial —'),'s2')}${W(f('due','Amount due override (₱, blank = default)','number','min="0"'),'s2')}
+ <div class="full"><label for="e_notes">Registrant's note</label><textarea id="e_notes" data-e="notes" rows="2">${val('notes')}</textarea></div></div>
+ ${ex.length?`<h4>Other fields</h4><div class="eg">${ex.map(k=>f(k,E(k),typeof x[k]==='number'?'number':'text')).join('')}</div>`:''}
+ <p class="pn" style="margin:14px 0 0">Internal notes are added from View Details and can't be edited here.</p>`;
+ $('edf').innerHTML='<span class="grow" id="eds"></span><button type="button" class="btn ghost" onclick="closeEd()">Cancel</button><button type="button" class="btn" id="edsv" onclick="saveEdit()">Save changes</button>';
+ edTog();$('ed').showModal();}
+function edTog(){[['addressSame','e_a2w'],['clubSame','e_c2w']].forEach(([k,w])=>{const c=$('ed').querySelector('[data-e="'+k+'"]');if(c&&$(w))$(w).hidden=c.checked;});}
+async function saveEdit(){const x=rows.find(r=>r.id===edId);if(!x)return;const u={};
+ $('ed').querySelectorAll('[data-e]').forEach(el=>{const k=el.dataset.e,o=x[k];
+  if(el.type==='checkbox'){if(el.checked!==(el.dataset.init==='1'))u[k]=el.checked;return;}
+  const v=el.value.trim();
+  if(k==='due'){if(v===''){if(o!==undefined)u.due=firebase.firestore.FieldValue.delete();}else if(+v!==+o)u.due=+v;return;}
+  if(typeof o==='number'||(o===undefined&&el.type==='number')){if(v!==''&&+v!==o)u[k]=+v;return;}
+  if(v!==String(o??''))u[k]=v;});
+ if(u.address1!==undefined&&x.c1!==undefined&&x.c1===x.address1)u.c1=u.address1;
+ if(u.address2!==undefined&&x.c2!==undefined&&x.c2===x.address2)u.c2=u.address2;
+ const nv={},ov={};[1,2].forEach(n=>{nv['p'+n]={};['rating','rel','level','by'].forEach(k=>{const el=$('ed').querySelector('[data-ev="'+k+n+'"]');nv['p'+n][k]=el?el.value.trim():'';});
+  const o=(x.vouch||{})['p'+n]||{};ov['p'+n]={rating:String(o.rating??''),rel:String(o.rel??''),level:o.level||'',by:o.by||''};});
+ if(JSON.stringify(nv)!==JSON.stringify(ov))u.vouch=nv;
+ if(u.decision!==undefined)u.decisionAt=firebase.firestore.FieldValue.serverTimestamp();
+ if(!Object.keys(u).length){edDirty=false;$('ed').close();return;}
+ u.editedAt=firebase.firestore.FieldValue.serverTimestamp();
+ $('edsv').disabled=true;$('eds').textContent='Saving…';
+ try{await db.collection(REG).doc(x.id).update(u);edDirty=false;$('ed').close();}
+ catch(e){$('edsv').disabled=false;$('eds').innerHTML='<span class="neg">Could not save: '+E(e.message)+'</span>';}}
+function closeEd(){if(edDirty&&!confirm('You have unsaved changes. Close anyway?'))return;edDirty=false;$('ed').close();}
+$('ed').addEventListener('cancel',e=>{e.preventDefault();closeEd();});
+['input','change'].forEach(ev=>$('ed').addEventListener(ev,e=>{const d=e.target.dataset;if(d&&(d.e||d.ev))edDirty=true;}));
+/* ---- Shirt count ---- */
+const SZ=(x,n)=>{for(const f of ['shirt'+n,'size'+n,'shirtSize'+n,'s'+n,'sz'+n,'p'+n+'size']){const v=x[f];if(v!==undefined&&v!==null&&String(v).trim())return String(v).trim();}return '';};
+const szKey=v=>{const u=String(v||'').trim().toUpperCase();return !u?'—':MPO_SIZES.includes(u)?u:'Others';},tot=e=>(+e.price||0)*(+e.qty||1);
+function drawShirts(){const conf=rows.filter(isConf),cols=[...MPO_SIZES,'—'],M={};MPO_SHIRT_TYPES.forEach(t=>{M[t]={};cols.forEach(c=>M[t][c]=0);});
+ let auto=0;conf.forEach(x=>[1,2].forEach(n=>{auto++;M['Tournament Shirt'][szKey(SZ(x,n))]++;}));
+ extras.forEach(e=>{M[e.type]&&(M[e.type][szKey(e.size)]+=(+e.qty||1));});
+ const tt=t=>sum(cols,c=>M[t][c]),exT=sum(extras.filter(e=>e.type==='Tournament Shirt'),e=>+e.qty||1);
+ $('shs').innerHTML=MPO_SHIRT_TYPES.map(t=>`<div class="stat"><b>${t}</b><br><big>${tt(t)}</big>${t==='Tournament Shirt'?`<small>${auto} from ${conf.length} confirmed teams · ${exT} extra</small>`:t==='Organizer Shirt'?'<small>free · manual entries</small>':'<small>for sale · manual entries</small>'}</div>`).join('')+`<div class="stat"><b>All shirts</b><br><big>${sum(MPO_SHIRT_TYPES,tt)}</big><small>total to order</small></div>`+(()=>{const by={};rows.forEach(x=>by[x.status||'(no status)']=(by[x.status||'(no status)']||0)+1);return `<div class="pn" style="grid-column:1/-1">Registrations loaded: ${rows.length} · counted (confirmed only): ${conf.length} · with a shirt size: ${conf.reduce((t,x)=>t+[1,2].filter(n=>SZ(x,n)).length,0)}<br>By status: ${Object.entries(by).map(([k,v])=>k+' '+v).join(' · ')||'none'}</div>`;})();
+ $('shsz').innerHTML='<table><tr><th>Type</th>'+cols.map(c=>`<th class="cnt">${c==='—'?'No size':c}</th>`).join('')+'<th class="cnt">Total</th></tr>'+MPO_SHIRT_TYPES.map(t=>`<tr><td>${t}</td>`+cols.map(c=>`<td class="cnt">${M[t][c]||''}</td>`).join('')+`<td class="cnt"><b>${tt(t)}</b></td></tr>`).join('')+'</table>';
+ $('xl').innerHTML=extras.length?'<table><tr><th>Name</th><th>Class</th><th>Type</th><th>Size</th><th>Qty</th><th>Price each</th><th>Total</th><th>Payment</th><th>Notes</th>'+(A()?'<th></th>':'')+'</tr>'+extras.map(e=>`<tr><td>${E(e.name)}</td><td>${E(e.cls)}</td><td>${E(e.type)}</td><td>${E(e.size)}</td><td>${E(e.qty||1)}</td><td>${e.price?peso(e.price):''}</td><td>${tot(e)?peso(tot(e)):''}</td><td>${A()?`<select class="s" onchange="db.collection(SHIRTS).doc('${e.id}').update({pay:this.value})">${MPO_SHIRT_PAY.map(p=>`<option ${p===e.pay?'selected':''}>${p}</option>`).join('')}</select>`:E(e.pay)}</td><td>${E(e.notes)}</td>${A()?`<td>${ib('trash','Delete record',`delX('${e.id}')`,'dng')}</td>`:''}</tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No extra shirts yet.</p>';}
+function xType(){const f=$('xf').elements,org=f.type.value==='Organizer Shirt';f.price.readOnly=org;if(org){f.price.value=0;f.pay.value='Waived';}}
+function buildXF(){if(!A()){$('xf').hidden=true;return;}const o=a=>a.map(v=>`<option>${v}</option>`).join('');
+ $('xf').innerHTML=`<div class="row"><div><label>Name</label><input name="name" required></div><div><label>Classification</label><select name="cls">${o(MPO_CLASSES)}</select></div></div>
+ <div class="row"><div><label>Type</label><select name="type" onchange="xType()">${o(MPO_SHIRT_TYPES)}</select></div><div><label>Size</label><select name="size" onchange="this.nextElementSibling.hidden=this.value!=='Others'">${o(MPO_SIZES)}</select><input name="sizeOther" placeholder="Specify size" hidden style="margin-top:6px"></div></div>
+ <div class="row"><div><label>Qty</label><input type="number" name="qty" min="1" value="1"></div><div><label>Price each (₱) — Organizer shirts are free</label><input type="number" name="price" min="0" step="any" value="0"></div></div>
+ <div class="row"><div><label>Payment status</label><select name="pay">${o(MPO_SHIRT_PAY)}</select></div><div><label>Notes</label><input name="notes"></div></div><p><button class="btn">Add shirt</button></p><div id="xe"></div>`;
+ $('xf').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('xf')));d.qty=Math.max(1,+d.qty||1);if(d.size==='Others'){if(!d.sizeOther.trim())return alert('Please specify the size.');d.size='Others: '+d.sizeOther.trim();}delete d.sizeOther;
+  d.price=d.type==='Organizer Shirt'?0:(+d.price||0);if(d.type==='Organizer Shirt')d.pay='Waived';d.createdAt=firebase.firestore.FieldValue.serverTimestamp();$('xe').innerHTML='';
+  try{await db.collection(SHIRTS).add(d);$('xf').reset();$('xf').querySelector('[name=sizeOther]').hidden=true;xType();}catch(err){$('xe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+const delX=id=>confirm('Delete this shirt record?')&&db.collection(SHIRTS).doc(id).delete();
+function shirtCsv(){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"',out=[];
+ rows.filter(isConf).forEach(x=>[1,2].forEach(n=>out.push([x['p'+n],'Tournament Shirt',SZ(x,n)])));
+ extras.forEach(e=>{for(let i=0;i<(+e.qty||1);i++)out.push([e.name,e.type,e.size]);});
+ out.sort((p,r)=>String(p[1]).localeCompare(r[1])||String(p[0]).localeCompare(r[0]));
+ const t=[['name','type','size'].join(',')].concat(out.map(r=>r.map(q).join(','))).join('\n');
+ const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));l.download='mpo-cup-2026-shirts.csv';l.click();}
+/* ---- Payments tab ---- */
+function recvals(){const conf=rows.filter(isConf),pipe=rows.filter(x=>x.status==='Submitted'||x.status==='Confirmation-Sent'),rej=rows.filter(x=>x.status==='Rejected');
+ return {conf,pipe,rej,exp:sum(conf,dueOf),col:sum(rows.filter(x=>x.status!=='Rejected'),paidOf),rec:sum(conf,x=>Math.max(0,dueOf(x)-paidOf(x))),pipeAmt:sum(pipe,dueOf),
+  shU:sum(extras.filter(e=>e.pay==='Unpaid'),tot),shP:sum(extras.filter(e=>e.pay==='Paid'),tot),refund:sum(rej,paidOf)};}
+function drawPay(){const v=recvals(),card=(t,n,s,c)=>`<div class="stat"><b>${t}</b><br><big class="${c||''}">${peso(n)}</big><small>${s}</small></div>`;
+ $('pst').innerHTML=(+S.feeNum?'':'<div class="msg err" style="grid-column:1/-1">Set "Fee per player" in Event details to compute amounts due.</div>')+
+  card('Receivable',v.rec+v.shU,`teams ${peso(v.rec)} · shirts/merch ${peso(v.shU)}`,'neg')+card('Collected',v.col+v.shP,`teams ${peso(v.col)} · shirts/merch ${peso(v.shP)}`,'pos')+card('Expected (confirmed)',v.exp,v.conf.length+' confirmed teams')+card('Pipeline (not yet confirmed)',v.pipeAmt,v.pipe.length+' teams')+(v.refund?card('Paid by rejected teams',v.refund,'review for refund','neg'):'');
+ const M={};MPO_PAY_MODES.forEach(m=>M[m]=0);rows.forEach(r=>(r.payments||[]).forEach(p=>M[p.mode]=(M[p.mode]||0)+(+p.amount||0)));
+ $('pmd').innerHTML=Object.keys(M).map(m=>`<div class="stat"><small>${E(m)}</small><big>${peso(M[m])}</big></div>`).join('');
+ const L=[...v.conf].sort((p,q)=>(dueOf(q)-paidOf(q))-(dueOf(p)-paidOf(p)));
+ $('ptl').innerHTML=L.length?'<table><tr><th>Code</th><th>Team</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th>'+(A()?'<th></th>':'')+'</tr>'+L.map(x=>{const b=dueOf(x)-paidOf(x);return `<tr><td><span class="code">${E(x.code)}</span></td><td>${E(x.team)}</td><td>${peso(dueOf(x))}</td><td>${peso(paidOf(x))}</td><td class="${b>0?'neg':'pos'}">${b>0?peso(b):b<0?'+'+peso(-b)+' over':'—'}</td><td class="st-${E(x.status)}">${E(x.status)}</td>${A()?`<td><button class="btn ghost sm" onclick="openPay('${x.id}')">Payment</button></td>`:''}</tr>`;}).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No confirmed teams yet.</p>';}
+/* ---- Finances ---- */
+function finForm(){const k=$('fk').value;$('fpl').textContent=k==='pledge'?'Pledged by (sponsor / donor)':'Paid to / supplier';$('fcw').hidden=k==='pledge';$('fsw').hidden=k!=='pledge';}
+function buildFin(){if(!A()){$('ff').hidden=true;return;}const o=a=>a.map(v=>`<option>${E(v)}</option>`).join('');
+ $('ff').innerHTML=`<div class="row"><div><label>Type</label><select name="kind" id="fk" onchange="finForm()"><option value="actual">Actual expense</option><option value="projected">Projected expense</option><option value="pledge">Pledge</option></select></div><div><label>Date</label><input type="date" name="date"></div></div>
+ <div class="row"><div><label>Item / description</label><input name="desc" required></div><div><label id="fpl">Paid to / supplier</label><input name="party"></div></div>
+ <div class="row"><div id="fcw"><label>Category</label><select name="cat">${o(MPO_FIN_CATS)}</select></div><div id="fsw" hidden><label>Status</label><select name="pst">${o(MPO_PLEDGE_STATUS)}</select></div><div><label>Amount (₱)</label><input type="number" name="amount" min="0" step="any" required></div></div>
+ <label>Notes / reference</label><input name="notes"><p><button class="btn" id="fbtn">Add record</button> <button type="button" class="btn ghost" id="fcx" hidden onclick="cancelFin()">Cancel edit</button></p><div id="fe"></div>`;
+ $('ff').elements.date.value=today();
+ $('ff').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData($('ff')));d.amount=+d.amount||0;if(d.kind==='pledge')delete d.cat;else delete d.pst;
+  $('fe').innerHTML='';try{if(editFin)await db.collection(FIN).doc(editFin).update(d);else{d.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection(FIN).add(d);}cancelFin();}catch(err){$('fe').innerHTML='<div class="msg err">Could not save: '+E(err.message)+'</div>';}};}
+function cancelFin(){editFin=null;$('ff').reset();$('ff').elements.date.value=today();finForm();$('fbtn').textContent='Add record';$('fcx').hidden=true;}
+function editF(id){const r=fin.find(x=>x.id===id);if(!r)return;editFin=id;const f=$('ff').elements;['kind','date','desc','party','cat','pst','amount','notes'].forEach(k=>{if(r[k]!==undefined)f[k].value=r[k];});finForm();$('fbtn').textContent='Save changes';$('fcx').hidden=false;$('ff').scrollIntoView({behavior:'smooth'});}
+const delF=id=>confirm('Delete this record?')&&db.collection(FIN).doc(id).delete();
+function drawFin(){if(!A()||!$('fst'))return;const v=recvals(),act=fin.filter(x=>x.kind==='actual'),prj=fin.filter(x=>x.kind==='projected'),pl=fin.filter(x=>x.kind==='pledge'),
+ plR=sum(pl.filter(x=>x.pst==='Received'),x=>+x.amount||0),plP=sum(pl.filter(x=>x.pst!=='Received'),x=>+x.amount||0),
+ col=v.col+v.shP+plR,pipe=v.rec+v.pipeAmt+v.shU+plP,actT=sum(act,x=>+x.amount||0),prjT=sum(prj,x=>+x.amount||0),
+ cats=[...new Set([...MPO_FIN_CATS,...act.concat(prj).map(x=>x.cat).filter(Boolean)])],by=(a,k)=>sum(a.filter(x=>x.cat===k),x=>+x.amount||0),
+ remain=sum(cats,k=>Math.max(0,by(prj,k)-by(act,k))),outlook=actT+remain,netNow=col-actT,netProj=col+pipe-outlook,
+ card=(t,n,s,c)=>`<div class="stat"><b>${t}</b><br><big class="${c||''}">${peso(n)}</big><small>${s}</small></div>`;
+ $('fst').innerHTML=card('Income collected',col,`teams ${peso(v.col)} · shirts/merch ${peso(v.shP)} · pledges received ${peso(plR)}`,'pos')+card('Pipeline income',pipe,`receivable ${peso(v.rec)} · unconfirmed teams ${peso(v.pipeAmt)} · shirts/merch ${peso(v.shU)} · pledges ${peso(plP)}`)+card('Actual expenses',actT,act.length+' records','neg')+card('Projected expenses (budget)',prjT,`${peso(remain)} still to spend`)+card('Net now (collected − actual)',netNow,'cash position',netNow<0?'neg':'pos')+card('Net if all comes in',netProj,'collected + pipeline − expected expenses',netProj<0?'neg':'pos');
+ const mx=Math.max(1,col+pipe,outlook),bar=(l,t,s)=>`<div class="fr"><span>${l} <b>${peso(t)}</b></span><div class="ft">${s.map(([n,c,tt])=>`<i style="width:${n/mx*100}%;background:${c}" title="${tt}: ${peso(n)}"></i>`).join('')}</div></div>`;
+ $('fbars').innerHTML=bar('Income',col+pipe,[[col,'var(--mint)','Collected'],[pipe,'rgba(61,220,151,.35)','Pipeline']])+bar('Expenses',outlook,[[actT,'#ff5470','Actual'],[remain,'rgba(255,84,112,.35)','Projected, not yet spent']])+'<small class="pn">Solid = collected / spent. Faded = pipeline / still projected. Payments from rejected teams are not counted as income.</small>';
+ $('fcat').innerHTML='<table><tr><th>Category</th><th>Projected</th><th>Actual</th><th>Variance</th></tr>'+cats.map(k=>{const p=by(prj,k),a=by(act,k),d=p-a;return p||a?`<tr><td>${E(k)}</td><td>${peso(p)}</td><td>${peso(a)}</td><td class="${d<0?'neg':'pos'}">${d<0?'over '+peso(-d):peso(d)+' left'}</td></tr>`:'';}).join('')+`<tr><td><b>Total</b></td><td><b>${peso(prjT)}</b></td><td><b>${peso(actT)}</b></td><td></td></tr></table>`;
+ const tbl=(t,a,pledge)=>`<h3 class="sec">${t}</h3><div class="panel" style="overflow-x:auto">${a.length?`<table><tr><th>Date</th><th>Item</th><th>${pledge?'Pledged by':'Category'}</th>${pledge?'<th>Status</th>':'<th>Paid to</th>'}<th>Amount</th><th>Notes</th><th></th></tr>`+a.map(x=>`<tr><td>${E(x.date)}</td><td>${E(x.desc)}</td><td>${E(pledge?x.party:x.cat)}</td><td>${pledge?`<select class="s" onchange="db.collection(FIN).doc('${x.id}').update({pst:this.value})">${MPO_PLEDGE_STATUS.map(s=>`<option ${s===x.pst?'selected':''}>${s}</option>`).join('')}</select>`:E(x.party)}</td><td>${peso(x.amount)}</td><td>${E(x.notes)}</td><td style="white-space:nowrap">${ib('edit','Edit record',`editF('${x.id}')`)} ${ib('trash','Delete record',`delF('${x.id}')`,'dng')}</td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">None yet.</p>'}</div>`;
+ $('fl').innerHTML=tbl('Pledges',pl,true)+tbl('Actual expenses',act)+tbl('Projected expenses',prj);}
+function finCsv(){const h=['kind','date','desc','cat','party','amount','pst','notes'],t=[h.join(',')].concat(fin.map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-finances.csv';a.click();}
+/* ---- Event details ---- */
+const FIELDS=[['date','Event dates'],['venue','Venue'],['fee','Registration fee (display text)'],['feeNum','Fee per player (₱, number only)'],['slots','Slots per category'],['contact','Contact person'],['phone','Contact number'],['email','Contact email']];
+function buildSettings(s){$('sf').innerHTML=FIELDS.map(([k,l])=>`<label>${l}</label><input name="${k}" value="${E(s[k])}">`).join('')+
+ `<div class="row"><div><label>Registration opens</label><input type="date" name="open" value="${E(s.open)}"></div><div><label>Last day of registration</label><input type="date" name="close" value="${E(s.close)}"></div></div>
+ <label>Registration mode</label><select name="mode"><option value="auto" ${s.mode==='auto'?'selected':''}>Automatic (by the dates above)</option><option value="open" ${s.mode==='open'?'selected':''}>Force open</option><option value="closed" ${s.mode==='closed'?'selected':''}>Force closed</option></select>
+ <p><button class="btn">Save details</button> <span id="sm" aria-live="polite"></span></p>`;
+ $('sf').onsubmit=async e=>{e.preventDefault();const sd=Object.fromEntries(new FormData($('sf')));await mpoSave(sd);S=Object.assign({},S,sd);drawPay();draw();drawFin();$('sm').textContent='Saved.';};}
+
+/* ---- Google sign-in (runs alongside the passcode login) ---- */
+async function googleLogin(){$('ge').innerHTML='';if(typeof firebase.auth!=='function'){$('ge').innerHTML='<div class="msg err">Google sign-in is not available (Firebase Auth did not load).</div>';return;}
+ const a=firebase.auth(),p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+ try{await a.signInWithPopup(p);}
+ catch(e){if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await a.signInWithRedirect(p);return;}catch(e2){e=e2;}}
+  if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')$('ge').innerHTML='<div class="msg err">'+E(e.code==='auth/unauthorized-domain'?'This website address is not authorized in Firebase Auth (Authentication > Settings > Authorized domains).':(e.message||'Sign-in failed.'))+'</div>';}}
+if(typeof firebase.auth==='function')firebase.auth().onAuthStateChanged(async u=>{if(!u||started)return;const em=String(u.email||'').toLowerCase(),
+ deny=m=>{$('ge').innerHTML='<div class="msg err">'+m+'</div>';firebase.auth().signOut();};
+ if(!u.email||u.isAnonymous)return deny('Please sign in with a Google account.');
+ if(SUPER_EMAILS.includes(em)){ROLE='admin';ISSUPER=true;AUTHUSER=u;start();return;}
+ try{const d=await db.collection(USERS).doc(em).get();
+  if(!d.exists||d.data().active===false)return deny(E(u.email)+' is not authorized for this admin. Ask a superadmin to add it, or use the passcode.');
+  const x=d.data();ROLE=x.role==='admin'?'admin':'viewer';
+  ALLOW_KEYS=(Array.isArray(x.tabs)&&x.tabs.length?x.tabs:ROLE_TABS[ROLE]).filter(k=>ROLE==='admin'||!TAB_ADMIN_ONLY.includes(k));AUTHUSER=u;start();
+ }catch(e){deny('Could not check access: '+E(e.message)+'. Make sure the updated Firestore rules are published.');}});
+
+/* ---- Access: which tabs this login can open ---- */
+function applyAccess(){const keys=ISSUPER?null:(ALLOW_KEYS||(A()?ROLE_TABS.admin:ROLE_TABS.viewer));
+ ALLOW=ISSUPER?new Set([0,1,2,3,4,5,6]):new Set(keys.map(k=>TIDX[k]).filter(i=>i!==undefined));
+ [0,1,2,3,4,5,6].forEach(i=>{const b=$('t'+i);if(b)b.hidden=!ALLOW.has(i);});
+ const first=[0,1,3,4,5,2,6].find(i=>ALLOW.has(i));if(first!==undefined&&first!==0)tab(first);}
+/* ---- Users tab (superadmin only) ---- */
+function drawUsers(){if(!$('ul'))return;$('sup').textContent=SUPER_EMAILS.join('  ·  ');
+ $('ul').innerHTML=users.length?`<table><tr><th>User</th><th>Role</th><th>Tabs</th><th>Status</th><th></th></tr>`+users.map(u=>{const tabs=(Array.isArray(u.tabs)&&u.tabs.length?u.tabs:ROLE_TABS[u.role]||[]);
+  return `<tr><td><b>${E(u.name||'')}</b><br>${E(u.email||u.id)}</td><td>${u.role==='admin'?'Admin':'Viewer'}</td><td>${tabs.map(k=>`<span class="chip">${E(TLAB[k]||k)}</span>`).join('')}</td><td>${u.active===false?'<span class="chip off">Disabled</span>':'<span class="chip">Active</span>'}</td><td><div class="acts">${ib('edit','Edit user',`openUser(decodeURIComponent('${encodeURIComponent(u.id)}'))`)}${ib('trash','Remove user',`delUser(decodeURIComponent('${encodeURIComponent(u.id)}'))`,'dng')}</div></td></tr>`;}).join('')+'</table>':'<p class="pn" style="padding:12px">No users yet. Click “Add user”.</p>';}
+function uRole(reset){const r=$('u_role').value;document.querySelectorAll('#u_tabs [data-tab]').forEach(c=>{const ao=TAB_ADMIN_ONLY.includes(c.dataset.tab);if(reset)c.checked=ROLE_TABS[r].includes(c.dataset.tab);if(r==='viewer'&&ao){c.checked=false;c.disabled=true;}else c.disabled=false;});}
+function openUser(em){if(!ISSUPER)return;const u=users.find(x=>x.id===em)||{},role=u.role==='admin'?'admin':'viewer',keys=Array.isArray(u.tabs)&&u.tabs.length?u.tabs:ROLE_TABS[role];
+ $('duh').textContent=em?'Edit user':'Add user';$('dus').textContent='';
+ $('duc').innerHTML=`<div class="eg"><div class="s2"><label for="u_em">Google email</label><input id="u_em" type="email" value="${E(u.email||'')}" ${em?'readonly':''} placeholder="name@gmail.com"></div><div><label for="u_nm">Name</label><input id="u_nm" value="${E(u.name||'')}"></div><div><label for="u_role">Role</label><select id="u_role" onchange="uRole(true)"><option value="admin" ${role==='admin'?'selected':''}>Admin (can edit)</option><option value="viewer" ${role==='viewer'?'selected':''}>Viewer (read-only)</option></select></div></div>
+ <label class="ck" style="margin-top:10px"><input type="checkbox" id="u_act" ${u.active===false?'':'checked'}> Active (can sign in)</label>
+ <h4>Tab access</h4><div class="tg" id="u_tabs">${TAB_DEFS.map(([k,i,l])=>`<label class="ck"><input type="checkbox" data-tab="${k}" ${keys.includes(k)?'checked':''}> ${l}${TAB_ADMIN_ONLY.includes(k)?' <span class="pn">(Admin role only)</span>':''}</label>`).join('')}</div>
+ <p class="pn" style="margin:8px 0 0">The Users tab is for superadmins only. <button type="button" class="btn ghost sm" onclick="uRole(true)">Reset to role defaults</button></p>`;
+ uRole(false);$('du').showModal();}
+async function saveUser(){if(!ISSUPER)return;const em=$('u_em').value.trim().toLowerCase(),er=m=>{$('dus').innerHTML='<span class="neg">'+E(m)+'</span>';};
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return er('Enter a valid email.');
+ if(SUPER_EMAILS.includes(em))return er('This account is already a superadmin.');
+ const tabs=[...document.querySelectorAll('#u_tabs [data-tab]')].filter(c=>c.checked&&!c.disabled).map(c=>c.dataset.tab);
+ if(!tabs.length)return er('Select at least one tab.');
+ try{await db.collection(USERS).doc(em).set({email:em,name:$('u_nm').value.trim(),role:$('u_role').value,active:$('u_act').checked,tabs,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:AUTHUSER.email},{merge:true});$('du').close();}
+ catch(e){er(e.message);}}
+async function delUser(id){if(!ISSUPER||!confirm('Remove '+id+'? They will no longer be able to sign in with Google.'))return;try{await db.collection(USERS).doc(id).delete();}catch(e){alert(e.message);}}
+/* ---- sidebar collapse + hide registration numbers (remembered in this browser) ---- */
+function sbTips(){const c=document.body.classList.contains('sbc');document.querySelectorAll('.nb').forEach(b=>{if(c)b.dataset.tip=b.querySelector('span').textContent;else delete b.dataset.tip;});}
+function hbClick(){if(innerWidth>=960){document.body.classList.toggle('sbc');try{localStorage.mpoSb=document.body.classList.contains('sbc')?'1':'';}catch(e){}sbTips();}else menu(1);}
+function statsBtn(){$('stg').textContent=$('stats').classList.contains('off')?'Show numbers':'Hide numbers';}
+function togStats(){const off=$('stats').classList.toggle('off');try{localStorage.mpoStats=off?'1':'';}catch(e){}statsBtn();}
+try{if(localStorage.mpoSb)document.body.classList.add('sbc');if(localStorage.mpoStats)$('stats').classList.add('off');}catch(e){}
+sbTips();statsBtn();
+if(['admin','viewer'].includes(sessionStorage.mpo)){ROLE=sessionStorage.mpo;start();}
+</script></body></html>
