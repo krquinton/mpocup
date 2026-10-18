@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registration Status · MPO Cup 2026</title><meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0b3d2e;--deep:#072a20;--mint:#7ff0c0;--ink:#eafff6;--mute:#9cc7b6;--line:rgba(127,240,192,.25)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{font-family:Barlow,system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 50% -10%,#14614a 0,var(--green) 45%,var(--deep) 100%) fixed;display:flex;justify-content:center;padding:28px 16px 40px}
+main{width:100%;max-width:460px;text-align:center}
+.logo{height:84px;margin-top:6px}
+.kick{font:700 .78rem Barlow;letter-spacing:.22em;color:var(--mint);margin:10px 0 2px}
+h1{font:800 2.1rem/1.05 'Barlow Condensed',Barlow,sans-serif;text-transform:uppercase;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 22px;font-size:.98rem}
+form{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:20px}
+label{display:block;text-align:left;font-weight:600;font-size:.85rem;color:var(--mute);margin-bottom:6px}
+input{width:100%;font:700 1.9rem/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.3em;text-align:center;text-transform:uppercase;padding:12px 8px 12px 18px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--green);outline:none}
+input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,240,192,.25)}
+input::placeholder{color:#b8cdc4;letter-spacing:.3em}
+button{width:100%;margin-top:14px;font:700 1.05rem Barlow;letter-spacing:.04em;padding:14px;border:0;border-radius:12px;background:var(--mint);color:var(--green);cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.msg{margin-top:14px;font-size:.92rem;color:#ffd3d9;background:rgba(225,29,72,.18);border:1px solid rgba(255,84,112,.45);border-radius:10px;padding:10px 12px;text-align:left}
+#res{margin-top:18px}
+.card{background:#fff;color:#14302a;border-radius:16px;padding:22px 20px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,.28);border-top:6px solid var(--c,#4f63d2)}
+.team{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#6b7f78;font-weight:600}
+.tn{font:800 1.6rem/1.15 'Barlow Condensed',Barlow,sans-serif;margin:2px 0 12px;word-break:break-word}
+.badge{display:inline-block;font:700 .78rem Barlow;letter-spacing:.08em;text-transform:uppercase;color:var(--c);border:1.5px solid var(--c);background:var(--bg);padding:3px 12px;border-radius:99px}
+.card h2{font:800 1.45rem/1.15 'Barlow Condensed',Barlow,sans-serif;margin:12px 0 8px;color:var(--c)}
+.card p{margin:0 0 10px;line-height:1.5;font-size:1rem}
+.reason{background:#fff1f3;border-left:4px solid #e11d48;border-radius:8px;padding:10px 12px;margin-top:6px;white-space:pre-wrap;word-break:break-word}
+.reason b{display:block;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#be123c;margin-bottom:2px}
+.foot{color:var(--mute);font-size:.8rem;margin-top:22px}
+</style></head><body>
+<main>
+<img class="logo" src="logo.png" alt="Mindoro Pickleball Org." onerror="this.style.display='none'">
+<div class="kick">MPO CUP 2026</div>
+<h1>Registration Status</h1>
+<p class="sub">Enter the 6-character code from your email.</p>
+<form id="f" autocomplete="off"><label for="code">Your code</label>
+<input id="code" maxlength="6" placeholder="XXXXXX" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="6-character registration code">
+<button id="go" type="submit">Check status</button><div id="err" role="alert"></div></form>
+<div id="res" aria-live="polite"></div>
+<p class="foot">Mindoro Pickleball Org. · Didn't get a code? Wait for our acknowledgement email or contact the organizers.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+const $=id=>document.getElementById(id),PUB='mpo-cup2026-status',DB=(typeof db!=='undefined')?db:firebase.firestore();
+const MAX_TRIES=5,LOCK_MS=5*60*1000,KEY='mpoStatusTries';
+/* Light client-side throttle (5 wrong codes -> 5 minute pause). Real protection: codes are random, and the database only allows reading ONE record by exact code (no listing). */
+const tries=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{};}},saveTries=t=>{try{localStorage.setItem(KEY,JSON.stringify(t));}catch(e){}};
+function lockLeft(){const t=tries();return t.until&&t.until>Date.now()?t.until-Date.now():0;}
+function say(m){$('err').innerHTML='';if(m){const d=document.createElement('div');d.className='msg';d.textContent=m;$('err').appendChild(d);}}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+function view(d){
+ const rej=d.rejected||d.decision==='Rejected',cat=d.finalCategory||d.category||'';
+ let c,bg,badge,head,paras=[],reason='';
+ if(rej){c='#e11d48';bg='#fff1f3';badge='Rejected';head='We are sorry.';paras=['Your application has been rejected.'];reason=d.rejectReason||'';}
+ else if(d.slotConfirmed){c='#16a34a';bg='#e8f7ee';badge='Slot confirmed';head='Slot confirmed.';paras=['See you on the court!'];if(cat)paras.unshift('You are in: '+cat+'.');}
+ else if(d.decision==='Accepted'){c='#16a34a';bg='#e8f7ee';badge='Accepted';head='Accepted!';paras=['Your registration has been reviewed and accepted.','You have been accepted to play in '+(cat||'your category')+'.','Please check your email for payment processing.'];}
+ else if(d.decision==='For Verification'){c='#b45309';bg='#fff4de';badge='For verification';head='Wait! Hold on.';paras=['We are still reviewing your skills and category level.','Please expect a call from us.'];}
+ else{c='#4f63d2';bg='#eceeff';badge='Registration received';head='Registration received!';paras=['This is not guaranteed. We will be reviewing your registration.','You will receive an email or a call regarding the results.'];}
+ const card=el('div','card');card.style.setProperty('--c',c);card.style.setProperty('--bg',bg);
+ card.append(el('div','team','Team'),el('div','tn',d.team||'—'),el('span','badge',badge),el('h2','',head));
+ paras.forEach(p=>card.appendChild(el('p','',p)));
+ if(rej&&reason){const r=el('div','reason');r.append(el('b','','Reason'),document.createTextNode(reason));card.appendChild(r);}
+ $('res').replaceChildren(card);}
+async function check(code){
+ const left=lockLeft();if(left){say('Too many wrong attempts. Please try again in '+Math.ceil(left/60000)+' minute(s).');return;}
+ code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+ if(code.length!==6){say('Please enter your 6-character code.');return;}
+ say('');$('res').replaceChildren();$('go').disabled=true;$('go').textContent='Checking…';
+ try{const s=await DB.collection(PUB).doc(code).get();
+  if(!s.exists){const t=tries(),n=(t.until&&t.until<=Date.now()?0:(t.n||0))+1;saveTries(n>=MAX_TRIES?{n:0,until:Date.now()+LOCK_MS}:{n});
+   say(n>=MAX_TRIES?'Too many wrong attempts. Please try again in 5 minutes.':"We couldn't find that code. Please check it and try again.");}
+  else{saveTries({n:0});view(s.data());}}
+ catch(e){say("We couldn't check right now. Please try again in a moment.");console.warn(e.message);}
+ $('go').disabled=false;$('go').textContent='Check status';}
+$('code').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'');});
+$('f').addEventListener('submit',e=>{e.preventDefault();check($('code').value);});
+const q=new URLSearchParams(location.search).get('code');if(q){$('code').value=q.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);check(q);}
+</script></body></html>
