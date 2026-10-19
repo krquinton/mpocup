@@ -13,7 +13,7 @@ const CONFIG = {
   SECRET: 'CHANGE-ME-to-a-long-random-text',
 
   FROM_NAME: 'MPO Cup 2026',
-  REPLY_TO: '',            // fallback if Event Details has no contact email
+  REPLY_TO: 'mindoropickleballorg@gmail.com',            // fallback if Event Details has no contact email
   BCC: [],                 // organizer emails, e.g. ['a@gmail.com', 'b@gmail.com']
 
   STATUS_URL: 'https://mindoropickleball.org/status',
@@ -27,7 +27,7 @@ const CONFIG = {
     'Bank transfer: BANK NAME - Account name - 0000 0000 0000',
     'Cash: arrange with the organizers'
   ],
-  PAYMENT_NOTE: 'Slots are first-paid, first-confirmed.',
+  PAYMENT_NOTE: 'Slots are first-paid, first-confirmed. Payment is final and non-refundable.',
 
   GREEN: '#0b3d2e',
   MINT: '#7ff0c0'

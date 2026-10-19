@@ -3,7 +3,7 @@
 <style>table{font-size:14px}th{text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}td{vertical-align:top}
 .tabs{display:flex;flex-wrap:wrap}.tabs button{background:none;border:0;color:var(--mute);font:600 1rem Barlow,sans-serif;padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent}.tabs button.on{color:var(--mint);border-color:var(--mint)}
 .stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}.stat small{color:var(--mute);display:block}.stat big{font:800 2rem 'Barlow Condensed'}
-.st-Submitted{color:#9db3d8}.st-Confirmation-Sent{color:#5ec8ff}.st-Confirmed-Unpaid{color:#ffb347}.st-Confirmed-Partial{color:#ffd23f}.st-Confirmed-Paid{color:#2ecc71}.st-Rejected{color:#ff5470}select.s{width:auto;padding:6px}
+.st-Submitted{color:#9db3d8}.st-Acknowledgement-Sent{color:#5ec8ff}.st-Confirmed-Unpaid{color:#ffb347}.st-Confirmed-Partial{color:#ffd23f}.st-Confirmed-Paid{color:#2ecc71}.st-Rejected{color:#ff5470}select.s{width:auto;padding:6px}
 .bar{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px}@media(max-width:760px){.bar{grid-template-columns:1fr}}
 .code{font:700 .95rem monospace;letter-spacing:.12em;color:var(--mint)}.acts{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .sm{padding:5px 12px;font-size:.85rem}dialog{background:var(--panel);color:inherit;border:1px solid var(--line);border-radius:var(--r);max-width:440px;width:92%;padding:22px}dialog::backdrop{background:rgba(0,0,0,.6)}
@@ -18,7 +18,7 @@ body.adm{--bg:#f3f6f5;--panel:#fff;--line:#dfe7e3;--mute:#64748b;--mint:#0b7a4b;
 .adm .panel,.adm .stat,.adm dialog{background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(16,50,40,.06)}.adm dialog{color:#1e2a26}
 .adm table{width:100%;border-collapse:collapse}.adm th{color:#4b5d56;background:#f4f8f6;text-align:left;padding:10px}.adm td{padding:10px;border-top:1px solid var(--line)}
 .adm .ft{background:#e8efec}.adm .stat big{color:#12332a}.adm .pos{color:#16a34a}.adm .neg{color:#e11d48}.adm .pl button,.adm .lnk{color:#e11d48}
-.adm .st-Submitted{color:#4f63d2}.adm .st-Confirmation-Sent{color:#0a8fae}.adm .st-Confirmed-Unpaid{color:#d9680b}.adm .st-Confirmed-Partial{color:#a87b00}.adm .st-Confirmed-Paid{color:#16a34a}.adm .st-Rejected{color:#e11d48}
+.adm .st-Submitted{color:#4f63d2}.adm .st-Acknowledgement-Sent{color:#0a8fae}.adm .st-Confirmed-Unpaid{color:#d9680b}.adm .st-Confirmed-Partial{color:#a87b00}.adm .st-Confirmed-Paid{color:#16a34a}.adm .st-Rejected{color:#e11d48}
 #gate{margin:0 auto}#gate img{background:#0a3d2e;padding:10px;border-radius:14px}#gate form{background:#fff;border:1px solid var(--line);border-radius:14px}
 #app:not([hidden]){display:flex;min-height:100vh}
 #sb{width:250px;flex:none;background:#0a3d2e;color:#d8efe5;display:flex;flex-direction:column;padding:18px 12px;position:fixed;inset:0 auto 0 0;z-index:30;transform:translateX(-100%);transition:transform .25s;overflow-y:auto}
@@ -48,7 +48,7 @@ body.adm{--bg:#f3f6f5;--panel:#fff;--line:#dfe7e3;--mute:#64748b;--mint:#0b7a4b;
 .adm select:focus,.adm input:focus,.adm textarea:focus{outline:2px solid #17a06a;outline-offset:1px}
 .adm option{background:#fff;color:#1e2a26}.adm input,.adm textarea{border:1.5px solid #6f8a7e!important;color:#1e2a26!important}.adm ::placeholder{color:#7b8b85}
 .adm select.s{font-weight:700;border-left-width:6px!important}
-.adm select.st-Submitted{border-left-color:#4f63d2!important}.adm select.st-Confirmation-Sent{border-left-color:#0ea5c6!important}.adm select.st-Confirmed-Unpaid{border-left-color:#f97316!important}.adm select.st-Confirmed-Partial{border-left-color:#eab308!important}.adm select.st-Confirmed-Paid{border-left-color:#16a34a!important}.adm select.st-Rejected{border-left-color:#e11d48!important}
+.adm select.st-Submitted{border-left-color:#4f63d2!important}.adm select.st-Acknowledgement-Sent{border-left-color:#0ea5c6!important}.adm select.st-Confirmed-Unpaid{border-left-color:#f97316!important}.adm select.st-Confirmed-Partial{border-left-color:#eab308!important}.adm select.st-Confirmed-Paid{border-left-color:#16a34a!important}.adm select.st-Rejected{border-left-color:#e11d48!important}
 #mn .wrap{max-width:none!important;margin:0!important;padding:14px 16px 40px!important}.top{padding:10px 16px}.stats{margin:0 0 12px}.adm td,.adm th{padding:8px 10px}
 
 /* icon action buttons + tooltip */
@@ -107,16 +107,29 @@ dialog#ed{max-width:960px;width:96%;max-height:92vh;overflow:auto;padding:0}
 .chip{display:inline-block;background:#e6f2ec;color:#0a3d2e;border-radius:99px;padding:2px 9px;font-size:.75rem;font-weight:600;margin:2px 3px 2px 0}.chip.off{background:#eceff1;color:#64748b}
 dialog#du{max-width:640px;width:96%;max-height:92vh;overflow:auto;padding:0}
 .nadd input[readonly]{background:#f1f5f3!important;color:#4b5d56!important}
+.dcol{display:flex;flex-direction:column;gap:16px;min-width:0}.dh small{color:var(--mute);font-weight:500;font-size:.78rem;margin-left:6px}
+.dpc{padding:14px 18px}.dpc .dh{margin-bottom:8px}.dpc .cr{padding:8px 0}.dpc .sbar{height:12px}.dpc .cl{margin-top:5px;font-size:.74rem}
+.lgr{cursor:pointer;border-radius:6px}.lgr:hover{background:#f1f6f3}
+.adm .rbar{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;overflow-x:auto;padding:2px 1px}
+.adm .rbar select,.adm .rbar input{flex:none;width:auto!important;height:36px!important;min-height:0;margin:0!important;padding:0 8px!important;font-size:.82rem!important}
+.adm .rbar select{max-width:175px}.adm .rbar input#q{flex:1 1 280px;min-width:190px;width:auto!important;font-size:.92rem!important}
+.adm .rbar .ib{flex:none}
+.adm .acts{display:grid!important;grid-template-columns:repeat(4,34px);gap:6px;max-width:none!important;width:max-content}
+@media(min-width:1100px){.dgrid{align-items:stretch}.dcol .panel{flex:1}}
+dialog#dh{max-width:760px;width:96%;max-height:92vh;overflow:auto;padding:0}
+.dsel2{margin-top:4px;font-size:.78rem}select.sd{margin-top:4px;font-size:.78rem;max-width:170px}
+.hl td{vertical-align:top}.hl .ev{font-weight:700;white-space:nowrap}
 </style></head><body class="adm">
 <div id="gate" class="wrap" style="padding-top:100px;max-width:420px"><img src="logo.png" alt="MPO" style="height:90px"><h2 style="margin:12px 0 10px">Admin login</h2><form onsubmit="login(event)" style="padding:22px"><div class="gg"><button type="button" class="btn ghost" id="gbtn" onclick="googleLogin()"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Sign in with Google</button><div class="or">or use passcode</div></div><label for="pw">Passcode</label><input type="password" id="pw" autofocus><p><button class="btn">Enter</button></p><div id="ge"></div></form></div>
-<div id="app" hidden><aside id="sb"><div class="sbh"><img src="logo.png" alt="MPO"><div><b>MPO CUP 2026</b><small>Admin</small></div></div><button class="nb on" id="t0" onclick="tab(0)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></button><button class="nb" id="t1" onclick="tab(1)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>Registrations</span></button><button class="nb" id="t3" onclick="tab(3)"><svg viewBox="0 0 24 24"><path d="M8 3l-5 4 3 4 2-1v11h10V10l2 1 3-4-5-4a4 4 0 0 1-8 0z"/></svg><span>Shirt Count</span></button><button class="nb" id="t4" onclick="tab(4)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Payments</span></button><button class="nb" id="t5" onclick="tab(5)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Finances</span></button><button class="nb" id="t2" onclick="tab(2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Event details</span></button><button class="nb" id="t6" onclick="tab(6)" hidden><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button><button class="nb" id="t7" onclick="tab(7)" hidden><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg><span>Audit Log</span></button><div class="sbf"><a href="index.html" data-tip="View site"><i>↗</i><span>View site</span></a><a href="#" onclick="logout();return false" data-tip="Log out"><i>⎋</i><span>Log out</span></a></div></aside><div id="ov" onclick="menu(0)"></div><div id="mn"><header class="top"><button id="hb" onclick="hbClick()" aria-label="Toggle menu">☰</button><h1 id="pt0">Dashboard</h1><button type="button" id="stg" class="btn ghost sm" onclick="togStats()" hidden>Hide numbers</button><span id="who" class="badge"></span></header><div class="wrap"><div id="p0"><div class="stats ds" id="dst"></div><div class="dgrid"><div class="panel" style="padding:18px"><h3 class="dh">Status overview</h3><div id="dnut"></div></div><div class="panel" style="padding:18px"><h3 class="dh">Registrations per category</h3><div id="dcat"></div></div></div></div>
-<div id="p1" hidden><div class="stats" id="stats"></div><div class="bar"><select id="fc" onchange="draw()" aria-label="Category"><option value="">All categories</option></select><select id="fs" onchange="draw()" aria-label="Status"><option value="">All statuses</option></select><input id="q" placeholder="Search" oninput="draw()" aria-label="Search"><button class="btn ghost" onclick="csv()">Export CSV</button></div>
+<div id="app" hidden><aside id="sb"><div class="sbh"><img src="logo.png" alt="MPO"><div><b>MPO CUP 2026</b><small>Admin</small></div></div><button class="nb on" id="t0" onclick="tab(0)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Dashboard</span></button><button class="nb" id="t1" onclick="tab(1)"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><span>Registrations</span></button><button class="nb" id="t3" onclick="tab(3)"><svg viewBox="0 0 24 24"><path d="M8 3l-5 4 3 4 2-1v11h10V10l2 1 3-4-5-4a4 4 0 0 1-8 0z"/></svg><span>Shirt Count</span></button><button class="nb" id="t4" onclick="tab(4)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Payments</span></button><button class="nb" id="t5" onclick="tab(5)"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Finances</span></button><button class="nb" id="t8" onclick="tab(8)"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span>Email Tracker</span></button><button class="nb" id="t2" onclick="tab(2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Event details</span></button><button class="nb" id="t6" onclick="tab(6)" hidden><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button><button class="nb" id="t7" onclick="tab(7)" hidden><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg><span>Audit Log</span></button><div class="sbf"><a href="index.html" data-tip="View site"><i>↗</i><span>View site</span></a><a href="#" onclick="logout();return false" data-tip="Log out"><i>⎋</i><span>Log out</span></a></div></aside><div id="ov" onclick="menu(0)"></div><div id="mn"><header class="top"><button id="hb" onclick="hbClick()" aria-label="Toggle menu">☰</button><h1 id="pt0">Dashboard</h1><button type="button" id="psb" class="btn ghost sm" onclick="forceSync()" hidden data-tip="Rewrite every registration to the public status page">Sync status page</button><button type="button" id="stg" class="btn ghost sm" onclick="togStats()" hidden>Hide numbers</button><span id="who" class="badge"></span></header><div class="wrap"><div id="p0"><div class="stats ds" id="dst"></div><div class="dgrid"><div class="dcol"><div class="panel" style="padding:18px"><h3 class="dh">Status overview</h3><div id="dnut"></div></div><div class="panel" style="padding:18px"><h3 class="dh">Decision overview</h3><div id="dnut2"></div></div></div><div class="dcol"><div class="panel dpc"><h3 class="dh">Registrations per category <small>by initial category</small></h3><div id="dcat"></div></div><div class="panel dpc"><h3 class="dh">Final registrations per category <small>by final category</small></h3><div id="dcat2"></div></div></div></div></div>
+<div id="p1" hidden><div class="stats" id="stats"></div><div class="bar rbar"><select id="fc" onchange="draw()" aria-label="Category"><option value="">All categories</option></select><select id="fs" onchange="draw()" aria-label="Status"><option value="">All statuses</option></select><select id="fd" onchange="draw()" aria-label="Decision"><option value="">All decisions</option><option>Accepted</option><option>For Verification</option><option>Rejected</option><option value="__">Decision pending</option></select><input id="q" placeholder="Search team, player, code, email…" oninput="draw()" aria-label="Search"><button type="button" class="ib" data-tip="Export CSV" aria-label="Export CSV" onclick="csv()"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></button></div>
 <div id="list" class="panel" style="margin-top:16px"></div></div>
 <div id="p3" hidden><p style="margin-top:18px"><button class="btn ghost" onclick="shirtCsv()">Export shirt list (CSV)</button></p><div class="stats" id="shs"></div><h3>By size</h3><div id="shsz" class="panel" style="overflow-x:auto"></div>
 <h3 class="sec">Extra shirts &amp; merch</h3><form id="xf" class="panel" style="padding:16px;margin-bottom:16px"></form><div id="xl" class="panel" style="overflow-x:auto"></div></div>
 <div id="p4" hidden><div class="stats" id="pst"></div><div id="pmd" class="sh"></div><div id="ptl" class="panel" style="margin-top:12px;overflow-x:auto"></div></div>
 <div id="p5" hidden><div class="stats" id="fst"></div><div id="fbars" class="panel" style="padding:16px"></div><h3 class="sec">Budget vs actual by category</h3><div id="fcat" class="panel" style="overflow-x:auto"></div>
 <h3 class="sec">Add record</h3><form id="ff" class="panel" style="padding:16px;max-width:760px"></form><p><button class="btn ghost" onclick="finCsv()">Export finance records (CSV)</button></p><div id="fl"></div></div>
+<div id="p8" hidden><div class="bar" style="margin-top:14px"><button class="btn ghost" onclick="loadTrk()">Refresh</button><span class="pn" id="trkn"></span></div><div class="stats" id="trks"></div><div class="panel" style="padding:18px" id="trkb"></div><h3 class="sec">Last 7 days</h3><div id="trkd" class="panel" style="overflow-x:auto"></div><h3 class="sec">Email log <small class="pn">latest 100</small></h3><div id="trkl" class="panel" style="overflow-x:auto"></div></div>
 <div id="p2" hidden><form id="sf" style="max-width:640px;margin-top:18px"></form></div>
 <div id="p7" hidden><div class="bar" style="margin-top:14px"><select id="aa" onchange="drawAudit()" aria-label="Action"></select><select id="au" onchange="drawAudit()" aria-label="User"></select><input id="aq" placeholder="Search" oninput="drawAudit()" aria-label="Search"><button class="btn ghost" onclick="auditCsv()">Export CSV</button></div><p class="pn" id="aun" style="margin:8px 0 0"></p><div id="al" class="panel" style="margin-top:10px;overflow-x:auto"></div></div>
 <div id="p6" hidden><div class="panel" style="padding:16px;margin-top:14px"><h3 class="dh" style="margin-bottom:6px">Superadmins</h3><p class="pn" id="sup" style="margin:0"></p><p class="pn" style="margin:6px 0 0">Superadmins can sign in with Google, see every tab and manage users. They are fixed in the page code and Firestore rules.</p></div><p style="margin:14px 0 8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" onclick="openUser()">+ Add user</button><span class="pn">Role and tab access are saved per Google account. Passcode logins are unchanged.</span></p><div id="ul" class="panel" style="overflow-x:auto"></div></div></div></div></div>
@@ -128,14 +141,15 @@ dialog#du{max-width:640px;width:96%;max-height:92vh;overflow:auto;padding:0}
 <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="payPaid()">Record payment</button><button class="btn ghost" onclick="paySoon()">Settle later</button><button class="btn ghost" onclick="$('pd').close()">Close</button></p></dialog>
 <dialog id="ed"><div class="dth"><h3 id="edh">Edit registration<small id="edt"></small></h3><button type="button" class="btn ghost sm" onclick="closeEd()">Close</button></div><div class="dtb" id="edc"></div><div class="dtf2" id="edf"></div></dialog><datalist id="szl"></datalist><dialog id="du"><div class="dth"><h3 id="duh">Add user</h3><button type="button" class="btn ghost sm" onclick="$('du').close()">Close</button></div><div class="dtb" id="duc"></div><div class="dtf2"><span class="grow" id="dus"></span><button type="button" class="btn ghost" onclick="$('du').close()">Cancel</button><button type="button" class="btn" onclick="saveUser()">Save user</button></div></dialog>
 <datalist id="lvl"><option value="Low Intermediate"><option value="High Intermediate"><option value="Advanced"></datalist>
-<dialog id="dt"><div class="dth"><h3 id="dtt">Team details<small id="dts"></small></h3><button type="button" class="btn ghost sm" onclick="closeDet()">Close</button></div><div class="dtb" id="dtc"></div><div class="dtf2" id="dtfoot"></div></dialog>
+<dialog id="dh"><div class="dth"><h3 id="dhh">History<small id="dhs"></small></h3><button type="button" class="btn ghost sm" onclick="$('dh').close()">Close</button></div><div class="dtb" id="dhc"></div></dialog><dialog id="dt"><div class="dth"><h3 id="dtt">Team details<small id="dts"></small></h3><button type="button" class="btn ghost sm" onclick="closeDet()">Close</button></div><div class="dtb" id="dtc"></div><div class="dtf2" id="dtfoot"></div></dialog>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script><script src="firebase-init.js"></script><script src="mpo-config.js"></script>
 <script>
 const SHIRTS='mpo-cup2026-shirts',FIN='mpo-cup2026-finance',$=id=>document.getElementById(id),E=mpoEsc;const ADMIN_PASS='mpo2026admin',VIEW_PASS='mpo2026view'; // CHANGE BOTH before deploying
 const SUPER_EMAILS=['ton.quinton@gmail.com','mindoropickleballorg@gmail.com'],USERS='mpo-cup2026-users'; // superadmins always get in via Google; other users are managed in the Users tab. Passcodes above keep working until we remove them.
-const TAB_DEFS=[['dash',0,'Dashboard'],['reg',1,'Registrations'],['shirts',3,'Shirt Count'],['pay',4,'Payments'],['fin',5,'Finances'],['set',2,'Settings']],TAB_ADMIN_ONLY=['fin','set'],
- ROLE_TABS={admin:['dash','reg','shirts','pay','fin','set'],viewer:['dash','reg','shirts','pay']},TIDX=Object.fromEntries(TAB_DEFS.map(([k,i])=>[k,i])),TLAB=Object.fromEntries(TAB_DEFS.map(([k,i,l])=>[k,l]));
+const TAB_DEFS=[['dash',0,'Dashboard'],['reg',1,'Registrations'],['shirts',3,'Shirt Count'],['pay',4,'Payments'],['fin',5,'Finances'],['mail',8,'Email Tracker'],['set',2,'Settings']],TAB_ADMIN_ONLY=['fin','mail','set'],
+ ROLE_TABS={admin:['dash','reg','shirts','pay','fin','mail','set'],viewer:['dash','reg','shirts','pay']},TIDX=Object.fromEntries(TAB_DEFS.map(([k,i])=>[k,i])),TLAB=Object.fromEntries(TAB_DEFS.map(([k,i,l])=>[k,l]));
 
+const STATS=['Submitted','Acknowledgement-Sent','Confirmed-Unpaid','Confirmed-Partial','Confirmed-Paid','Rejected'],PUB='mpo-cup2026-status',pubSeen=new Map();
 let audit=[],AUTHNAME='',AUTHUSER=null,ISSUPER=false,ALLOW=null,ALLOW_KEYS=null,users=[],S=Object.assign({},MPO_DEF),rows=[],extras=[],fin=[],cur=null,ROLE='',started=false,editFin=null;const coding=new Set();
 const A=()=>ROLE==='admin',isConf=x=>['Confirmed-Paid','Confirmed-Partial','Confirmed-Unpaid'].includes(x.status),
  peso=n=>'₱'+Number(n||0).toLocaleString('en-PH'),sum=(a,f)=>a.reduce((t,x)=>t+f(x),0),
@@ -150,88 +164,168 @@ async function logout(){try{await logA('logout','','');}catch(e){}sessionStorage
 function start(){if(started)return;started=true;$('gate').hidden=true;$('app').hidden=false;$('who').textContent=(ISSUPER?'superadmin':ROLE)+(AUTHUSER?' · '+AUTHUSER.email:'');if(!sessionStorage.mpoLg){sessionStorage.mpoLg='1';logA('login','',AUTHUSER?'Google sign-in':'Passcode ('+ROLE+')');}
  applyAccess();
  if(A())buildSettings(S);/* show the form right away (defaults), filled with saved values once loaded */
- $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=MPO_STATUSES.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
+ $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=STATS.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
  buildXF();buildFin();const er=id=>e=>$(id).innerHTML='<div class="msg err">'+E(e.message)+'</div>',all=()=>{drawDash();draw();drawShirts();drawPay();drawFin();drawNotes();};
- db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));all();backfill();backfillGeo();},er('list'));
+ db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>{const o={id:d.id,...d.data()};if(o.status==='Confirmation-Sent'){o.status='Acknowledgement-Sent';o._old=1;}return o;});all();backfill();backfillGeo();migrateAck();syncPub();},er('list'));
  db.collection(SHIRTS).orderBy('createdAt','desc').onSnapshot(s=>{extras=s.docs.map(d=>({id:d.id,...d.data()}));drawShirts();drawPay();drawFin();},er('xl'));
  if(ISSUPER)db.collection(AUDIT).orderBy('ts','desc').limit(500).onSnapshot(s=>{audit=s.docs.map(d=>({id:d.id,...d.data()}));drawAudit();},e=>{$('al').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules (audit log) first.</div>';});
  if(ISSUPER)db.collection(USERS).onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));drawUsers();},e=>{$('ul').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules first.</div>';});
  if(A())db.collection(FIN).orderBy('createdAt','desc').onSnapshot(s=>{fin=s.docs.map(d=>({id:d.id,...d.data()}));drawFin();},er('fl'));
  mpoSettings().then(s=>{S=s;if(A())buildSettings(s);all();}).catch(e=>{if(A())$('sf').insertAdjacentHTML('afterbegin','<div class="msg err">Could not load saved settings: '+E(e.message)+'. Showing defaults. Check the Firestore rules for the settings document.</div>');});}
-const IC={eye:'<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',send:'<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/>',edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>'};
+const IC={clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',eye:'<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',send:'<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/>',edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>'};
 const ib=(ic,tip,fn,cls)=>`<button type="button" class="ib ${cls||''}" data-tip="${tip}" aria-label="${tip}" onclick="${fn}"><svg viewBox="0 0 24 24">${IC[ic]}</svg></button>`;
 /* hover tooltip for any [data-tip] element */
 (function(){const t=document.createElement('div');t.id='tt';document.body.appendChild(t);
  const show=e=>{const b=e.target.closest&&e.target.closest('[data-tip]');if(!b)return;t.textContent=b.dataset.tip;const r=b.getBoundingClientRect(),w=t.offsetWidth,h=t.offsetHeight;t.style.left=Math.max(6,Math.min(innerWidth-w-6,r.left+r.width/2-w/2))+'px';t.style.top=(r.top-h-8<6?r.bottom+8:r.top-h-8)+'px';t.style.opacity=1;},hide=()=>{t.style.opacity=0;};
  document.addEventListener('mouseover',show);document.addEventListener('focusin',show);document.addEventListener('mouseout',hide);document.addEventListener('focusout',hide);document.addEventListener('scroll',hide,true);document.addEventListener('click',hide);})();
-function tab(n){if(ALLOW&&!ALLOW.has(n))return;[0,1,2,3,4,5,6,7].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});$('pt0').textContent=$('t'+n).querySelector('span').textContent;menu(0);$('stg').hidden=n!==1;scrollTo(0,0);}
+function tab(n){if(ALLOW&&!ALLOW.has(n))return;if(n===8)loadTrk();[0,1,2,3,4,5,6,7,8].forEach(i=>{$('p'+i).hidden=i!==n;$('t'+i).classList.toggle('on',i===n)});$('pt0').textContent=$('t'+n).querySelector('span').textContent;menu(0);$('stg').hidden=n!==1;$('psb').hidden=!A()||(n!==0&&n!==1);scrollTo(0,0);}
 function menu(o){$('app').classList.toggle('mo',!!o);}
 
 /* ---- Audit trail: every important action is written to mpo-cup2026-audit (read: superadmins only; entries can't be edited/deleted) ---- */
 const AUDIT='mpo-cup2026-audit',tgt=r=>r?((r.team||'')+(r.code?' ('+r.code+')':'')):'',
  fmtV=v=>v===undefined||v===null||v===''?'(blank)':'"'+String(v)+'"',
  vn=v=>JSON.stringify(['p1','p2'].map(p=>{const o=(v||{})[p]||{};return ['rating','rel','level','by'].map(k=>String(o[k]??''));}));
-function diffStr(x,u){return Object.keys(u).filter(k=>!['editedAt','decisionAt','detEditedAt','c1','c2'].includes(k)).map(k=>{
+function diffStr(x,u){return Object.keys(u).filter(k=>!['editedAt','decisionAt','detEditedAt','c1','c2','hist','prevStatus'].includes(k)).map(k=>{
  if(k==='vouch')return vn(x.vouch)!==vn(u.vouch)?'vouching updated':'';
  if(u[k]!==null&&typeof u[k]==='object')return k+': '+fmtV(x[k])+' → (removed)';
  return String(x[k]??'')!==String(u[k]??'')?k+': '+fmtV(x[k])+' → '+fmtV(u[k]):'';}).filter(Boolean).join('; ');}
 function logA(action,target,detail,tid){try{const cu=typeof firebase.auth==='function'?firebase.auth().currentUser:null,em=cu&&cu.email?cu.email.toLowerCase():'';
  return db.collection(AUDIT).add({ts:firebase.firestore.FieldValue.serverTimestamp(),actorEmail:em,actorName:AUTHUSER?AUTHNAME:('Passcode '+(ROLE||'')),method:AUTHUSER?'google':'passcode',role:ISSUPER?'superadmin':(ROLE||''),action,target:target||'',targetId:tid||'',detail:String(detail||'').slice(0,800)}).catch(e=>console.warn('audit log failed:',e.message));}catch(e){return Promise.resolve();}}
 /* ---- Dashboard ---- */
-const DCOL={'Submitted':'#4f63d2','Confirmation-Sent':'#0ea5c6','Confirmed-Unpaid':'#f97316','Confirmed-Partial':'#eab308','Confirmed-Paid':'#16a34a','Rejected':'#e11d48'},DST=Object.keys(DCOL),DLB=t=>t.replace(/-/g,' ');let DC=[];
-function goReg(i,t){tab(1);$('fc').value=i<0?'':(DC[i]||'');$('fs').value=t||'';draw();}
+const DCOL={'Submitted':'#4f63d2','Acknowledgement-Sent':'#0ea5c6','Confirmed-Unpaid':'#f97316','Confirmed-Partial':'#eab308','Confirmed-Paid':'#16a34a','Rejected':'#e11d48'},DST=Object.keys(DCOL),DLB=t=>t.replace(/-/g,' ');let DC=[];
+function goReg(i,t){tab(1);$('fc').value=i<0?'':(DC[i]||'');$('fs').value=t||'';$('fd').value='';draw();}
+function goDec(d){tab(1);$('fc').value='';$('fs').value='';$('fd').value=d;draw();}
+const ringHtml=(items,tot,unit)=>{let a=0;const seg=items.map(t=>{const p=tot?t.n/tot*100:0,r=t.c+' '+a+'% '+(a+p)+'%';a+=p;return r}).join(',');
+ return `<div class="dn"><div class="ring" style="background:${tot?'conic-gradient('+seg+')':'#e8efec'}"><div><big>${tot}</big><small>${unit}</small></div></div><div class="lg">${items.map(t=>`<div class="lgr" onclick="${t.go}"><i style="background:${t.c}"></i>${t.l}<span>${t.n}</span><em>${tot?Math.round(t.n/tot*100):0}%</em></div>`).join('')}</div></div>`;};
+const DECCOL={'Accepted':'#16a34a','For Verification':'#f59e0b','Rejected':'#e11d48','':'#94a3b8'};
 function drawDash(){if(!$('dst'))return;DC=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
  const n=(t,l)=>(l||rows).filter(x=>x.status===t).length,tot=rows.length;
  $('dst').innerHTML=`<div class="stat" onclick="goReg(-1,'')"><span class="dic" style="background:#0b7a4b"></span><div><small>Total registrations</small><big>${tot}</big></div></div>`+DST.map(t=>`<div class="stat" onclick="goReg(-1,'${t}')"><span class="dic" style="background:${DCOL[t]}"></span><div><small>${DLB(t)}</small><big>${n(t)}</big></div></div>`).join('');
- let a=0;const seg=DST.map(t=>{const p=tot?n(t)/tot*100:0,r=DCOL[t]+' '+a+'% '+(a+p)+'%';a+=p;return r}).join(',');
- $('dnut').innerHTML=`<div class="dn"><div class="ring" style="background:${tot?'conic-gradient('+seg+')':'#e8efec'}"><div><big>${tot}</big><small>teams</small></div></div><div class="lg">${DST.map(t=>`<div><i style="background:${DCOL[t]}"></i>${DLB(t)}<span>${n(t)}</span><em>${tot?Math.round(n(t)/tot*100):0}%</em></div>`).join('')}</div></div>`;
+ $('dnut').innerHTML=ringHtml(DST.map(t=>({l:DLB(t),c:DCOL[t],n:n(t),go:`goReg(-1,'${t}')`})),tot,'teams');
+ $('dnut2').innerHTML=ringHtml(['Accepted','For Verification','Rejected',''].map(d=>({l:d||'Decision pending',c:DECCOL[d],n:rows.filter(x=>(x.decision||'')===d).length,go:`goDec('${d||'__'}')`})),tot,'teams');
+ /* initial category */
  $('dcat').innerHTML=DC.map((k,i)=>{const r=rows.filter(x=>x.category===k),ct=r.length;
-  return `<div class="cr"><div class="ch"><b onclick="goReg(${i},'')">${E(k)}</b><span>${ct} team${ct===1?'':'s'}</span></div><div class="sbar">${DST.map(t=>n(t,r)?`<i title="${DLB(t)}: ${n(t,r)}" style="width:${n(t,r)/ct*100}%;background:${DCOL[t]}" onclick="goReg(${i},'${t}')"></i>`:'').join('')}</div><div class="cl">${ct?DST.filter(t=>n(t,r)).map(t=>`<span><i style="background:${DCOL[t]}"></i>${DLB(t)} ${n(t,r)}</span>`).join(''):'<span>No registrations yet</span>'}</div></div>`}).join('')||'<p class="pn">No categories.</p>';}
+  return `<div class="cr"><div class="ch"><b onclick="goReg(${i},'')">${E(k)}</b><span>${ct} team${ct===1?'':'s'}</span></div><div class="sbar">${DST.map(t=>n(t,r)?`<i title="${DLB(t)}: ${n(t,r)}" style="width:${n(t,r)/ct*100}%;background:${DCOL[t]}" onclick="goReg(${i},'${t}')"></i>`:'').join('')}</div><div class="cl">${ct?DST.filter(t=>n(t,r)).map(t=>`<span><i style="background:${DCOL[t]}"></i>${DLB(t)} ${n(t,r)}</span>`).join(''):'<span>No registrations yet</span>'}</div></div>`}).join('')||'<p class="pn">No categories.</p>';
+ /* final category (teams without one go in a gray "not set yet" row so totals still add up) */
+ const FC=[...new Set([...MPO_CATS,...rows.map(r=>r.finalCategory).filter(Boolean)])],slots=parseInt(String(S.slots||'').replace(/\D/g,''))||24,
+  row=(k,r,real)=>{const ct=r.length,conf=r.filter(isConf).length;
+   return `<div class="cr"><div class="ch"><b style="cursor:default${real?'':';color:#64748b'}">${E(k)}</b><span>${ct} team${ct===1?'':'s'}${real?` · <b class="${conf>=slots?'neg':''}">${conf}/${slots}</b> confirmed`:''}</span></div><div class="sbar">${DST.map(t=>n(t,r)?`<i title="${DLB(t)}: ${n(t,r)}" style="width:${n(t,r)/ct*100}%;background:${DCOL[t]};cursor:default"></i>`:'').join('')}</div><div class="cl">${ct?DST.filter(t=>n(t,r)).map(t=>`<span><i style="background:${DCOL[t]}"></i>${DLB(t)} ${n(t,r)}</span>`).join(''):'<span>None yet</span>'}</div></div>`;},
+  noFin=rows.filter(x=>!x.finalCategory);
+ $('dcat2').innerHTML=FC.map(k=>row(k,rows.filter(x=>x.finalCategory===k),true)).join('')+(noFin.length?row('No final category yet',noFin,false):'');}
+
 /* ---- Registrations ---- */
-function draw(){const c=$('fc').value,s=$('fs').value,q=$('q').value.toLowerCase(),cats=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
+function draw(){const c=$('fc').value,s=$('fs').value,d=$('fd').value,q=$('q').value.toLowerCase(),cats=[...new Set([...MPO_CATS,...rows.map(r=>r.category).filter(Boolean)])];
  $('stats').innerHTML=cats.map(k=>{const r=rows.filter(x=>x.category===k),n=st=>r.filter(x=>x.status===st).length,conf=r.filter(isConf).length,slots=parseInt(String(S.slots||'').replace(/\D/g,''))||24,rej=n('Rejected'),pend=r.length-conf-rej;
   return `<div class="stat cs"><b class="ct">${E(k)}</b><div class="cbig ${conf>=slots?'full':''}">${conf}<span>/${slots}</span></div><div class="cteams">${r.length} team${r.length===1?'':'s'}</div><div class="cln">Confirmed - <b>${conf}</b></div><div class="cdet">Paid ${n('Confirmed-Paid')} · Partial ${n('Confirmed-Partial')} · Unpaid ${n('Confirmed-Unpaid')}</div><div class="cln">Pending - <b>${pend}</b></div><div class="cln">Rejected - <b>${rej}</b></div></div>`}).join('');
- const v=rows.filter(x=>(!c||x.category===c)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
- $('list').innerHTML=v.length?`<table><tr><th>Code</th><th>Team</th><th>Category</th><th>Players</th><th>Contact</th><th>Status</th><th></th></tr>`+v.map(x=>`<tr><td><span class="code">${E(x.code)}</span></td><td><b>${E(x.team)}</b><br><small>${x.createdAt?x.createdAt.toDate().toLocaleString():''}</small></td><td>${E(x.category)}${x.finalCategory&&x.finalCategory!==x.category?'<br><span class="pn">Final: <b>'+E(x.finalCategory)+'</b></span>':''}</td><td>${E(x.p1)} (${E(x.c1)})<br>${E(x.p2)} (${E(x.c2)})</td><td>${E(x.phone)}<br>${E(x.email)}${x.notes?'<br><i>'+E(x.notes)+'</i>':''}</td><td>${A()?`<select class="s st-${E(x.status)}" onchange="setSt('${x.id}',this.value)">${MPO_STATUSES.map(t=>`<option ${t===x.status?'selected':''}>${t}</option>`).join('')}</select>`:`<span class="st-${E(x.status)}">${E(x.status)}</span>`}${payLine(x)}${decBadge(x)}${x.payNotes?'<br><span class="pn">'+E(x.payNotes)+'</span>':''}${x.ackAt&&x.ackAt.toDate?'<br><span class="pn">✉ Acknowledged '+E(x.ackAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.payInstrAt&&x.payInstrAt.toDate?'<br><span class="pn">✉ Payment instructions sent '+E(x.payInstrAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.slotEmailAt&&x.slotEmailAt.toDate?'<br><span class="pn">✉ Slot email sent '+E(x.slotEmailAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}</td><td><div class="acts">${ib('eye','View details (vouching, notes, decision)',`openDet('${x.id}')`,'pri')}${A()?`${ib('edit','Edit registration',`openEdit('${x.id}')`)}${ib('trash','Delete registration',`del('${x.id}')`,'dng')}${x.status==='Submitted'?ib('mail','Acknowledge (send confirmation email)',`ack('${x.id}')`,'pri'):''}${x.status!=='Submitted'&&x.status!=='Rejected'?ib('send',x.payInstrAt?'Resend payment instructions':'Send payment instructions',`sendPay('${x.id}')`,x.payInstrAt?'done':''):''}${x.status!=='Rejected'?ib(isConf(x)?'card':'check',isConf(x)?'Payments (record / view)':'Confirm slot & record payment',`openPay('${x.id}')`):''}${isConf(x)?ib('cal',x.slotEmailAt?'Resend slot confirmation email':'Send slot confirmation email',`sendSlot('${x.id}')`,x.slotEmailAt?'done':''):''}`:''}</div></td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No registrations found.</p>';}
-const setSt=(id,s)=>{const r=rows.find(x=>x.id===id),o=r?r.status:'';return db.collection(REG).doc(id).update({status:s}).then(()=>logA('status_change',tgt(r),o+' → '+s,id));};
+ const v=rows.filter(x=>(!c||x.category===c)&&(!s||x.status===s)&&(!d||(d==='__'?!x.decision:x.decision===d))&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('list').innerHTML=v.length?`<table><tr><th>Code</th><th>Team</th><th>Category</th><th>Players</th><th>Contact</th><th>Status</th><th></th></tr>`+v.map(x=>`<tr><td><span class="code">${E(x.code)}</span></td><td><b>${E(x.team)}</b><br><small>${x.createdAt?x.createdAt.toDate().toLocaleString():''}</small></td><td>${E(x.category)}${x.finalCategory?'<br><span class="pn">Final: <b>'+E(x.finalCategory)+'</b></span>':''}</td><td>${E(x.p1)} (${E(x.c1)})<br>${E(x.p2)} (${E(x.c2)})</td><td>${E(x.phone)}<br>${E(x.email)}${x.notes?'<br><i>'+E(x.notes)+'</i>':''}</td><td>${A()?`<select class="s st-${E(x.status)}" onchange="setSt('${x.id}',this.value)">${STATS.map(t=>`<option ${t===x.status?'selected':''}>${t}</option>`).join('')}</select>`:`<span class="st-${E(x.status)}">${E(x.status)}</span>`}${payLine(x)}${A()?decSel(x):decBadge(x)}${x.payNotes?'<br><span class="pn">'+E(x.payNotes)+'</span>':''}${x.ackAt&&x.ackAt.toDate?'<br><span class="pn">✉ Acknowledged '+E(x.ackAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.payInstrAt&&x.payInstrAt.toDate?'<br><span class="pn">✉ Payment instructions sent '+E(x.payInstrAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}${x.slotEmailAt&&x.slotEmailAt.toDate?'<br><span class="pn">✉ Slot email sent '+E(x.slotEmailAt.toDate().toLocaleDateString('en-PH'))+'</span>':''}</td><td><div class="acts">${ib('eye','View details (vouching, notes, decision)',`openDet('${x.id}')`,'pri')}${A()?`${ib('edit','Edit registration',`openEdit('${x.id}')`)}${ib('trash','Delete registration',`del('${x.id}')`,'dng')}${ib('clock','History (timestamps)',`openHist('${x.id}')`)}${flowBtns(x)}`:ib('clock','History (timestamps)',`openHist('${x.id}')`)}</div></td></tr>`).join('')+'</table>':'<p style="color:var(--mute);padding:12px">No registrations found.</p>';}
+const setSt=async(id,v)=>{const r=rows.find(x=>x.id===id);if(!r)return;if(v==='Rejected')return setDec(id,'Rejected');const o=r.status,u={status:v,hist:H('Status changed',o+' → '+v)};
+ if(r.decision==='Rejected'&&o==='Rejected'){u.decision='';u.decisionAt=TS();}
+ await db.collection(REG).doc(id).update(u);logA('status_change',tgt(r),o+' → '+v,id);};
 const del=id=>{if(!confirm('Delete this registration permanently?'))return;const r=rows.find(x=>x.id===id);return db.collection(REG).doc(id).delete().then(()=>logA('registration_deleted',tgt(r),(r&&r.email)||'',id));};
 async function backfill(){if(!A())return;for(const r of rows){if(r.code||coding.has(r.id))continue;coding.add(r.id);
  try{await db.collection(REG).doc(r.id).update({code:await mpoGenCode(db.collection(REG))});}catch(e){coding.delete(r.id);console.error(e);}}}
 const HOOK_SECRET=typeof MPO_WEBHOOK_SECRET!=='undefined'?MPO_WEBHOOK_SECRET:'';
 async function callHook(payload){
  const res=await fetch(MPO_WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({secret:HOOK_SECRET},payload))});
- const j=await res.json();if(!j.ok)throw new Error(j.error||'The email script returned an error');return j;}
-const mailFields=async r=>({event:await mpoSettings(),code:r.code,team:r.team,category:r.category,p1:r.p1,p2:r.p2,email:r.email,phone:r.phone,due:dueOf(r),paid:paidOf(r),balance:Math.max(0,dueOf(r)-paidOf(r)),status:r.status});
-/* Acknowledge -> "Registration received" email only (Apps Script action "acknowledge") */
-async function ack(id){const r=rows.find(x=>x.id===id);if(!r)return;
- const mark=()=>db.collection(REG).doc(id).update({status:'Confirmation-Sent',ackAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>logA('acknowledged',tgt(r),'Acknowledgement to '+r.email,id));
- if(!MPO_WEBHOOK){alert("TEST MODE: this will send the 'Registration received' acknowledgement email to the registrant (no payment details).");return mark();}
- if(!confirm('Send acknowledgement ("registration received") to '+r.email+'?'))return;
+ const j=await res.json();if(j.tracker){TRK=Object.assign(TRK||{},j.tracker);if(!$('p8').hidden)drawTrk();}
+ if(!j.ok)throw new Error(j.error||'The email script returned an error');return j;}
+/* ---- Email Tracker tab: counts come from the Apps Script (it logs every send, including tests) ---- */
+let TRK=null;
+const TRK_ACT={acknowledge:'Acknowledgement',paymentInstructions:'Payment details',confirmSlot:'Slot confirmation',test:'Test'};
+async function loadTrk(){
+ if(!MPO_WEBHOOK){$('trks').innerHTML='<div class="msg err" style="grid-column:1/-1">No email webhook is set in mpo-config.js (test mode), so nothing is being sent or counted.</div>';return;}
+ $('trkn').textContent='Loading…';
+ try{TRK=await callHook({action:'emailStats'});drawTrk();$('trkn').textContent='Updated '+new Date().toLocaleTimeString();}
+ catch(e){$('trkn').textContent='';$('trks').innerHTML='<div class="msg err" style="grid-column:1/-1">'+E(e.message)+'<br>Paste the new Code.gs, then Deploy &gt; Manage deployments &gt; Edit &gt; New version.</div>';}}
+function drawTrk(){const t=TRK;if(!t||t.used===undefined)return;
+ const pct=Math.min(100,Math.round(t.used/t.limit*100)),col=pct>=100?'#e11d48':pct>=80?'#d9680b':'#16a34a',left=Math.max(0,t.limit-t.used);
+ $('trks').innerHTML=`<div class="stat"><small>Recipients sent today (${E(t.date)})</small><big style="color:${col}">${t.used} / ${t.limit}</big></div><div class="stat"><small>Emails sent today</small><big>${t.emails}</big></div><div class="stat"><small>Left under your limit</small><big>${left}</big></div><div class="stat"><small>Gmail quota left (actual)</small><big>${t.remaining==null?'–':t.remaining}</big></div>`;
+ $('trkb').innerHTML=`<div style="height:14px;background:#eef3f0;border-radius:8px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${col}"></div></div><p class="pn" style="margin:10px 0 0">${pct>=100?'<b style="color:#e11d48">Limit reached.</b> '+(t.hardStop?'The script now refuses to send until tomorrow (PH time).':''):pct>=80?'<b style="color:#d9680b">Almost at the limit.</b> ':''}Each email uses <b>${t.perEmail||1}</b> of the quota (To + ${(t.perEmail||1)-1} BCC). That is about <b>${Math.floor(left/(t.perEmail||1))}</b> more emails today. Days are counted in Philippine time.</p>`;
+ $('trkd').innerHTML=(t.days||[]).length?'<table><tr><th>Date</th><th>Emails</th><th>Recipients counted</th></tr>'+t.days.map(d=>`<tr><td>${E(d.date)}</td><td>${d.emails}</td><td>${d.used}</td></tr>`).join('')+'</table>':'<p class="pn" style="padding:14px;margin:0">No emails logged yet.</p>';
+ const SC={Sent:'#16a34a',Blocked:'#e11d48',Failed:'#e11d48'};
+ $('trkl').innerHTML=(t.log||[]).length?'<table><tr><th>Time (PH)</th><th>Type</th><th>To</th><th>Team</th><th>Counted</th><th>Status</th></tr>'+t.log.map(l=>`<tr><td>${E(l.ts)}</td><td>${E(TRK_ACT[l.action]||l.action)}</td><td>${E(l.to)}</td><td>${E(l.team)}</td><td>${l.n}</td><td style="color:${SC[l.status]||'inherit'};font-weight:600" ${l.note?`title="${E(l.note)}"`:''}>${E(l.status)}</td></tr>`).join('')+'</table>':'<p class="pn" style="padding:14px;margin:0">No emails logged yet.</p>';}
+const mailFields=async r=>({event:await mpoSettings(),code:r.code,team:r.team,category:r.category,finalCategory:r.finalCategory||'',p1:r.p1,p2:r.p2,email:r.email,phone:r.phone,due:dueOf(r),paid:paidOf(r),balance:Math.max(0,dueOf(r)-paidOf(r)),status:r.status});
+/* ---- Emails (Google Apps Script webhook). Every email is sent only when the admin presses its button. ---- */
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,okEmail=r=>{if(EMAIL_RE.test(String(r.email||'').trim()))return true;alert('This registration has no valid email address ("'+(r.email||'')+'").\n\nFix it with the Edit button first.');return false;};
+/* 1) Acknowledge -> 6-character code + status page link (Apps Script action "acknowledge") */
+async function ack(id){const r=rows.find(x=>x.id===id);if(!r||!okEmail(r))return;
+ if(!r.code)return alert('This registration has no code yet. Wait a moment for it to generate, then try again.');
+ const re=!!r.ackAt,mark=()=>db.collection(REG).doc(id).update(Object.assign({ackAt:TS(),hist:H(re?'Acknowledgement email resent':'Acknowledgement email sent',r.email)},r.status==='Submitted'?{status:'Acknowledgement-Sent'}:{})).then(()=>logA('acknowledged',tgt(r),(re?'Resent to ':'Acknowledgement to ')+r.email,id));
+ if(!MPO_WEBHOOK){alert("TEST MODE: this will email the registrant their 6-character code and the status page link (no payment details).");return mark();}
+ if(!confirm((re?'RESEND acknowledgement':'Send acknowledgement')+' (code '+r.code+' + status page link) to '+r.email+'?'))return;
  try{await callHook(Object.assign({action:'acknowledge'},await mailFields(r)));await mark();alert('Acknowledgement sent to '+r.email);}
  catch(e){alert('Email failed: '+e.message+'. Status not changed.');}}
-/* Send payment instructions -> separate button (Apps Script action "paymentInstructions") */
-async function sendPay(id){const r=rows.find(x=>x.id===id);if(!r)return;
- if(r.status==='Rejected')return;
- if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the payment instructions to '+r.email+'.');
+/* 2) Send payment details -> only after the decision is Accepted (Apps Script action "paymentInstructions") */
+async function sendPay(id){const r=rows.find(x=>x.id===id);if(!r||!okEmail(r))return;
+ if(r.status==='Rejected'||r.decision!=='Accepted')return alert('Payment details can only be sent once the Final MPO Decision is Accepted.');
+ if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the payment details (and ask for proof of payment by reply) to '+r.email+'.');
  const bal=Math.max(0,dueOf(r)-paidOf(r));
- if(!confirm((r.payInstrAt?'RESEND payment instructions':'Send payment instructions')+' to '+r.email+'?\n\nAmount due: '+peso(dueOf(r))+(paidOf(r)?'\nBalance: '+peso(bal):'')))return;
+ if(!confirm((r.payInstrAt?'RESEND payment details':'Send payment details')+' to '+r.email+'?\n\nCategory: '+(r.finalCategory||r.category)+'\nAmount due: '+peso(dueOf(r))+(paidOf(r)?'\nBalance: '+peso(bal):'')))return;
  try{await callHook(Object.assign({action:'paymentInstructions'},await mailFields(r)));
-  await db.collection(REG).doc(r.id).update({payInstrAt:firebase.firestore.FieldValue.serverTimestamp()});logA('payment_instructions_sent',tgt(r),r.email,r.id);alert('Payment instructions sent to '+r.email);}
+  await db.collection(REG).doc(r.id).update({payInstrAt:TS(),hist:H(r.payInstrAt?'Payment details resent':'Payment details sent',r.email)});logA('payment_instructions_sent',tgt(r),r.email,r.id);alert('Payment details sent to '+r.email);}
  catch(e){alert('Email failed: '+e.message);}}
-/* Send slot confirmation -> player portal link + code (Apps Script action "confirmSlot") */
-async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r)return;
+/* 3) Send confirmation -> "Slot confirmed. See you on the court!" (no code, no portal link) (Apps Script action "confirmSlot") */
+async function sendSlot(id){const r=rows.find(x=>x.id===id);if(!r||!okEmail(r))return;
  if(!isConf(r))return alert('Confirm this registration first (record a payment or settle later).');
- if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the slot confirmation, player portal link and 6-character code to '+r.email+'.');
- if(!r.code)return alert('This registration has no code yet. Wait a moment for it to generate, then try again.');
+ if(!MPO_WEBHOOK)return alert('TEST MODE: this will email the slot confirmation to '+r.email+'.');
  const bal=Math.max(0,dueOf(r)-paidOf(r));
- if(!confirm((r.slotEmailAt?'RESEND slot confirmation':'Send slot confirmation')+' to '+r.email+'?\n\nStatus: '+r.status+(bal>0?'\nUnpaid balance: '+peso(bal):'')))return;
+ if(!confirm((r.slotEmailAt?'RESEND confirmation':'Send confirmation')+' to '+r.email+'?\n\nStatus: '+r.status+(bal>0?'\nUnpaid balance: '+peso(bal):'')))return;
  try{await callHook(Object.assign({action:'confirmSlot'},await mailFields(r)));
-  await db.collection(REG).doc(r.id).update({slotEmailAt:firebase.firestore.FieldValue.serverTimestamp()});logA('slot_email_sent',tgt(r),r.email,r.id);alert('Slot confirmation sent to '+r.email);}
+  await db.collection(REG).doc(r.id).update({slotEmailAt:TS(),hist:H(r.slotEmailAt?'Confirmation email resent':'Confirmation email sent',r.email)});logA('slot_email_sent',tgt(r),r.email,r.id);alert('Confirmation sent to '+r.email);}
  catch(e){alert('Email failed: '+e.message+'. Check the Apps Script Executions log before retrying.');}}
-function csv(){const h=['code','team','category','p1','c1','p2','c2','phone','email','status','due','paid','balance','payNotes','notes','municipality','province','decision','finalCategory'];
+function csv(){const h=['code','team','category','p1','c1','p2','c2','phone','email','status','due','paid','balance','payNotes','notes','municipality','province','decision','finalCategory','rejectReason'];
  const t=[h.join(',')].concat(rows.map(r=>({...r,due:dueOf(r),paid:paidOf(r),balance:dueOf(r)-paidOf(r)})).map(r=>h.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))).join('\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));a.download='mpo-cup-2026-registrations.csv';a.click();}
 
+/* ---- Shared helpers: timestamps, per-registration history, decision <-> status sync, public status mirror ---- */
+const TS=()=>firebase.firestore.FieldValue.serverTimestamp(),actor=()=>AUTHUSER?AUTHNAME:('Passcode '+(ROLE||'admin')),
+ H=(ev,detail)=>firebase.firestore.FieldValue.arrayUnion({ts:Date.now(),by:actor(),ev,detail:String(detail||'').slice(0,400)});
+/* Rejected decision <-> Rejected status stay in sync. Returns the Firestore update for a decision change. */
+function decUpdate(x,dec,reason){const u={decision:dec,decisionAt:TS()};let d='Decision: '+(x.decision||'Pending')+' → '+(dec||'Pending');
+ if(dec==='Rejected'){u.rejectReason=reason;d+=' · reason: '+reason;if(x.status!=='Rejected'){u.prevStatus=x.status||'Submitted';u.status='Rejected';}}
+ else if(x.status==='Rejected'){u.status=(x.prevStatus&&x.prevStatus!=='Rejected')?x.prevStatus:(x.ackAt?'Acknowledgement-Sent':'Submitted');d+=' · status restored to '+u.status;}
+ u.hist=H('Decision changed',d);return u;}
+const decSel=x=>`<br><select class="s sd" aria-label="Final MPO decision" onchange="setDec('${x.id}',this.value)"><option value="">Decision: Pending</option>${['Accepted','For Verification','Rejected'].map(d=>`<option ${d===x.decision?'selected':''}>${d}</option>`).join('')}</select>`;
+async function setDec(id,v){const x=rows.find(r=>r.id===id);if(!x||!A())return;let reason=String(x.rejectReason||'');
+ if(v==='Rejected'){reason=(prompt('Reason for rejection.\n\nThis reason is VISIBLE to the rejected team on the status page:',reason)||'').trim();if(!reason){alert('A reason is required to reject a registration.');draw();return;}}
+ try{await db.collection(REG).doc(id).update(decUpdate(x,v,reason));logA('decision_changed',tgt(x),(x.decision||'Pending')+' → '+(v||'Pending')+(v==='Rejected'?' · reason: '+reason:''),id);}catch(e){alert('Could not save: '+e.message);draw();}}
+/* Which action buttons show, following the flow: Acknowledge -> decision -> payment details -> record payment -> confirmation */
+const flowBtns=x=>{const rej=x.status==='Rejected',fv=x.decision==='For Verification',acc=x.decision==='Accepted';let h='';
+ if(x.status==='Submitted'||x.status==='Acknowledgement-Sent')h+=ib('mail',x.ackAt?'Resend acknowledgement email (code + status link)':'Acknowledge (email the 6-character code + status link)',`ack('${x.id}')`,x.ackAt?'done':'pri');
+ if(!rej&&acc)h+=ib('send',x.payInstrAt?'Resend payment details':'Send payment details',`sendPay('${x.id}')`,x.payInstrAt?'done':'');
+ if(!rej&&!fv&&(acc||isConf(x)||paidOf(x)>0))h+=ib(isConf(x)?'card':'check',isConf(x)?'Payments (record / view)':'Confirm slot & record payment',`openPay('${x.id}')`);
+ if(!rej&&!fv&&isConf(x))h+=ib('cal',x.slotEmailAt?'Resend confirmation email':'Send confirmation email',`sendSlot('${x.id}')`,x.slotEmailAt?'done':'');
+ return h;};
+/* Old status name -> new one (one-time, admin only) */
+const migrating=new Set();
+async function migrateAck(){if(!A())return;for(const r of rows){if(!r._old||migrating.has(r.id))continue;migrating.add(r.id);try{await db.collection(REG).doc(r.id).update({status:'Acknowledgement-Sent'});}catch(e){migrating.delete(r.id);console.warn(e.message);}}}
+/* Public status mirror: collection mpo-cup2026-status, one tiny doc per 6-char code (team, decision, final category, reject reason, slot confirmed). The public status page can read ONE doc by code but cannot list. */
+const pubOf=x=>({team:x.team||'',category:x.category||'',finalCategory:x.finalCategory||'',decision:x.decision||'',rejected:x.status==='Rejected'||x.decision==='Rejected',rejectReason:(x.status==='Rejected'||x.decision==='Rejected')?(x.rejectReason||''):'',slotConfirmed:!!x.slotEmailAt&&isConf(x)});
+function syncPub(){if(!A())return;const seen=new Set();
+ rows.forEach(x=>{if(!x.code)return;seen.add(x.code);const p=pubOf(x),j=JSON.stringify(p);if(pubSeen.get(x.code)===j)return;pubSeen.set(x.code,j);
+  db.collection(PUB).doc(x.code).set(Object.assign({},p,{updatedAt:TS()})).catch(e=>{pubSeen.delete(x.code);console.warn('status sync failed:',e.message);if(!window._pubWarn){window._pubWarn=1;alert('The public status page could not be updated: '+e.message+'\n\nPublish the Firestore rules for mpo-cup2026-status first.');}});});
+ [...pubSeen.keys()].forEach(c=>{if(!seen.has(c)){pubSeen.delete(c);db.collection(PUB).doc(c).delete().catch(()=>{});}});}
+/* Manual sync: rewrites every registration to the public status page and reports exactly what happened */
+async function forceSync(){if(!A())return;const b=$('psb'),t=b.textContent;b.disabled=true;b.textContent='Syncing…';pubSeen.clear();
+ const withCode=rows.filter(x=>x.code),noCode=rows.length-withCode.length,res=await Promise.allSettled(withCode.map(x=>{const p=pubOf(x);pubSeen.set(x.code,JSON.stringify(p));return db.collection(PUB).doc(x.code).set(Object.assign({},p,{updatedAt:TS()}));})),
+  bad=res.filter(r=>r.status==='rejected');bad.length&&withCode.forEach(x=>pubSeen.delete(x.code));
+ b.disabled=false;b.textContent=t;
+ alert('Status page sync: '+(withCode.length-bad.length)+' of '+withCode.length+' registrations written.'+(noCode?'\n'+noCode+' registration(s) have no code yet and were skipped.':'')+(bad.length?'\n\nError: '+(bad[0].reason&&bad[0].reason.message||bad[0].reason)+'\n\nCheck that the Firestore rules for mpo-cup2026-status are published and that you are signed in as an admin (Google sign-in).':'\n\nDone. Test a code on the status page now.'));}
+/* History: every send / decision / payment with a timestamp. Older registrations are rebuilt from their saved timestamps. */
+function openHist(id){const x=rows.find(r=>r.id===id);if(!x)return;const L=[],h0=x.hist||[],has=p=>h0.some(h=>String(h.ev).startsWith(p)),tm=t=>t&&t.toDate?t.toDate().getTime():null;
+ if(tm(x.createdAt))L.push({ts:tm(x.createdAt),by:'Registrant',ev:'Registration submitted',detail:x.email||''});
+ if(!has('Acknowledgement email')&&tm(x.ackAt))L.push({ts:tm(x.ackAt),ev:'Acknowledgement email sent',detail:x.email||''});
+ if(!has('Payment details')&&tm(x.payInstrAt))L.push({ts:tm(x.payInstrAt),ev:'Payment details sent',detail:x.email||''});
+ if(!has('Confirmation email')&&tm(x.slotEmailAt))L.push({ts:tm(x.slotEmailAt),ev:'Confirmation email sent',detail:x.email||''});
+ if(!has('Decision')&&tm(x.decisionAt))L.push({ts:tm(x.decisionAt),ev:'Decision set',detail:x.decision||'Pending'});
+ if(!has('Payment recorded'))(x.payments||[]).forEach(p=>{const t=Date.parse((p.date||'')+'T12:00:00+08:00');if(!isNaN(t))L.push({ts:t,ev:'Payment recorded',detail:peso(p.amount)+' · '+(p.mode||'')+(p.ref?' · ref '+p.ref:'')});});
+ (x.notesLog||[]).forEach(n=>L.push({ts:n.ts,by:n.name,ev:'Note added',detail:n.text}));
+ h0.forEach(h=>L.push(h));L.sort((a,b)=>a.ts-b.ts);
+ $('dhh').firstChild.textContent='History · '+(x.team||'');$('dhs').textContent=(x.code||'')+' · current status: '+String(x.status||'').replace(/-/g,' ')+(x.decision?' · decision: '+x.decision:'');
+ $('dhc').innerHTML=L.length?`<div class="dtw"><table class="hl"><tr><th style="width:170px">When (PH time)</th><th>Event</th><th>By</th><th>Details</th></tr>${L.map(e=>`<tr><td style="white-space:nowrap">${E(fmtTs(e.ts))}</td><td class="ev">${E(e.ev)}</td><td>${E(e.by||'')}</td><td style="white-space:pre-wrap;word-break:break-word">${E(e.detail||'')}</td></tr>`).join('')}</table></div><p class="pn" style="margin:10px 0 0">Entries from before history tracking was added are rebuilt from saved timestamps, so some older details are not available.</p>`:'<p class="pn">No history yet.</p>';
+ $('dh').showModal();}
+function decTog(){const w=$('d_rw'),d=$('d_dec');if(w&&d)w.hidden=d.value!=='Rejected';}
 /* ---- View Details modal: vouching, notes (append-only), final decision ---- */
 const DECS=['Accepted','For Verification','Rejected'],geoing=new Set();let curDet=null,detDirty=false;
 const decBadge=x=>x.decision?`<br><span class="dec dec-${E(x.decision).replace(/ /g,'-')}">${E(x.decision)}</span>`:'';
@@ -257,8 +351,9 @@ function openDet(id){const x=rows.find(r=>r.id===id);if(!x)return;curDet=id;detD
  <div id="dtn"></div>
  ${ro?'':`<div class="nadd"><div><label for="nn">Your name</label><input id="nn" value="${E(nm)}" placeholder="Name" ${AUTHUSER?'readonly':''}></div><div><label for="nt">Note</label><textarea id="nt" rows="1" placeholder="Write a note…"></textarea></div><div><label>&nbsp;</label><button type="button" class="btn" onclick="addNote()">Add Notes +</button></div></div><div id="ne"></div><p class="pn" style="margin:6px 0 0">Notes are append-only: saved right away and can't be edited or deleted.</p>`}
  <h4>Final MPO Decision</h4>
- <div class="tg"><div><label for="d_dec">Decision</label><select id="d_dec" data-f="decision" ${dis}><option value="">— Pending —</option>${DECS.map(d=>`<option ${d===x.decision?'selected':''}>${d}</option>`).join('')}</select></div>
+ <div class="tg"><div><label for="d_dec">Decision</label><select id="d_dec" data-f="decision" onchange="decTog()" ${dis}><option value="">— Pending —</option>${DECS.map(d=>`<option ${d===x.decision?'selected':''}>${d}</option>`).join('')}</select></div>
  <div><label for="d_fc">Final category</label><select id="d_fc" data-f="finalCategory" ${dis}><option value="">— Same as initial —</option>${cats.map(c=>`<option ${c===x.finalCategory?'selected':''}>${E(c)}</option>`).join('')}</select></div></div>
+ <div id="d_rw" ${x.decision==='Rejected'?'':'hidden'} style="margin-top:12px"><label for="d_rr">Reason for rejection *</label><textarea id="d_rr" rows="2" style="width:100%;box-sizing:border-box" ${dis}>${E(x.rejectReason||'')}</textarea><p class="pn" style="margin:4px 0 0">Required when rejecting. <b>This reason is visible to the rejected team</b> on the status page.</p></div>
  ${x.decisionAt&&x.decisionAt.toDate?`<p class="pn" style="margin:8px 0 0">Decision last changed ${E(x.decisionAt.toDate().toLocaleString('en-PH'))}</p>`:''}`;
  $('dtfoot').innerHTML=ro?'<span class="grow">View only</span>':'<span class="grow" id="dtst"></span><button type="button" class="btn ghost" onclick="closeDet()">Cancel</button><button type="button" class="btn" id="dtsv" onclick="saveDet()">Save</button>';
  $('dt').showModal();drawNotes();}
@@ -272,10 +367,14 @@ async function addNote(){if(!A()||!curDet)return;const nm=$('nn').value.trim(),t
 const dget=n=>{const el=$('dt').querySelector('[data-f="'+n+'"]');return el?el.value.trim():'';};
 async function saveDet(){if(!A()||!curDet)return;const x=rows.find(r=>r.id===curDet);if(!x)return;
  const vouch={};[1,2].forEach(n=>vouch['p'+n]={rating:dget('vr'+n),rel:dget('vl'+n),level:dget('vs'+n),by:dget('vb'+n)});
- const u={vouch,municipality:dget('municipality'),province:dget('province'),decision:dget('decision'),finalCategory:dget('finalCategory'),detEditedAt:firebase.firestore.FieldValue.serverTimestamp()};
- if(u.decision!==(x.decision||''))u.decisionAt=firebase.firestore.FieldValue.serverTimestamp();
+ const dec=dget('decision'),rrEl=$('d_rr'),rr=rrEl?rrEl.value.trim():String(x.rejectReason||'');
+ if(dec==='Rejected'&&!rr){$('dtst').innerHTML='<span class="neg">A reason for rejection is required (it is visible to the rejected team).</span>';return;}
+ const u={vouch,municipality:dget('municipality'),province:dget('province'),decision:dec,finalCategory:dget('finalCategory'),detEditedAt:TS()};
+ if(dec==='Rejected'&&rr!==String(x.rejectReason||''))u.rejectReason=rr;
+ if(dec!==(x.decision||''))Object.assign(u,decUpdate(x,dec,rr));
+ const d=diffStr(x,u);if(!u.hist&&d)u.hist=H('Details saved',d);
  $('dtsv').disabled=true;$('dtst').textContent='Saving…';
- try{await db.collection(REG).doc(curDet).update(u);{const d=diffStr(x,u);if(d)logA('details_saved',tgt(x),d,x.id);}detDirty=false;$('dt').close();}
+ try{await db.collection(REG).doc(curDet).update(u);if(d)logA('details_saved',tgt(x),d,x.id);detDirty=false;$('dt').close();}
  catch(e){$('dtsv').disabled=false;$('dtst').innerHTML='<span class="neg">Could not save: '+E(e.message)+'</span>';}}
 function closeDet(){if(detDirty&&!confirm('You have unsaved changes. Close anyway?'))return;detDirty=false;$('dt').close();}
 $('dt').addEventListener('cancel',e=>{e.preventDefault();closeDet();});
@@ -288,15 +387,15 @@ function renderPay(){const p=paidOf(cur),d=dueOf(cur),b=d-p;
 function openPay(id){cur=rows.find(r=>r.id===id);if(!cur)return;$('pdt').textContent=cur.team+' · '+(cur.code||'');renderPay();$('pm').value='';$('pa').value=Math.max(0,dueOf(cur)-paidOf(cur))||'';$('pt').value=today();$('pr').value='';$('pn').value=cur.payNotes||'';$('pe').innerHTML='';$('pd').showModal();}
 async function payPaid(){const amt=+$('pa').value;if(!$('pm').value||!(amt>0)){$('pe').innerHTML='<div class="msg err">Select a mode of payment and enter an amount, or choose "Settle later".</div>';return;}
  const pays=[...(cur.payments||[]),{mode:$('pm').value,amount:amt,date:$('pt').value||today(),ref:$('pr').value.trim(),notes:$('pn').value.trim()}];
- await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});logA('payment_recorded',tgt(cur),peso(amt)+' · '+pays[pays.length-1].mode+(pays[pays.length-1].ref?' · ref '+pays[pays.length-1].ref:'')+' → status '+statusFor(cur,sum(pays,p=>+p.amount||0)),cur.id);$('pd').close();}
-async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur))});logA('slot_confirmed_pay_later',tgt(cur),$('pn').value.trim(),cur.id);$('pd').close();}
-async function delPay(i){if(!confirm('Delete this payment record?'))return;const pays=(cur.payments||[]).filter((_,k)=>k!==i),u={payments:pays};
+ await db.collection(REG).doc(cur.id).update({payments:pays,payNotes:'',hist:H('Payment recorded',peso(amt)+' · '+$('pm').value+($('pr').value.trim()?' · ref '+$('pr').value.trim():'')),status:statusFor(cur,sum(pays,p=>+p.amount||0)),editedAt:firebase.firestore.FieldValue.serverTimestamp()});logA('payment_recorded',tgt(cur),peso(amt)+' · '+pays[pays.length-1].mode+(pays[pays.length-1].ref?' · ref '+pays[pays.length-1].ref:'')+' → status '+statusFor(cur,sum(pays,p=>+p.amount||0)),cur.id);$('pd').close();}
+async function paySoon(){await db.collection(REG).doc(cur.id).update({payNotes:$('pn').value.trim(),status:statusFor(cur,paidOf(cur)),hist:H('Slot confirmed (pay later)',$('pn').value.trim())});logA('slot_confirmed_pay_later',tgt(cur),$('pn').value.trim(),cur.id);$('pd').close();}
+async function delPay(i){if(!confirm('Delete this payment record?'))return;const pays=(cur.payments||[]).filter((_,k)=>k!==i),u={payments:pays,hist:H('Payment deleted',(g=>g?peso(g.amount)+' · '+(g.mode||''):'')((cur.payments||[])[i]))};
  if(isConf(cur))u.status=statusFor(cur,sum(pays,p=>+p.amount||0));await db.collection(REG).doc(cur.id).update(u);{const g=(cur.payments||[])[i];logA('payment_deleted',tgt(cur),g?peso(g.amount)+' · '+g.mode+(g.ref?' · ref '+g.ref:''):'',cur.id);}cur.payments=pays;if(u.status)cur.status=u.status;renderPay();}
 /* ---- Edit registration ---- */
 const KNOWN=[['team','Team'],['category','Category'],['p1','Player 1'],['c1','Player 1 club'],['p2','Player 2'],['c2','Player 2 club'],['phone','Phone'],['email','Email'],['municipality','Municipality'],['province','Province'],['notes','Notes'],['due','Amount due override (₱, blank = default)']],
- SKIP=['vouch','notesLog','decision','decisionAt','finalCategory','detEditedAt','id','createdAt','editedAt','code','status','payments','payNotes','payAt','payMode','slotEmailAt','ackAt','payInstrAt'],isSz=k=>/size|^s[12]$|^sz|shirt/i.test(k);
+ SKIP=['vouch','notesLog','decision','decisionAt','finalCategory','detEditedAt','id','createdAt','editedAt','code','status','payments','payNotes','payAt','payMode','slotEmailAt','ackAt','payInstrAt','hist','prevStatus','rejectReason','_old'],isSz=k=>/size|^s[12]$|^sz|shirt/i.test(k);
 let edDirty=false,edId=null;
-const EDCOV=['team','category','phone','email','municipality','province','p1','p2','age1','age2','gender1','gender2','dupr1','dupr2','shirt1','shirt2','address1','address2','club1','club2','c1','c2','notes','due','decision','finalCategory'];
+const EDCOV=['team','category','phone','email','municipality','province','p1','p2','age1','age2','gender1','gender2','dupr1','dupr2','shirt1','shirt2','address1','address2','club1','club2','c1','c2','notes','due','decision','finalCategory','rejectReason'];
 function openEdit(id){const x=rows.find(r=>r.id===id);if(!x)return;cur=x;edId=id;edDirty=false;
  const V=x.vouch||{},cats=[...new Set([...MPO_CATS,x.category].filter(Boolean))],val=k=>E(x[k]??''),
  f=(k,l,t,ex)=>`<div><label for="e_${k}">${l}</label><input id="e_${k}" data-e="${k}" type="${t||'text'}" value="${val(k)}" ${ex||''}></div>`,
@@ -314,6 +413,7 @@ function openEdit(id){const x=rows.find(r=>r.id===id);if(!x)return;cur=x;edId=id
  <h4>Address &amp; Club</h4><div class="eg"><div class="full">${ck('addressSame','Same address for both players',aS)}</div>${f('address1','Address (team / Player 1)')}<div id="e_a2w">${f('address2','Address (Player 2)')}</div>
  <div class="full">${ck('clubSame','Same club / association for both players',cS)}</div>${f('club1','Club (team / Player 1)')}<div id="e_c2w">${f('club2','Club (Player 2)')}</div></div>
  <h4>Decision, Payment &amp; Notes</h4><div class="eg">${sel('decision','Final MPO decision',DECS,'— Pending —')}${W(sel('finalCategory','Final category',cats,'— Same as initial —'),'s2')}${W(f('due','Amount due override (₱, blank = default)','number','min="0"'),'s2')}
+ <div class="full"><label for="e_rejectReason">Reason for rejection <small>(visible to the rejected team · required when the decision is Rejected)</small></label><textarea id="e_rejectReason" data-e="rejectReason" rows="2">${val('rejectReason')}</textarea></div>
  <div class="full"><label for="e_notes">Registrant's note</label><textarea id="e_notes" data-e="notes" rows="2">${val('notes')}</textarea></div></div>
  ${ex.length?`<h4>Other fields</h4><div class="eg">${ex.map(k=>f(k,E(k),typeof x[k]==='number'?'number':'text')).join('')}</div>`:''}
  <p class="pn" style="margin:14px 0 0">Internal notes are added from View Details and can't be edited here.</p>`;
@@ -332,7 +432,10 @@ async function saveEdit(){const x=rows.find(r=>r.id===edId);if(!x)return;const u
  const nv={},ov={};[1,2].forEach(n=>{nv['p'+n]={};['rating','rel','level','by'].forEach(k=>{const el=$('ed').querySelector('[data-ev="'+k+n+'"]');nv['p'+n][k]=el?el.value.trim():'';});
   const o=(x.vouch||{})['p'+n]||{};ov['p'+n]={rating:String(o.rating??''),rel:String(o.rel??''),level:o.level||'',by:o.by||''};});
  if(JSON.stringify(nv)!==JSON.stringify(ov))u.vouch=nv;
- if(u.decision!==undefined)u.decisionAt=firebase.firestore.FieldValue.serverTimestamp();
+ {const dNew=u.decision!==undefined?u.decision:(x.decision||''),rNew=String(u.rejectReason!==undefined?u.rejectReason:(x.rejectReason||'')).trim();
+  if(dNew==='Rejected'&&!rNew){$('eds').innerHTML='<span class="neg">A reason for rejection is required (it is visible to the rejected team).</span>';return;}
+  if(u.decision!==undefined)Object.assign(u,decUpdate(x,u.decision,rNew));
+  const d0=diffStr(x,u);if(!u.hist&&d0)u.hist=H('Registration edited',d0);}
  if(!Object.keys(u).length){edDirty=false;$('ed').close();return;}
  u.editedAt=firebase.firestore.FieldValue.serverTimestamp();
  $('edsv').disabled=true;$('eds').textContent='Saving…';
@@ -368,7 +471,7 @@ function shirtCsv(){const q=v=>'"'+String(v||'').replace(/"/g,'""')+'"',out=[];
  const t=[['name','type','size'].join(',')].concat(out.map(r=>r.map(q).join(','))).join('\n');
  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'}));l.download='mpo-cup-2026-shirts.csv';l.click();}
 /* ---- Payments tab ---- */
-function recvals(){const conf=rows.filter(isConf),pipe=rows.filter(x=>x.status==='Submitted'||x.status==='Confirmation-Sent'),rej=rows.filter(x=>x.status==='Rejected');
+function recvals(){const conf=rows.filter(isConf),pipe=rows.filter(x=>x.status==='Submitted'||x.status==='Acknowledgement-Sent'),rej=rows.filter(x=>x.status==='Rejected');
  return {conf,pipe,rej,exp:sum(conf,dueOf),col:sum(rows.filter(x=>x.status!=='Rejected'),paidOf),rec:sum(conf,x=>Math.max(0,dueOf(x)-paidOf(x))),pipeAmt:sum(pipe,dueOf),
   shU:sum(extras.filter(e=>e.pay==='Unpaid'),tot),shP:sum(extras.filter(e=>e.pay==='Paid'),tot),refund:sum(rej,paidOf)};}
 function drawPay(){const v=recvals(),card=(t,n,s,c)=>`<div class="stat"><b>${t}</b><br><big class="${c||''}">${peso(n)}</big><small>${s}</small></div>`;
@@ -431,9 +534,9 @@ if(typeof firebase.auth==='function')firebase.auth().onAuthStateChanged(async u=
 
 /* ---- Access: which tabs this login can open ---- */
 function applyAccess(){const keys=ISSUPER?null:(ALLOW_KEYS||(A()?ROLE_TABS.admin:ROLE_TABS.viewer));
- ALLOW=ISSUPER?new Set([0,1,2,3,4,5,6,7]):new Set(keys.map(k=>TIDX[k]).filter(i=>i!==undefined));
- [0,1,2,3,4,5,6,7].forEach(i=>{const b=$('t'+i);if(b)b.hidden=!ALLOW.has(i);});
- const first=[0,1,3,4,5,2,6,7].find(i=>ALLOW.has(i));if(first!==undefined&&first!==0)tab(first);}
+ ALLOW=ISSUPER?new Set([0,1,2,3,4,5,6,7,8]):new Set(keys.map(k=>TIDX[k]).filter(i=>i!==undefined));
+ [0,1,2,3,4,5,6,7,8].forEach(i=>{const b=$('t'+i);if(b)b.hidden=!ALLOW.has(i);});
+ const first=[0,1,3,4,5,8,2,6,7].find(i=>ALLOW.has(i));if(first!==undefined&&first!==0)tab(first);}
 /* ---- Users tab (superadmin only) ---- */
 function drawUsers(){if(!$('ul'))return;$('sup').textContent=SUPER_EMAILS.join('  ·  ');
  $('ul').innerHTML=users.length?`<table><tr><th>User</th><th>Role</th><th>Tabs</th><th>Status</th><th></th></tr>`+users.map(u=>{const tabs=(Array.isArray(u.tabs)&&u.tabs.length?u.tabs:ROLE_TABS[u.role]||[]);
