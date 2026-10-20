@@ -460,7 +460,7 @@
     <div class="modal-sub" id="bucketModalSub">Give the category a name and choose its mode.</div>
     <div class="field"><label for="bucketName">Category name</label><input type="text" id="bucketName" placeholder="e.g. Beginners, Open Singles"></div>
     <div class="field"><label for="bucketMode">Mode</label>
-      <select id="bucketMode"><option value="singles">Singles (1 vs 1)</option><option value="doubles">Doubles (2 vs 2)</option><option value="fixed">Doubles - Fixed Partner (2 vs 2)</option><option value="mixed">Mixed Doubles (2 vs 2 · 1 man + 1 woman per team)</option></select>
+      <select id="bucketMode"><option value="singles">Singles (1 vs 1)</option><option value="doubles">Doubles (2 vs 2)</option><option value="fixed">Doubles - Fixed Partner (2 vs 2)</option><option value="pair">Doubles - Pair Entry (pair typed as one name, plays like Singles)</option><option value="mixed">Mixed Doubles (2 vs 2 · 1 man + 1 woman per team)</option></select>
       <div class="helper" id="bucketModeHelper">The mode can't be changed after the category is created.</div></div>
     <div class="field"><label>Courts</label><div class="court-checks" id="bucketCourts"></div>
       <div class="helper">Matches from this category can only be put on the checked courts.</div></div>
@@ -474,7 +474,7 @@
   <div class="modal">
     <h2>Add participant</h2>
     <div class="modal-sub" id="addModalSub">Adding to category</div>
-    <div class="source-toggle">
+    <div class="source-toggle" id="sourceToggle">
       <button type="button" class="active" id="srcMemberBtn">From Registrations</button>
       <button type="button" id="srcGuestBtn">Guest</button>
     </div>
@@ -484,7 +484,7 @@
         <div class="combo-wrap"><input type="text" id="memberSearch" placeholder="Start typing…"><div class="combo-results" id="memberResults"></div></div><div class="helper" id="memberHint"></div></div>
     </div>
     <div id="guestSourceBlock" style="display:none;">
-      <div class="field"><label>Guest Name</label><input type="text" id="guestName" placeholder="Guest Name"></div>
+      <div class="field"><label id="guestNameLabel">Guest Name</label><input type="text" id="guestName" placeholder="Guest Name"></div>
       <div class="field"><label>Team Name</label><input type="text" id="guestTeam" placeholder="Team name (optional)"></div>
       <div class="field"><label>Code</label><input type="text" id="guestDuprId" placeholder="Registration code (optional)"></div>
       <div class="field" style="display:none;"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
@@ -501,7 +501,7 @@
 <div class="overlay" id="genOverlay">
   <div class="modal">
     <h2 id="genTitle">Generate matchups</h2>
-    <div class="modal-sub">Pick who to include (playing and queued players too), then how many rounds to create.</div>
+    <div class="modal-sub" id="genSub">Pick who to include (playing and queued players too), then how many rounds to create.</div>
     <div class="field" id="genPoolField" style="display:none;"><label for="genPool">Pool</label><select id="genPool"></select>
       <div class="helper">Players are only matched with others in the same pool. "All pools" builds each pool separately in the same rounds.</div></div>
     <div class="gen-tools">
@@ -510,7 +510,7 @@
       <button class="btn btn-ghost btn-sm" id="genAvail">Available only</button>
     </div>
     <div class="gen-list" id="genList"></div>
-    <div class="gen-rounds"><label for="genRounds">Number of rounds</label><input type="number" id="genRounds" min="1" max="30" value="1"></div>
+    <div class="gen-rounds" id="genRoundsWrap"><label for="genRounds">Number of rounds</label><input type="number" id="genRounds" min="1" max="30" value="1"></div>
     <div class="gen-summary" id="genSummary"></div>
     <div class="error-text" id="errGen"></div>
     <div class="modal-actions"><button class="btn btn-ghost" id="btnGenCancel">Cancel</button><button class="btn btn-primary" id="btnGenConfirm">Generate</button></div>
@@ -529,6 +529,7 @@
   <div class="modal wide">
     <h2>Optimize queue</h2>
     <div class="modal-sub" id="optSub"></div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin:0 0 12px;cursor:pointer;"><input type="checkbox" id="optLockChk"> 🔒 Lock first 4 matches (keep them in place)</label>
     <div class="opt-cols">
       <div class="opt-col"><h4>Current order</h4><div class="opt-list" id="optBefore"></div></div>
       <div class="opt-col"><h4>Suggested order</h4><div class="opt-list" id="optAfter"></div></div>
@@ -744,8 +745,8 @@ function freeCourtsFor(key){
   return bucketCourts(key).filter(c => !busy.has(c)).length;
 }
 function bucketSize(key){ const b = BUCKETS.find(x => x.key === key); return b ? b.size : 4; }
-function normMode(v){ return v === 'singles' ? 'singles' : (v === 'fixed' ? 'fixed' : (v === 'mixed' ? 'mixed' : 'doubles')); }
-function modeLabel(m){ return m === 'singles' ? 'Singles' : (m === 'fixed' ? 'Doubles · Fixed Partner' : (m === 'mixed' ? 'Mixed Doubles' : 'Doubles')); }
+function normMode(v){ return v === 'singles' ? 'singles' : (v === 'pair' ? 'pair' : (v === 'fixed' ? 'fixed' : (v === 'mixed' ? 'mixed' : 'doubles'))); }
+function modeLabel(m){ return m === 'singles' ? 'Singles' : (m === 'pair' ? 'Doubles · Pair Entry' : (m === 'fixed' ? 'Doubles · Fixed Partner' : (m === 'mixed' ? 'Mixed Doubles' : 'Doubles'))); }
 function modeTagHtml(b){
   if (!b || !b.mode) return '';
   let h = `<span class="mode-tag">${modeLabel(b.mode)}</span>`;
@@ -851,7 +852,7 @@ dbMembers.collection(REG_COLLECTION).onSnapshot(snap => {
 db.collection('ccpc-queue-buckets').onSnapshot(snap => {
   BUCKETS = snap.docs.map(d => {
     const x = d.data(), mode = normMode(x.mode);
-    return { key:d.id, label:x.name || 'Category', mode, size: mode === 'singles' ? 2 : 4, color: BUCKET_COLOR, createdAtMs: x.createdAtMs || 0,
+    return { key:d.id, label:x.name || 'Category', mode, size: (mode === 'singles' || mode === 'pair') ? 2 : 4, color: BUCKET_COLOR, createdAtMs: x.createdAtMs || 0,
       order: (x.order !== undefined && x.order !== null) ? Number(x.order) : (x.createdAtMs || 0),
       courts: (Array.isArray(x.courts) ? x.courts.map(Number).filter(c => c >= 1 && c <= MAX_COURTS) : []).sort((a,b) => a-b),
       pools: Array.isArray(x.pools) ? x.pools.filter(q => q && q.id).map(q => ({ id:String(q.id), name:String(q.name || 'Pool') })) : [] };
@@ -1063,7 +1064,7 @@ function renderParticipants(){
     <div class="bucket-card" data-bucket="${b.key}">
       <div class="bucket-head">
         <h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}</h3>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;"><span class="count">${list.length} player${list.length===1?'':'s'}${b.mode === 'mixed' ? ` · ${list.filter(x => genderOf(x) === 'M').length} M · ${list.filter(x => genderOf(x) === 'F').length} F` : ''}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;"><span class="count">${list.length} ${b.mode === 'pair' ? 'pair' : 'player'}${list.length===1?'':'s'}${b.mode === 'mixed' ? ` · ${list.filter(x => genderOf(x) === 'M').length} M · ${list.filter(x => genderOf(x) === 'F').length} F` : ''}</span>
           <span class="bucket-drag" draggable="true" title="Drag to rearrange categories">⠿</span>
           <button class="btn-icon" title="Move left" ${bi===0?'disabled':''} onclick="moveBucket('${b.key}',-1)">◀</button>
           <button class="btn-icon" title="Move right" ${bi===BUCKETS.length-1?'disabled':''} onclick="moveBucket('${b.key}',1)">▶</button>
@@ -1354,6 +1355,7 @@ document.getElementById('bucketCards-participants').addEventListener('dragstart'
 async function moveParticipantToBucket(pid, bucketKey){
   const p = participants.find(x => x.id === pid);
   if (!p || p.bucket === bucketKey) return;
+  if (isPair(bucketKey) && p.sourceType !== 'guest') { showToast('Pair Entry categories only accept guest entries (typed pair names).', true); return; }
   if (p.status === 'queued') { showToast(`${p.name} is in a match and can't be moved right now.`, true); return; }
   try {
     const q = partnerOf(p), FV = firebase.firestore.FieldValue, mb = db.batch();
@@ -1492,12 +1494,16 @@ function openAddModal(bucketKey){
   document.getElementById('errGuestDupr').textContent = '';
   document.getElementById('guestGenderField').style.display = isMixed(bucketKey) ? 'block' : 'none';
   document.getElementById('guestGender').value = '';
-  setSourceUI('member');
+  const pr = isPair(bucketKey);   // Pair Entry: guest only, the pair is typed as one name (e.g. "Ton and Roy")
+  document.getElementById('sourceToggle').style.display = pr ? 'none' : '';
+  document.getElementById('guestNameLabel').textContent = pr ? 'Pair name' : 'Guest Name';
+  document.getElementById('guestName').placeholder = pr ? 'e.g. Ton and Roy' : 'Guest Name';
+  setSourceUI(pr ? 'guest' : 'member');
   renderPending();
   renderMemberResults();
   memberResults.classList.remove('show');
   addOverlay.classList.add('show');
-  document.getElementById('memberSearch').focus();
+  document.getElementById(pr ? 'guestName' : 'memberSearch').focus();
 }
 function setSourceUI(src){
   addSource = src;
@@ -1688,6 +1694,7 @@ function pendingGenderHtml(x, i){
 
 /* ================= FIXED PARTNER (pairs) ================= */
 function isFixed(bk){ const b = BUCKETS.find(x => x.key === bk); return !!b && b.mode === 'fixed'; }
+function isPair(bk){ const b = BUCKETS.find(x => x.key === bk); return !!b && b.mode === 'pair'; }
 function partnerOf(p){ return p && p.pairId ? participants.find(x => x.pairId === p.pairId && x.id !== p.id) || null : null; }
 function newPairId(){ return 'pr_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function pairUnits(list){
@@ -1947,10 +1954,10 @@ function planMixedRounds(selected, roundCount){
 function mergeRounds(plans, n){
   return Array.from({ length: n }, (_, r) => ({ matches: plans.flatMap(pl => (pl[r] ? pl[r].matches : [])), bench: plans.flatMap(pl => (pl[r] ? pl[r].bench : [])) }));
 }
-function generateSuggestions(bucketKey, selected, roundCount, groups){
+function generateSuggestions(bucketKey, selected, roundCount, groups, prebuilt){
   const g = bucketSize(bucketKey);
   const planFor = list => isFixed(bucketKey) ? planFixedRounds(list, roundCount) : (isMixed(bucketKey) ? planMixedRounds(list, roundCount) : planRounds(list, g, roundCount));
-  const rounds = groups ? mergeRounds(groups.map(planFor), roundCount) : planFor(selected);
+  const rounds = prebuilt || (groups ? mergeRounds(groups.map(planFor), roundCount) : planFor(selected));
   suggestionState[bucketKey] = { rounds };
   renderSuggestions(bucketKey);
   const placed = new Set();
@@ -2032,7 +2039,7 @@ function renderSuggestions(bucketKey){
 
 /* ---- Generate modal ---- */
 const genOverlay = document.getElementById('genOverlay');
-let genBucket = null, genList = [], genSelected = new Set(), genPoolSel = '';
+let genBucket = null, genList = [], genSelected = new Set(), genPoolSel = '', genRR = false;
 function genInPool(p){
   if (!bucketHasPools(genBucket)) return true;
   const id = poolIdOf(p);
@@ -2052,6 +2059,7 @@ function genCapacity(list){
 }
 function genEligible(p){ return !isMixed(genBucket) || !!genderOf(p); }
 function genUpdateSummary(){
+  if (genRR) { genRRSummary(); return; }
   if (bucketHasPools(genBucket)) {
     const gs = genGroups().map(gr => ({ ...gr, cap: genCapacity(gr.list) }));
     document.getElementById('genSummary').textContent = gs.map(gr => `${gr.name}: ` + (gr.cap.matches >= 1 ? `${gr.cap.n} → ${gr.cap.matches} match${gr.cap.matches===1?'':'es'} per round` + (isMixed(genBucket) ? '' : (gr.cap.n - gr.cap.matches * bucketSize(genBucket) ? `, ${gr.cap.n - gr.cap.matches * bucketSize(genBucket)} sit out` : '')) : 'not enough players, skipped')).join('  ·  ');
@@ -2114,10 +2122,13 @@ function genRender(){
   }));
   genUpdateSummary();
 }
-function openGenerateModal(bucketKey){
-  genBucket = bucketKey;
+function openGenerateModal(bucketKey, rr){
+  genBucket = bucketKey; genRR = !!rr;
   const b = BUCKETS.find(x=>x.key===bucketKey);
-  document.getElementById('genTitle').textContent = 'Generate matchups · ' + b.label;
+  document.getElementById('genTitle').textContent = (genRR ? 'Round robin · ' : 'Generate matchups · ') + b.label;
+  document.getElementById('genRoundsWrap').style.display = genRR ? 'none' : '';
+  document.getElementById('btnGenConfirm').textContent = genRR ? 'Generate round robin' : 'Generate';
+  document.getElementById('genSub').textContent = genRR ? 'Pick who to include. Everyone in the pool plays everyone else once; the number of rounds is automatic.' : 'Pick who to include (playing and queued players too), then how many rounds to create.';
   const gpf = document.getElementById('genPoolField');
   if (bucketHasPools(bucketKey)) {
     genPoolSel = '*';
@@ -2142,6 +2153,7 @@ document.getElementById('genNone').onclick = () => { genSelected = new Set(); ge
 document.getElementById('genAvail').onclick = () => { genSelected = new Set(genList.filter(p=>p.status==='active' && genEligible(p)).map(p=>p.id)); genRender(); };
 document.getElementById('btnGenCancel').onclick = () => genOverlay.classList.remove('show');
 document.getElementById('btnGenConfirm').onclick = () => {
+  if (genRR) { genRRConfirm(); return; }
   const g = bucketSize(genBucket);
   const selected = genList.filter(p => genSelected.has(p.id) && genEligible(p));
   const rounds = Math.max(1, Math.min(30, parseInt(document.getElementById('genRounds').value, 10) || 1));
@@ -2164,6 +2176,52 @@ document.getElementById('btnGenConfirm').onclick = () => {
   generateSuggestions(genBucket, selected, rounds);
   genOverlay.classList.remove('show');
 };
+
+/* ---- Round robin (singles / pair entry / fixed partner): everyone in a pool plays everyone else once ---- */
+function rrEntries(list){
+  if (isFixed(genBucket)) return pairUnits(list).map(u => ({ members:[u.a, u.b], name:u.name }));
+  return list.map(p => ({ members:[p], name:p.name }));
+}
+function rrGroups(){
+  if (bucketHasPools(genBucket)) return genGroups().map(g => ({ name:g.name, entries: rrEntries(g.list) }));
+  return [{ name:'', entries: rrEntries(genList.filter(p => genSelected.has(p.id) && genEligible(p))) }];
+}
+/* Circle method. Odd count = one bye (bench) per round. */
+function rrSchedule(entries){
+  const arr = shuffle(entries); if (arr.length % 2) arr.push(null);
+  const n = arr.length, rounds = [];
+  for (let r = 0; r < n - 1; r++){
+    const matches = []; let bye = null;
+    for (let i = 0; i < n / 2; i++){
+      const a = arr[i], b = arr[n - 1 - i];
+      if (!a || !b) bye = a || b; else matches.push({ team1: a.members.slice(), team2: b.members.slice(), added:false });
+    }
+    rounds.push({ matches: shuffle(matches), bench: bye ? bye.members.slice() : [] });
+    arr.splice(1, 0, arr.pop());
+  }
+  return rounds;
+}
+function genRRSummary(){
+  const gs = rrGroups(), noun = (isFixed(genBucket) || isPair(genBucket)) ? 'pair' : 'player';
+  document.getElementById('genSummary').textContent = gs.map(g => {
+    const n = g.entries.length, pre = g.name ? g.name + ': ' : '';
+    if (n < 2) return pre + 'need at least 2 ' + noun + 's';
+    const rounds = n % 2 ? n : n - 1;
+    return `${pre}${n} ${noun}s → ${rounds} round${rounds === 1 ? '' : 's'}, ${n * (n - 1) / 2} matches` + (n % 2 ? ' (1 bye per round)' : '');
+  }).join(' · ');
+  document.getElementById('btnGenConfirm').disabled = !gs.some(g => g.entries.length >= 2);
+}
+function genRRConfirm(){
+  const gs = rrGroups().filter(g => g.entries.length >= 2);
+  if (!gs.length) { document.getElementById('errGen').textContent = 'Select at least 2 to make a round robin.'; return; }
+  const plans = gs.map(g => rrSchedule(g.entries));
+  const n = Math.max(...plans.map(pl => pl.length));
+  const rounds = mergeRounds(plans, n);
+  const total = rounds.reduce((t, r) => t + r.matches.length, 0);
+  generateSuggestions(genBucket, gs.flatMap(g => g.entries.flatMap(e => e.members)), n, null, rounds);
+  genOverlay.classList.remove('show');
+  showToast(`Round robin ready: ${n} round${n === 1 ? '' : 's'}, ${total} matches. Review, then add to queue.`);
+}
 
 function currentMatchIdSetFrom(arr){ return new Set(arr.map(p => p.id)); }
 function matchIdSetFromSnapshot(m){ return new Set([...m.team1, ...m.team2].map(p => p.participantId)); }
@@ -2272,6 +2330,7 @@ function renderMatchupBuckets(){
       <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}</h3><span class="count" id="poolCount-${b.key}"></span></div>
       <div class="sugg-toolbar">
         <button class="btn btn-primary btn-sm" onclick="openGenerateModal('${b.key}')">🔀 Generate matchups</button>
+        ${['singles','pair','fixed'].includes(b.mode) ? `<button class="btn btn-primary btn-sm" onclick="openGenerateModal('${b.key}', true)">🔁 Round Robin</button>` : ''}
         <button class="btn btn-ghost btn-sm" onclick="openCustomMatchModal('${b.key}')">➕ Custom match</button>
         <button class="btn btn-ghost btn-sm" onclick="this.disabled=true; addAllSuggestions('${b.key}').finally(()=>{this.disabled=false;})">Add all to queue</button>
         <button class="btn btn-ghost btn-sm" onclick="discardSuggestions('${b.key}')">Discard</button>
@@ -2527,8 +2586,9 @@ async function reorderQueueMatch(id, newIndex){
     }
   } catch (err) { onErr(err); }
 }
-/* ---- Optimize queue (preview first; first 4 locked; On Hold stays put) ---- */
-const OPT_LOCK = 4;
+/* ---- Optimize queue (preview first; optional lock on the first 4; On Hold stays put) ---- */
+const OPT_LOCK_N = 4; let optLockOn = false;
+function optLock(){ return optLockOn ? OPT_LOCK_N : 0; }
 const OPT_CONSEC = { 1:100, 2:40, 3:12, 4:4, 5:1 };   // penalty per shared player, by how many games apart
 const OPT_SAME_BUCKET = 20, OPT_SAME_BUCKET_RUN = 10;
 function matchPlayerIds(m){ return [...m.team1, ...m.team2].map(p => p.participantId); }
@@ -2536,7 +2596,7 @@ function planOptimizedQueue(list){
   const n = list.length, result = new Array(n).fill(null);
   const origIdx = new Map(list.map((m, i) => [m.id, i]));
   const movable = [];
-  list.forEach((m, i) => { if (i < OPT_LOCK || m.status === 'onhold') result[i] = m; else movable.push(m); });
+  list.forEach((m, i) => { const lockN = optLock(); if (i < lockN || m.status === 'onhold') result[i] = m; else movable.push(m); });
   const onCourt = queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status));
   const courtPlayers = new Set(onCourt.flatMap(matchPlayerIds));
   const busy = new Set(onCourt.map(m => m.court));
@@ -2590,7 +2650,7 @@ function queueQuality(seq){
 const optOverlay = document.getElementById('optOverlay');
 let optPlan = null, lastOptimizeUndo = null;
 function optRowHtml(m, i, beforeIdx, isAfter){
-  const hold = m.status === 'onhold', locked = i < OPT_LOCK;
+  const hold = m.status === 'onhold', locked = i < optLock();
   let tag = '';
   if (hold) tag = '<span class="badge hold">On hold</span>';
   else if (locked) tag = '<span title="Locked">🔒</span>';
@@ -2601,23 +2661,26 @@ function optRowHtml(m, i, beforeIdx, isAfter){
     <div class="opt-body"><div class="opt-teams">${escapeHtml(m.team1.map(p => p.name).join(' & '))} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(m.team2.map(p => p.name).join(' & '))}</div>
       <div class="opt-sub">${m.matchId} · ${bucketLabelHtml(m.bucket)}${poolTagHtml(m.bucket, matchPoolId(m))}</div></div>${tag}</div>`;
 }
-function openOptimizeModal(){
-  const list = queueOrderedList();
-  const movableCount = list.filter((m, i) => i >= OPT_LOCK && m.status === 'waiting').length;
-  if (movableCount < 2) { optOverlay.classList.remove('show'); showToast(`Nothing to optimize yet. The first ${OPT_LOCK} matches are locked and at least 2 more are needed.`, true); return; }
+function openOptimizeModal(keep){
+  const list = queueOrderedList(), lk = optLock();
+  const movableCount = list.filter((m, i) => i >= lk && m.status === 'waiting').length;
+  if (movableCount < 2) { if (!keep) optOverlay.classList.remove('show'); showToast(lk ? `Nothing to optimize with the first ${lk} matches locked. At least 2 more are needed.` : 'Nothing to optimize yet. At least 2 waiting matches are needed.', true); return false; }
   const after = planOptimizedQueue(list);
-  if (!after.some((m, i) => m.id !== list[i].id)) { optOverlay.classList.remove('show'); showToast('The queue is already well arranged.'); return; }
+  if (!after.some((m, i) => m.id !== list[i].id)) { if (!keep) optOverlay.classList.remove('show'); showToast('The queue is already well arranged.'); return false; }
   optPlan = { after, signature: list.map(m => m.id).join('|'), orders: list.map(m => m.order) };
   const beforeIdx = new Map(list.map((m, i) => [m.id, i]));
-  document.getElementById('optSub').textContent = `First ${OPT_LOCK} matches and On Hold matches stay where they are. Nothing changes until you apply.`;
+  document.getElementById('optSub').textContent = (lk ? `First ${lk} matches and On Hold matches stay where they are.` : 'On Hold matches stay where they are.') + ' Nothing changes until you apply.';
   document.getElementById('optBefore').innerHTML = list.map((m, i) => optRowHtml(m, i, beforeIdx, false)).join('');
   document.getElementById('optAfter').innerHTML = after.map((m, i) => optRowHtml(m, i, beforeIdx, true)).join('');
   const q0 = queueQuality(list), q1 = queueQuality(after);
   document.getElementById('optMetrics').innerHTML =
     `Back-to-back games (same player within 2 games): <b>${q0.b2b} → ${q1.b2b}</b><br>Same-category matches next to each other: <b>${q0.sameBucket} → ${q1.sameBucket}</b>`;
+  document.getElementById('optLockChk').checked = optLockOn;
   optOverlay.classList.add('show');
+  return true;
 }
-document.getElementById('btnOptimizeQueue').addEventListener('click', openOptimizeModal);
+document.getElementById('btnOptimizeQueue').addEventListener('click', () => openOptimizeModal());
+document.getElementById('optLockChk').addEventListener('change', e => { optLockOn = e.target.checked; if (!openOptimizeModal(true)) { optLockOn = !optLockOn; e.target.checked = optLockOn; } });
 document.getElementById('btnOptCancel').addEventListener('click', () => optOverlay.classList.remove('show'));
 optOverlay.addEventListener('click', e => { if (e.target === optOverlay) optOverlay.classList.remove('show'); });
 document.getElementById('btnOptApply').addEventListener('click', async () => {
@@ -3794,8 +3857,8 @@ function renderLeaderboard(){
     return `
     <div class="bucket-card">
       <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}${g.suffix ? `<span class="pool-tag">${escapeHtml(g.suffix)}</span>` : ''}</h3>
-        <span class="count">${rows.length} ${b.mode === 'fixed' ? 'pair' : 'player'}${rows.length===1?'':'s'}</span></div>
-      <table class="lb-table"><thead><tr><th class="num">#</th><th>${b.mode === 'fixed' ? 'Pair' : 'Player'}</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">Pts</th><th class="num">+/−</th></tr></thead>
+        <span class="count">${rows.length} ${(b.mode === 'fixed' || b.mode === 'pair') ? 'pair' : 'player'}${rows.length===1?'':'s'}</span></div>
+      <table class="lb-table"><thead><tr><th class="num">#</th><th>${(b.mode === 'fixed' || b.mode === 'pair') ? 'Pair' : 'Player'}</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">Pts</th><th class="num">+/−</th></tr></thead>
       <tbody>${body}</tbody></table>
     </div>`;
     });
