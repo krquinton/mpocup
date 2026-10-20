@@ -181,6 +181,23 @@
   .queue-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;
     padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow);cursor:grab;}
   .queue-row.onhold{opacity:.6;}
+  .sch-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .sch-inputs{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+  .sch-inputs .field{margin:0;min-width:120px;}
+  .sch-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 8px;}
+  .sch-bar .sch-sum{font-size:13px;color:var(--muted);margin-left:auto;}
+  .sch-panelbox{display:none;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px;}
+  .sch-panelbox.show{display:flex;}
+  .sch-panelbox .field{margin:0;min-width:150px;}
+  .sch-stale{display:none;background:rgba(255,152,0,.14);border:1px solid var(--orange);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:10px;}
+  .sch-slot{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px;}
+  .sch-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .sch-row.onhold{opacity:.6;}
+  .sch-time{font-weight:800;font-size:14px;color:var(--navy);min-width:84px;white-space:nowrap;}
+  html[data-theme="dark"] .sch-time{color:#fff;}
+  .sch-time small{display:block;font-weight:500;font-size:11px;color:var(--muted);}
+  .sch-court{display:inline-block;font-size:11px;font-weight:800;border:1px solid var(--border);border-radius:8px;padding:2px 8px;color:var(--muted);white-space:nowrap;}
+  .sch-teams{flex:1;min-width:180px;font-weight:600;}
   .queue-row .drag-handle{color:var(--muted);font-size:16px;}
   .queue-row .qid{font-family:'Baloo 2';font-weight:700;color:var(--navy);font-size:14px;min-width:56px;}
   html[data-theme="dark"] .queue-row .qid{color:var(--blue);}
@@ -373,6 +390,7 @@
   <button data-tab="matchups">2 · Match Suggestions</button>
   <button data-tab="queue">3 · Queue &amp; Courts</button>
   <button data-tab="leaderboard">4 · Leaderboard</button>
+  <button data-tab="schedule">5 · Schedule</button>
   <button data-tab="logs">Logs</button>
 </nav>
 
@@ -414,6 +432,31 @@
       </div>
     </div>
     <div class="bucket-grid" id="lbGrid"></div>
+  </section>
+
+  <section class="panel" id="panel-schedule">
+    <div class="sch-card">
+      <div class="sch-inputs">
+        <div class="field"><label for="schStart">Start time</label><input type="time" id="schStart"></div>
+        <div class="field"><label for="schCourts">No. of courts</label><input type="number" id="schCourts" min="1" max="20" step="1"></div>
+        <div class="field"><label for="schDur">Game duration (min)</label><input type="number" id="schDur" min="1" max="180" step="1"></div>
+        <button class="btn btn-primary" id="btnSchGenerate">Generate schedule</button>
+      </div>
+      <div class="error-text" id="errSch" style="margin-top:8px;"></div>
+    </div>
+    <div class="sch-stale" id="schStale">The Match Queue changed since this schedule was generated. Click “Generate schedule” to refresh it.</div>
+    <div class="sch-bar" id="schBar" style="display:none;">
+      <button class="btn btn-ghost btn-sm" id="btnSchSearch">🔍 Search</button>
+      <button class="btn btn-ghost btn-sm" id="btnSchFilter">⚙ Filter</button>
+      <span class="sch-sum" id="schSummary"></span>
+    </div>
+    <div class="sch-panelbox" id="schSearchBox"><div class="field" style="flex:1;min-width:200px;"><label for="schQuery">Search player, match ID, category or pool</label><input type="text" id="schQuery" placeholder="e.g. Ton, M-012, Pool A" autocomplete="off"></div><button class="btn btn-ghost btn-sm" id="btnSchSearchClear">Clear</button></div>
+    <div class="sch-panelbox" id="schFilterBox">
+      <div class="field"><label for="schCat">Category</label><select id="schCat"></select></div>
+      <div class="field"><label for="schPool">Pool</label><select id="schPool"></select></div>
+      <button class="btn btn-ghost btn-sm" id="btnSchFilterClear">Clear filters</button>
+    </div>
+    <div id="schList"><div class="empty-row" style="padding:20px;color:var(--muted);">Set the start time, number of courts and game duration, then click “Generate schedule”.</div></div>
   </section>
 
   <section class="panel" id="panel-logs">
@@ -864,6 +907,7 @@ db.collection('ccpc-queue-buckets').onSnapshot(snap => {
   renderMatchupBuckets();
   renderQueueList();
   renderCourts();
+  if (typeof schRenderFilters === 'function') schRenderFilters();
   renderLogBucketFilter();
   renderLogs();
   renderLeaderboard();
@@ -2494,6 +2538,7 @@ setInterval(() => {
 }, 1000);
 
 function renderQueueList(){
+  updateScheduleStale();
   const list = queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b) => a.order - b.order);
   const el = document.getElementById('queueList');
   if (!list.length) { el.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);">Queue is empty. Add matches from Match Suggestions.</div>`; return; }
@@ -2591,61 +2636,115 @@ const OPT_LOCK_N = 4; let optLockOn = false;
 function optLock(){ return optLockOn ? OPT_LOCK_N : 0; }
 const OPT_CONSEC = { 1:100, 2:40, 3:12, 4:4, 5:1 };   // penalty per shared player, by how many games apart
 const OPT_SAME_BUCKET = 20, OPT_SAME_BUCKET_RUN = 10;
+const OPT_POOL_W = 10;   // reward per step of "how long ago this pool last played" (stays below the 100 back-to-back penalty)
 function matchPlayerIds(m){ return [...m.team1, ...m.team2].map(p => p.participantId); }
+/* Courts-aware rest: with N courts the queue plays in "waves" of N games. A player whose next game is in the very next wave
+   plays back-to-back (e.g. 4:00-4:15, then again at 4:15). Same wave = impossible (two courts at once). */
+const OPT_GAP = [1000, 300, 8, 3, 1];   // penalty by wave gap: 0 = same wave, 1 = back-to-back, 2 = one game of rest, ...
+function optWavePen(gap){ return gap <= 0 ? OPT_GAP[0] : (OPT_GAP[gap] || 0); }
+function optCourtN(){ return Math.max(1, Number(COURTS) || 1); }
+function optCourtPlayers(){ return new Set(queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status)).flatMap(matchPlayerIds)); }
 function planOptimizedQueue(list){
-  const n = list.length, result = new Array(n).fill(null);
+  const n = list.length, base = new Array(n).fill(null), N = optCourtN(), lockN = optLock();
   const origIdx = new Map(list.map((m, i) => [m.id, i]));
-  const movable = [];
-  list.forEach((m, i) => { const lockN = optLock(); if (i < lockN || m.status === 'onhold') result[i] = m; else movable.push(m); });
+  const movable0 = [];
+  list.forEach((m, i) => { if (i < lockN || m.status === 'onhold') base[i] = m; else movable0.push(m); });
   const onCourt = queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status));
-  const courtPlayers = new Set(onCourt.flatMap(matchPlayerIds));
+  const courtPlayers = optCourtPlayers();
   const busy = new Set(onCourt.map(m => m.court));
-  const freeSet = new Set(Array.from({ length: COURTS }, (_, i) => i + 1).filter(c => !busy.has(c)));
-  const canClaim = b => bucketCourts(b).some(c => freeSet.has(c));
-  const claim = b => { const c = bucketCourts(b).find(x => freeSet.has(x)); if (c !== undefined) freeSet.delete(c); };
-  result.forEach(m => { if (m && m.status === 'waiting') claim(m.bucket); });   // locked matches take free courts first
+  const freeBase = Array.from({ length: COURTS }, (_, i) => i + 1).filter(c => !busy.has(c));
   const now = Date.now();
   const waitMin = m => {
     const ws = matchPlayerIds(m).map(id => { const p = participants.find(x => x.id === id); return p && p.statusSince ? (now - p.statusSince) / 60000 : 0; });
     return ws.reduce((a, b) => a + b, 0) / Math.max(1, ws.length);
   };
-  const waits = new Map(movable.map(m => [m.id, waitMin(m)]));
-  const remaining = {};
-  movable.forEach(m => { remaining[m.bucket] = (remaining[m.bucket] || 0) + 1; });
-  const pool = movable.slice();
-  const prevPlayable = idx => { const out = []; for (let j = idx - 1; j >= 0 && out.length < 5; j--) if (result[j] && result[j].status !== 'onhold') out.push(result[j]); return out; };
-  for (let idx = 0; idx < n; idx++) {
-    if (result[idx]) continue;
-    const prev = prevPlayable(idx), prevIds = prev.map(matchPlayerIds);
-    let best = null, bestCost = Infinity;
-    pool.forEach(c => {
-      const pids = matchPlayerIds(c);
-      let cost = 0;
-      prevIds.forEach((ids, k) => { cost += pids.filter(id => ids.includes(id)).length * (OPT_CONSEC[k + 1] || 0); });
-      if (OPT_CONSEC[prev.length + 1] && prev.length < 5) cost += pids.filter(id => courtPlayers.has(id)).length * OPT_CONSEC[prev.length + 1];
-      if (prev[0] && prev[0].bucket === c.bucket) { cost += OPT_SAME_BUCKET; if (prev[1] && prev[1].bucket === c.bucket) cost += OPT_SAME_BUCKET_RUN; }
-      cost -= 8 * ((remaining[c.bucket] || 0) / pool.length);
-      cost -= Math.min(30, 1.5 * (waits.get(c.id) || 0));
-      cost += 2 * Math.max(0, idx - origIdx.get(c.id));
-      if (canClaim(c.bucket)) cost -= 10;
-      if (cost < bestCost - 1e-9 || (Math.abs(cost - bestCost) <= 1e-9 && best && origIdx.get(c.id) < origIdx.get(best.id))) { best = c; bestCost = cost; }
-    });
-    result[idx] = best;
-    pool.splice(pool.indexOf(best), 1);
-    remaining[best.bucket]--;
-    claim(best.bucket);
+  const waits = new Map(movable0.map(m => [m.id, waitMin(m)]));
+  const poolKey = m => m.bucket + '|' + (matchPoolId(m) || '');
+
+  function greedy(noise){
+    const result = base.slice(), pool = movable0.slice(), freeSet = new Set(freeBase), remaining = {}, lastWave = {};
+    const canClaim = bk => bucketCourts(bk).some(c => freeSet.has(c));
+    const claim = bk => { const c = bucketCourts(bk).find(x => freeSet.has(x)); if (c !== undefined) freeSet.delete(c); };
+    movable0.forEach(m => { remaining[m.bucket] = (remaining[m.bucket] || 0) + 1; });
+    courtPlayers.forEach(id => { lastWave[id] = -1; });
+    let pc = 0;
+    result.forEach(m => { if (m) { if (m.status === 'waiting') claim(m.bucket); if (m.status !== 'onhold') { const w = Math.floor(pc / N); matchPlayerIds(m).forEach(id => { lastWave[id] = w; }); pc++; } } });
+    const prevPlayable = idx => { const out = []; for (let j = idx - 1; j >= 0 && out.length < 2; j--) if (result[j] && result[j].status !== 'onhold') out.push(result[j]); return out; };
+    const poolGap = (key, idx, K) => { for (let j = idx - 1; j >= 0 && idx - j <= K; j--) { const r = result[j]; if (r && r.status !== 'onhold' && poolKey(r) === key) return idx - j; } return K; };
+    for (let idx = 0; idx < n; idx++) {
+      if (result[idx]) continue;
+      const wave = Math.floor(pc / N), prev = prevPlayable(idx);
+      const poolK = Math.min(8, new Set(pool.map(poolKey)).size);
+      let best = null, bestCost = Infinity;
+      pool.forEach(c => {
+        let cost = 0;
+        matchPlayerIds(c).forEach(id => { if (lastWave[id] !== undefined) cost += optWavePen(wave - lastWave[id]); });
+        if (prev[0] && prev[0].bucket === c.bucket) { cost += OPT_SAME_BUCKET; if (prev[1] && prev[1].bucket === c.bucket) cost += OPT_SAME_BUCKET_RUN; }
+        cost -= OPT_POOL_W * poolGap(poolKey(c), idx, poolK);   // least-recently-played pool goes first
+        cost -= 8 * ((remaining[c.bucket] || 0) / pool.length);
+        cost -= Math.min(30, 1.5 * (waits.get(c.id) || 0));
+        cost += 2 * Math.max(0, idx - origIdx.get(c.id));
+        if (canClaim(c.bucket)) cost -= 10;
+        if (noise) cost += noise * Math.random();
+        if (cost < bestCost - 1e-9 || (Math.abs(cost - bestCost) <= 1e-9 && best && origIdx.get(c.id) < origIdx.get(best.id))) { best = c; bestCost = cost; }
+      });
+      result[idx] = best;
+      pool.splice(pool.indexOf(best), 1);
+      remaining[best.bucket]--;
+      claim(best.bucket);
+      matchPlayerIds(best).forEach(id => { lastWave[id] = wave; });
+      pc++;
+    }
+    return result;
   }
-  return result;
+  let seqHard = 0;   // back-to-back / same-wave penalties of the last seqCost() call (0 = fully spaced out)
+  function seqCost(seq){
+    const last = {}; courtPlayers.forEach(id => { last[id] = -1; });
+    let pc = 0, cost = 0, prevLane = null, prevBucket = null; seqHard = 0;
+    seq.forEach((m, idx) => {
+      if (m.status === 'onhold') return;
+      const wave = Math.floor(pc / N);
+      matchPlayerIds(m).forEach(id => { if (last[id] !== undefined) { const pn = optWavePen(wave - last[id]); cost += pn; if (pn >= OPT_GAP[1]) seqHard += pn; } last[id] = wave; });
+      const lane = poolKey(m);
+      if (prevLane === lane) cost += 30; else if (prevBucket === m.bucket) cost += 4;
+      prevLane = lane; prevBucket = m.bucket;
+      cost += 0.5 * Math.max(0, idx - origIdx.get(m.id));
+      pc++;
+    });
+    return cost;
+  }
+  /* several randomised passes, keep the best, then swap-improve it */
+  let best = null, bestC = Infinity;
+  let bestHard = Infinity;
+  for (let r = 0; r < 24; r++) {
+    const seq = greedy(r === 0 ? 0 : 6), c = seqCost(seq), hd = seqHard;
+    if (hd < bestHard || (hd === bestHard && c < bestC)) { best = seq; bestC = c; bestHard = hd; }
+    if (bestHard === 0 && r >= 5) break;   // already fully spaced out
+  }
+  const mIdx = base.map((x, i) => x ? -1 : i).filter(i => i >= 0);
+  const maxPass = mIdx.length > 250 ? 1 : 5;
+  let improved = true, pass = 0;
+  while (improved && pass < maxPass && bestHard > 0) {
+    improved = false; pass++;
+    for (let x = 0; x < mIdx.length - 1; x++) for (let y = x + 1; y < mIdx.length; y++) {
+      const i = mIdx[x], j = mIdx[y];
+      [best[i], best[j]] = [best[j], best[i]];
+      const c = seqCost(best);
+      if (seqHard < bestHard || (seqHard === bestHard && c < bestC - 1e-9)) { bestC = c; bestHard = seqHard; improved = true; } else { [best[i], best[j]] = [best[j], best[i]]; }
+    }
+  }
+  return best;
 }
 function queueQuality(seq){
-  const play = seq.filter(m => m.status !== 'onhold');
-  let b2b = 0, sameBucket = 0;
+  const play = seq.filter(m => m.status !== 'onhold'), N = optCourtN(), last = {};
+  optCourtPlayers().forEach(id => { last[id] = -1; });
+  let b2b = 0, sameBucket = 0, samePool = 0;
   play.forEach((m, i) => {
-    if (i > 0 && play[i - 1].bucket === m.bucket) sameBucket++;
-    const ids = matchPlayerIds(m);
-    for (let d = 1; d <= 2; d++) { const pr = play[i - d]; if (pr) { const pi = matchPlayerIds(pr); b2b += ids.filter(id => pi.includes(id)).length; } }
+    if (i > 0 && play[i - 1].bucket === m.bucket) { sameBucket++; if (bucketHasPools(m.bucket) && (matchPoolId(play[i - 1]) || '') === (matchPoolId(m) || '')) samePool++; }
+    const wave = Math.floor(i / N);
+    matchPlayerIds(m).forEach(id => { if (last[id] !== undefined && wave - last[id] <= 1) b2b++; last[id] = wave; });
   });
-  return { b2b, sameBucket };
+  return { b2b, sameBucket, samePool };
 }
 const optOverlay = document.getElementById('optOverlay');
 let optPlan = null, lastOptimizeUndo = null;
@@ -2674,7 +2773,7 @@ function openOptimizeModal(keep){
   document.getElementById('optAfter').innerHTML = after.map((m, i) => optRowHtml(m, i, beforeIdx, true)).join('');
   const q0 = queueQuality(list), q1 = queueQuality(after);
   document.getElementById('optMetrics').innerHTML =
-    `Back-to-back games (same player within 2 games): <b>${q0.b2b} → ${q1.b2b}</b><br>Same-category matches next to each other: <b>${q0.sameBucket} → ${q1.sameBucket}</b>`;
+    `Back-to-back games with ${optCourtN()} court${optCourtN() === 1 ? '' : 's'} (a player's next game starts right after the last): <b>${q0.b2b} → ${q1.b2b}</b>${q1.b2b ? `<br><b style="color:var(--orange);">⚠ ${q1.b2b} back-to-back still unavoidable</b> (not enough different players or pools to space them out)` : ''}<br>Same-category matches next to each other: <b>${q0.sameBucket} → ${q1.sameBucket}</b><br>Same pool right after each other: <b>${q0.samePool} → ${q1.samePool}</b>`;
   document.getElementById('optLockChk').checked = optLockOn;
   optOverlay.classList.add('show');
   return true;
@@ -4100,6 +4199,104 @@ document.getElementById('btnDsSave').addEventListener('click', async () => {
   } catch (err) { showToast('Could not save settings: ' + err.message, true); }
   finally { btn.disabled = false; }
 });
+
+/* ================= SCHEDULE TAB ================= */
+const SCH_KEY = 'ccpc-sched-settings';
+let schState = null, schFilter = { cat:'', pool:'', q:'' };
+function schSig(){ return queueOrderedList().map(m => m.id + ':' + m.status).join('|'); }
+function schFmt(min){ return new Date(2000, 0, 1, 0, Math.round(min)).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
+function schInit(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(SCH_KEY) || '{}') || {}; } catch (e) {}
+  let start = saved.start;
+  if (!start) { const d = new Date(); const m = Math.ceil((d.getHours() * 60 + d.getMinutes()) / 5) * 5; start = String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+  document.getElementById('schStart').value = start;
+  document.getElementById('schCourts').value = saved.courts || COURTS || 1;
+  document.getElementById('schDur').value = saved.dur || 20;
+}
+function schGenerate(){
+  const err = document.getElementById('errSch'); err.textContent = '';
+  const t = document.getElementById('schStart').value;
+  const courts = parseInt(document.getElementById('schCourts').value, 10), dur = parseInt(document.getElementById('schDur').value, 10);
+  if (!t) { err.textContent = 'Enter the start time.'; return; }
+  if (!(courts >= 1 && courts <= 20)) { err.textContent = 'No. of courts must be 1–20.'; return; }
+  if (!(dur >= 1 && dur <= 180)) { err.textContent = 'Game duration must be 1–180 minutes.'; return; }
+  const list = queueOrderedList();
+  if (!list.length) { err.textContent = 'The Match Queue is empty. Add matches from Match Suggestions first.'; return; }
+  try { localStorage.setItem(SCH_KEY, JSON.stringify({ start: t, courts, dur })); } catch (e) {}
+  const [hh, mm] = t.split(':').map(Number), start = hh * 60 + mm;
+  /* Simulate the queue in order: each game takes the next free court and waits until its players are free */
+  const free = new Array(courts).fill(start), ready = {}; let last = start;
+  const rows = list.map((m, i) => {
+    const ids = [...m.team1, ...m.team2].map(p => p.participantId);
+    const t0 = Math.max(Math.min(...free), last, ...ids.map(id => ready[id] || start));
+    const ci = free.findIndex(f => f <= t0);
+    free[ci] = t0 + dur; ids.forEach(id => { ready[id] = t0 + dur; }); last = t0;
+    return { m, n: i + 1, start: t0, end: t0 + dur, court: ci + 1 };
+  });
+  schState = { rows, sig: schSig(), start, courts, dur };
+  document.getElementById('schBar').style.display = 'flex';
+  schRender();
+}
+function schRenderFilters(){
+  const cs = document.getElementById('schCat'), ps = document.getElementById('schPool');
+  cs.innerHTML = '<option value="">All categories</option>' + BUCKETS.map(b => `<option value="${b.key}">${escapeHtml(b.label)}</option>`).join('');
+  if (!BUCKETS.some(b => b.key === schFilter.cat)) schFilter.cat = '';
+  cs.value = schFilter.cat;
+  const bs = schFilter.cat ? BUCKETS.filter(b => b.key === schFilter.cat) : BUCKETS;
+  const opts = bs.flatMap(b => bucketPools(b.key).map(q => ({ v: b.key + '|' + q.id, t: (schFilter.cat ? '' : b.label + ' · ') + q.name })));
+  ps.innerHTML = '<option value="">All pools</option>' + opts.map(o => `<option value="${escapeHtml(o.v)}">${escapeHtml(o.t)}</option>`).join('');
+  if (!opts.some(o => o.v === schFilter.pool)) schFilter.pool = '';
+  ps.value = schFilter.pool;
+  const nf = (schFilter.cat ? 1 : 0) + (schFilter.pool ? 1 : 0);
+  document.getElementById('btnSchFilter').textContent = '⚙ Filter' + (nf ? ` (${nf})` : '');
+  document.getElementById('btnSchSearch').textContent = '🔍 Search' + (schFilter.q.trim() ? ' •' : '');
+}
+function schRender(){
+  const el = document.getElementById('schList');
+  schRenderFilters();
+  if (!schState) return;
+  const q = schFilter.q.trim().toLowerCase();
+  const rows = schState.rows.filter(r => {
+    const m = r.m, pid = matchPoolId(m);
+    if (schFilter.cat && m.bucket !== schFilter.cat) return false;
+    if (schFilter.pool && (m.bucket + '|' + pid) !== schFilter.pool) return false;
+    if (!q) return true;
+    const hay = [m.matchId, ...m.team1.map(p => p.name), ...m.team2.map(p => p.name), bucketLabel(m.bucket), poolNameOf(m.bucket, pid), 'court ' + r.court].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+  const all = schState.rows, endMin = Math.max(...all.map(r => r.end));
+  document.getElementById('schSummary').textContent = `${rows.length === all.length ? all.length : rows.length + ' of ' + all.length} game${all.length === 1 ? '' : 's'} · ${schFmt(schState.start)} → ${schFmt(endMin)} · ${schState.courts} court${schState.courts === 1 ? '' : 's'} · ${schState.dur} min/game`;
+  if (!rows.length) { el.innerHTML = '<div class="empty-row" style="padding:20px;color:var(--muted);">No games match the search / filter.</div>'; updateScheduleStale(); return; }
+  let html = '', slot = null;
+  rows.forEach(r => {
+    if (r.start !== slot) { slot = r.start; html += `<div class="sch-slot">${schFmt(r.start)}</div>`; }
+    const m = r.m;
+    html += `<div class="sch-row ${m.status === 'onhold' ? 'onhold' : ''}">
+      <div class="sch-time">${schFmt(r.start)}<small>until ${schFmt(r.end)}</small></div>
+      <span class="sch-court">Court ${r.court}</span>
+      <div class="qid">${escapeHtml(m.matchId || '')}</div>
+      <div class="sch-teams">${escapeHtml(m.team1.map(p => p.name).join(' & '))} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(m.team2.map(p => p.name).join(' & '))}${m.status === 'onhold' ? ' <span class="badge hold" style="margin-left:8px;">On hold</span>' : ''}</div>
+      <div class="qmeta">${bucketLabelHtml(m.bucket)}${poolTagHtml(m.bucket, matchPoolId(m))}</div>
+      <span class="count" title="Position in the Match Queue">#${r.n}</span>
+    </div>`;
+  });
+  el.innerHTML = html;
+  updateScheduleStale();
+}
+function updateScheduleStale(){
+  const b = document.getElementById('schStale'); if (!b) return;
+  b.style.display = schState && schState.sig !== schSig() ? 'block' : 'none';
+}
+document.getElementById('btnSchGenerate').addEventListener('click', schGenerate);
+document.getElementById('btnSchSearch').addEventListener('click', () => { const bx = document.getElementById('schSearchBox'); bx.classList.toggle('show'); if (bx.classList.contains('show')) document.getElementById('schQuery').focus(); });
+document.getElementById('btnSchFilter').addEventListener('click', () => document.getElementById('schFilterBox').classList.toggle('show'));
+document.getElementById('schQuery').addEventListener('input', e => { schFilter.q = e.target.value; schRender(); });
+document.getElementById('btnSchSearchClear').addEventListener('click', () => { schFilter.q = ''; document.getElementById('schQuery').value = ''; schRender(); });
+document.getElementById('schCat').addEventListener('change', e => { schFilter.cat = e.target.value; schRender(); });
+document.getElementById('schPool').addEventListener('change', e => { schFilter.pool = e.target.value; schRender(); });
+document.getElementById('btnSchFilterClear').addEventListener('click', () => { schFilter.cat = ''; schFilter.pool = ''; schRender(); });
+schInit(); schRenderFilters();
 
 /* ================= INIT ================= */
 renderMatchupBuckets();
