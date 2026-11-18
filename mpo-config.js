@@ -1,5 +1,7 @@
 /* Shared config for MPO Cup 2026. Needs firebase-init.js loaded first (provides db, REG, SET). */
-const MPO_CATS=["Low Intermediate Men's Doubles","Low Intermediate Women's Doubles","High Intermediate Men's Doubles","High Intermediate Women's Doubles","Advanced Open (All-Gender Doubles)"];
+const MPO_CATS=["Intermediate Women's Doubles","Low Intermediate Men's Doubles","High Intermediate Men's Doubles","Advanced Open (All-Gender Doubles)"];
+/* Old category names that were merged. Admin page renames these in saved registrations (category + finalCategory) automatically. */
+const MPO_CAT_RENAME={"Low Intermediate Women's Doubles":"Intermediate Women's Doubles","High Intermediate Women's Doubles":"Intermediate Women's Doubles"};
 const MPO_STATUSES=["Submitted","Confirmation-Sent","Confirmed-Unpaid","Confirmed-Partial","Confirmed-Paid","Rejected"];
 /* Paste the Google Apps Script web app URL (or any webhook) here. Empty = test mode (no email sent). */
 const MPO_WEBHOOK="https://script.google.com/macros/s/AKfycbxYx3jB10cX1SRFUqr_tMbA299AGGf7ZDNG3No-GF0z4UL_VyOynRFEBVMSibr7Hkgw/exec";

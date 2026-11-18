@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pool Draw | Mindoro Pickleball Org Cup 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Saira+Condensed:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body><div class="wrap">
+<header><img src="logo.png" alt="" onerror="this.remove()"><h1 id="title">Pool draw</h1><p class="sub" id="st" role="status">Loading</p></header>
+<div class="bar"><button class="g" id="mute">Sound on</button></div>
+<div id="who"></div>
+<div id="board"><div id="in"><canvas id="cv"></canvas><div id="pools"></div></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const $=s=>document.querySelector(s),rnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n},
+sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a},
+sleep=ms=>new Promise(r=>setTimeout(r,ms)),L=i=>String.fromCharCode(65+i),e4=u=>1-(1-u)**4,P2=Math.PI*2;
+let stop=false,cfg={title:'Mindoro Pickleball Org Cup 2026',pools:4,effect:'drop',speed:1,sound:true},teams=[],last=null,busy=false,ac,rot=0,W=600,H=320,sp=1,N=4;
+const cv=$('#cv'),x=cv.getContext('2d'),pool=i=>$('#pools').children[i];
+function tone(f,d=.06,v=.05,t='triangle'){if(!cfg.sound||mute||!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(1e-4,ac.currentTime+d);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+let mute=false;$('#mute').onclick=e=>{mute=!mute;e.target.textContent=mute?'Sound off':'Sound on'};document.addEventListener('click',()=>{try{ac=ac||new AudioContext();ac.resume()}catch{}});
+const size=()=>{W=cv.width=cv.clientWidth;cv.height=H};
+const ball=(a,b,r=9)=>{x.fillStyle='#d7f542';x.beginPath();x.arc(a,b,r,0,7);x.fill();x.fillStyle='#6b7d0a';[[-3,-3],[3,-2],[0,3]].forEach(([i,j])=>{x.beginPath();x.arc(a+i*r/9,b+j*r/9,1.6*r/9,0,7);x.fill()})};
+const loop=fn=>new Promise(r=>{let l=performance.now();const f=t=>{const dt=Math.min(.033,(t-l)/1000)*sp;l=t;x.clearRect(0,0,W,H);if(stop||fn(dt))r();else requestAnimationFrame(f)};requestAnimationFrame(f)});
+
+/* ---- effects: each lands on pool index p ---- */
+async function drop(p){const d=W/(2*N),R=Math.max(10,N+4+(N%2)),sy=(H-100)/R,c=N%2?N:N-1,tk=2*p+1,py=r=>46+r*sy,R2=(R+tk-c)/2;let ks;
+ for(let a=0;a<400;a++){const st=sh([...Array(R2).fill(1),...Array(R-R2).fill(-1)]);ks=[c];let ok=1;for(const s of st){const k=ks[ks.length-1]+s;if(k<0||k>2*N){ok=0;break}ks.push(k)}if(ok)break}
+ const seg=[{x0:c*d,y0:-12,x1:c*d,y1:py(0)-12,du:.45,f:1}];
+ for(let r=1;r<R;r++)seg.push({x0:ks[r-1]*d,y0:py(r-1)-12,x1:ks[r]*d,y1:py(r)-12,du:.3});
+ seg.push({x0:ks[R-1]*d,y0:py(R-1)-12,x1:tk*d,y1:H-26,du:.5,last:1});
+ const tot=seg.reduce((a,s)=>a+s.du,0)+.7;let t=0,ev=-1,hot=null;
+ await loop(dt=>{t+=dt;let a=t,i=0;while(i<seg.length&&a>=seg[i].du){a-=seg[i].du;i++}
+  while(ev<i-1){ev++;if(ev<R){hot={k:ks[ev],r:ev,t};tone(380+ev*35,.05,.06)}else tone(660,.25,.08,'sine')}
+  const bw=W/N;x.textAlign='center';x.font='800 18px Saira Condensed,sans-serif';
+  for(let j=0;j<N;j++){x.fillStyle=j===p&&i>=seg.length?'#1c7a55':'#0a2a1e';x.fillRect(j*bw+2,H-40,bw-4,38);x.fillStyle='#3dffa6aa';x.fillText(L(j),j*bw+bw/2,H-14)}
+  x.fillStyle='#2f8f68';for(let r=0;r<R;r++)for(let k=(1+r)%2;k<=2*N;k+=2){x.beginPath();x.arc(k*d,py(r),4,0,7);x.fill()}
+  if(hot&&t-hot.t<.25){const g=1-(t-hot.t)/.25;x.fillStyle='rgba(61,255,166,'+g+')';x.beginPath();x.arc(hot.k*d,py(hot.r),4+g*9,0,7);x.fill()}
+  let bx,by;if(i>=seg.length){const s=seg[seg.length-1],u=Math.min(1,a/.7);bx=s.x1;by=s.y1-14*Math.abs(Math.sin(3*Math.PI*u))*(1-u)}
+  else{const s=seg[i],u=a/s.du;bx=s.x0+(s.x1-s.x0)*u;by=s.f?s.y0+(s.y1-s.y0)*u*u:s.last?s.y0+(s.y1-s.y0)*u*u-14*Math.sin(Math.PI*u):s.y0+(s.y1-s.y0)*u-16*Math.sin(Math.PI*u)}
+  x.shadowColor='#d7f542';x.shadowBlur=14;ball(bx,by,8);x.shadowBlur=0;return t>tot});
+ await sleep(300/sp)}
+
+async function smash(p){const tx=(p+.5)*W/N,cx=W/2,cy=H*.6;let t=0,hit=0;
+ await loop(dt=>{t+=dt;const k=t>1&&t<1.25?7:0;x.save();x.translate((Math.random()-.5)*k,(Math.random()-.5)*k);
+  let bx=cx,by=cy-170*Math.sin(Math.PI*Math.min(t,1));
+  if(t>1){const u=Math.min(1,(t-1)/1.1);bx=cx+(tx-cx)*u;by=cy+(H-14-cy)*u-150*Math.sin(Math.PI*u)}
+  if(t>=1&&!hit){hit=1;tone(110,.2,.15,'square')}
+  const a=t<.6?.9:.9-1.86*Math.min(1,(t-.6)/.4);
+  x.save();x.translate(cx+85,cy+60);x.rotate(a);x.fillStyle='#f2fff9';x.fillRect(-5,-76,10,76);x.fillStyle='#3dffa6';x.beginPath();x.ellipse(0,-104,27,35,0,0,7);x.fill();x.restore();
+  if(t>1&&t<1.3){x.strokeStyle='#3dffa6';x.lineWidth=4;x.beginPath();x.arc(cx,cy,(t-1)*320,0,7);x.stroke();x.lineWidth=1}
+  ball(bx,by,10);x.restore();return t>2.2});
+ tone(660,.2,.08,'sine');await sleep(300/sp)}
+
+async function wheel(p){const R=Math.min(130,W/2-12),a=P2/N,from=rot,jit=(Math.random()-.5)*a*.6,
+ d=(((-Math.PI/2-(p+.5)*a+jit-from)%P2)+P2)%P2,to=from+d+P2*(5+rnd(2));let t=0,pk=0;
+ await loop(dt=>{t+=dt;const u=Math.min(1,t/4.2);rot=from+(to-from)*e4(u);
+  x.save();x.translate(W/2,H/2+12);
+  for(let i=0;i<N;i++){x.beginPath();x.moveTo(0,0);x.arc(0,0,R,rot+i*a,rot+(i+1)*a);x.closePath();x.fillStyle=i%2?'#0a2a1e':'#145b3f';x.fill();x.strokeStyle='#3dffa6';x.stroke();
+   x.save();x.rotate(rot+(i+.5)*a);x.fillStyle='#f2fff9';x.font='800 28px Saira Condensed,sans-serif';x.textAlign='center';x.fillText(L(i),R*.68,9);x.restore()}
+  x.fillStyle='#3dffa6';x.beginPath();x.moveTo(-11,-R-20);x.lineTo(11,-R-20);x.lineTo(0,-R+4);x.fill();
+  x.fillStyle='#032016';x.beginPath();x.arc(0,0,12,0,7);x.fill();x.restore();
+  const k=Math.floor((-Math.PI/2-rot)/a);if(k!==pk){pk=k;tone(380,.03,.05)}return t>4.6});
+ rot%=P2;tone(660,.25,.08,'sine');await sleep(300/sp)}
+
+async function slot(p){const to=p+N*(6+rnd(3)),bw=130;let t=0,pk=-1;
+ await loop(dt=>{t+=dt;const u=Math.min(1,t/3.4),pos=to*e4(u);
+  x.save();x.beginPath();x.roundRect(W/2-bw/2,H/2-95,bw,190,16);x.fillStyle='#041a12';x.fill();x.clip();
+  for(let j=-2;j<=3;j++){const i=Math.floor(pos)+j,y=H/2+(i-pos)*72;x.globalAlpha=Math.max(0,1-Math.abs(i-pos)*.6);
+   x.fillStyle='#f2fff9';x.font='800 70px Saira Condensed,sans-serif';x.textAlign='center';x.fillText(L(((i%N)+N)%N),W/2,y+24)}
+  x.restore();x.strokeStyle='#3dffa6';x.lineWidth=3;x.beginPath();x.roundRect(W/2-bw/2,H/2-95,bw,190,16);x.stroke();
+  x.strokeStyle='#ffffff55';x.lineWidth=1;x.strokeRect(W/2-bw/2+6,H/2-36,bw-12,72);
+  if(Math.floor(pos)!==pk){pk=Math.floor(pos);tone(300+(pk%5)*40,.03,.05)}return t>3.9});
+ tone(660,.25,.08,'sine');await sleep(300/sp)}
+const EF={drop,smash,wheel,slot};
+
+/* ---- draw flow ---- */
+function plan(){const T=sh(teams),caps=sh(Array.from({length:N},(_,i)=>Math.floor(T.length/N)+(i<T.length%N?1:0)));
+ return T.map(t=>{const o=caps.map((c,i)=>c>0?i:-1).filter(i=>i>=0),p=o[rnd(o.length)];caps[p]--;return{t,p}})}
+function build(caps,fill){$('#in').style.setProperty('--n',N);$('#pools').innerHTML=caps.map((c,i)=>`<div class="pool"><h3>Pool ${L(i)}</h3>${Array.from({length:c},(_,k)=>fill&&fill[i][k]?`<div class="slot filled">${esc(fill[i][k])}</div>`:'<div class="slot"></div>').join('')}</div>`).join('');size()}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rep=(state,text)=>{$('#st').textContent=text;db.ref('mpo/status').set({state,text,at:Date.now()}).catch(()=>{})};
+async function run(){if(busy)return;busy=true;stop=false;try{ac=ac||new AudioContext()}catch{}
+ try{const[c,t]=await Promise.all(['config','teams'].map(k=>db.ref('mpo/'+k).once('value')));Object.assign(cfg,c.val()||{});teams=t.val()||[]}catch(e){rep('error','Cannot read settings: '+e.message);busy=false;return}
+ if(![16,20,24].includes(teams.length)){rep('error','Need 16, 20 or 24 teams. Found '+teams.length);busy=false;return}
+ sp=cfg.speed;N=cfg.pools;$('#title').innerHTML=esc(cfg.title)+' <em>Pool Draw</em>';
+ const pl=plan(),caps=Array(N).fill(0);pl.forEach(o=>caps[o.p]++);build(caps);const res=Array.from({length:N},()=>[]);
+ try{for(let i=0;i<pl.length;i++){const{t,p}=pl[i];rep('running',`Team ${i+1} of ${pl.length}`);
+  const w=$('#who');w.textContent=t;w.classList.remove('pop');void w.offsetWidth;w.classList.add('pop');await sleep(700/sp);
+  await EF[cfg.effect==='mix'?['drop','smash','wheel','slot'][rnd(4)]:cfg.effect](p);if(stop)break;
+  const el=pool(p);el.classList.add('lock');setTimeout(()=>el.classList.remove('lock'),700);
+  const s=el.querySelectorAll('.slot')[res[p].length];s.textContent=t;s.classList.add('filled');res[p].push(t);tone(784,.25,.07,'sine');await sleep(500/sp)}
+ if(stop){rep('stopped','Draw stopped. Nothing was saved.');busy=false;return}
+ $('#who').textContent='Draw complete';rep('running','Saving result');
+ const out={};res.forEach((r,i)=>out[L(i)]=r);
+ await db.ref('mpo/draw').set({at:firebase.database.ServerValue.TIMESTAMP,effect:cfg.effect,pools:out});last=out;rep('done','Draw complete. Result saved');
+ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.4,.08,'sawtooth'),i*140))}
+ catch(e){rep('error','Error: '+e.message)}
+ busy=false}
+let seen=null,first=true;
+const load=async()=>{const[c,t]=await Promise.all(['config','teams'].map(k=>db.ref('mpo/'+k).once('value')));Object.assign(cfg,c.val()||{});teams=t.val()||[]};
+async function reset(){stop=true;while(busy)await sleep(100);stop=false;last=null;try{await load()}catch{}N=cfg.pools;
+ build(Array.from({length:N},(_,i)=>Math.floor(teams.length/N)+(i<teams.length%N?1:0)));$('#who').textContent='';x.clearRect(0,0,W,H);rep('idle','Reset. Waiting for the admin to start')}
+db.ref('mpo/cmd').on('value',s=>{const v=s.val();if(first){first=false;seen=v&&v.id;return}if(!v||v.id===seen)return;seen=v.id;
+ if(v.action==='stop'){if(busy)stop=true}else if(v.action==='reset')reset();else run()});
+db.ref('.info/connected').on('value',s=>{if(s.val()){const r=db.ref('mpo/screen');r.onDisconnect().remove();r.set(true)}});addEventListener('resize',()=>{if(!busy)size()});
+(async()=>{try{const[c,t,d]=await Promise.all(['config','teams','draw'].map(k=>db.ref('mpo/'+k).once('value')));
+ Object.assign(cfg,c.val()||{});teams=t.val()||[];last=(d.val()||{}).pools||null;N=cfg.pools;
+ $('#title').innerHTML=esc(cfg.title)+' <em>Pool Draw</em>';
+ const caps=Array.from({length:N},(_,i)=>Math.floor(teams.length/N)+(i<teams.length%N?1:0));
+ if(last){N=Object.keys(last).length;build(Array.from({length:N},(_,i)=>(last[L(i)]||[]).length),Object.keys(last).map(k=>last[k]||[]));$('#st').textContent='Showing the last saved draw'}
+ else{build(caps);$('#st').textContent=teams.length?`${teams.length} teams, ${N} pools. Waiting for the admin to start`:'No teams yet. Upload a CSV in admin.html'}
+ }
+ catch(e){$('#st').textContent='Cannot reach Firebase. Check firebase-config.js';size()}})();
+</script></body></html>

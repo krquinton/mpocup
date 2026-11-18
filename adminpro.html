@@ -166,7 +166,7 @@ function start(){if(started)return;started=true;$('gate').hidden=true;$('app').h
  if(A())buildSettings(S);/* show the form right away (defaults), filled with saved values once loaded */
  $('fc').innerHTML+=MPO_CATS.map(c=>`<option>${E(c)}</option>`).join('');$('fs').innerHTML+=STATS.map(c=>`<option>${c}</option>`).join('');$('pm').innerHTML+=MPO_PAY_MODES.map(m=>`<option>${m}</option>`).join('');
  buildXF();buildFin();const er=id=>e=>$(id).innerHTML='<div class="msg err">'+E(e.message)+'</div>',all=()=>{drawDash();draw();drawShirts();drawPay();drawFin();drawNotes();};
- db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>{const o={id:d.id,...d.data()};if(o.status==='Confirmation-Sent'){o.status='Acknowledgement-Sent';o._old=1;}return o;});all();backfill();backfillGeo();migrateAck();syncPub();},er('list'));
+ db.collection(REG).orderBy('createdAt','desc').onSnapshot(s=>{rows=s.docs.map(d=>{const o={id:d.id,...d.data()};if(o.status==='Confirmation-Sent'){o.status='Acknowledgement-Sent';o._old=1;}return o;});all();backfill();backfillGeo();migrateAck();migrateCats();syncPub();},er('list'));
  db.collection(SHIRTS).orderBy('createdAt','desc').onSnapshot(s=>{extras=s.docs.map(d=>({id:d.id,...d.data()}));drawShirts();drawPay();drawFin();},er('xl'));
  if(ISSUPER)db.collection(AUDIT).orderBy('ts','desc').limit(500).onSnapshot(s=>{audit=s.docs.map(d=>({id:d.id,...d.data()}));drawAudit();},e=>{$('al').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules (audit log) first.</div>';});
  if(ISSUPER)db.collection(USERS).onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));drawUsers();},e=>{$('ul').innerHTML='<div class="msg err" style="margin:12px">'+E(e.message)+' — publish the updated Firestore rules first.</div>';});
@@ -307,7 +307,14 @@ const flowBtns=x=>{const rej=x.status==='Rejected',fv=x.decision==='For Verifica
  if(x.decision==='Rejected')h+=ib('xmail',x.rejEmailAt?'Resend rejection email':'Send rejection email',`sendRej('${x.id}')`,x.rejEmailAt?'done':'');
  return h;};
 /* Old status name -> new one (one-time, admin only) */
-const migrating=new Set();
+const migrating=new Set(),catMig=new Set();
+/* One-time rename of merged categories (MPO_CAT_RENAME in mpo-config.js) on saved registrations. Runs for admins only. */
+async function migrateCats(){if(!A()||typeof MPO_CAT_RENAME==='undefined')return;
+ for(const r of rows){const u={},ch=[];
+  for(const k of ['category','finalCategory']){const n=MPO_CAT_RENAME[r[k]];if(n){u[k]=n;ch.push(k+': '+r[k]+' → '+n);}}
+  if(!ch.length||catMig.has(r.id))continue;catMig.add(r.id);
+  try{u.hist=H('Category merged',ch.join('; '));await db.collection(REG).doc(r.id).update(u);logA('category_merge',tgt(r),ch.join('; '),r.id);}
+  catch(e){catMig.delete(r.id);console.warn('category merge failed:',e.message);}}}
 async function migrateAck(){if(!A())return;for(const r of rows){if(!r._old||migrating.has(r.id))continue;migrating.add(r.id);try{await db.collection(REG).doc(r.id).update({status:'Acknowledgement-Sent'});}catch(e){migrating.delete(r.id);console.warn(e.message);}}}
 /* Public status mirror: collection mpo-cup2026-status, one tiny doc per 6-char code (team, decision, final category, reject reason, slot confirmed). The public status page can read ONE doc by code but cannot list. */
 const pubOf=x=>({team:x.team||'',category:x.category||'',finalCategory:x.finalCategory||'',decision:x.decision||'',rejected:x.status==='Rejected'||x.decision==='Rejected',rejectReason:(x.status==='Rejected'||x.decision==='Rejected')?(x.rejectReason||''):'',slotConfirmed:!!x.slotEmailAt&&isConf(x)});

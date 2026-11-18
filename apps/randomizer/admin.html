@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Draw Settings | MPO Cup 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Saira+Condensed:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body><div class="wrap">
+<header><img src="logo.png" alt="" onerror="this.remove()"><h1>Draw <em>settings</em></h1><p class="sub">Load the teams, pick the effect, then open draw.html.</p></header>
+<div class="card"><h2>Teams (CSV)</h2>
+<label for="f">Upload a CSV file. The first column is the team name.</label><input type="file" id="f" accept=".csv,.txt">
+<label for="csv">Or paste team names, one per line</label><textarea id="csv" placeholder="Team name&#10;Smashers&#10;Dink Dynasty"></textarea>
+<p class="msg" id="cm"></p></div>
+<div class="card"><h2>Settings</h2><div class="row">
+<div><label for="t">Event name</label><input id="t" value="Mindoro Pickleball Org Cup 2026"></div>
+<div><label for="n">Number of pools</label><input id="n" type="number" min="2" max="8" value="4"></div>
+<div><label for="e">Draw effect</label><select id="e"><option value="drop">Pickleball Drop (Plinko)</option><option value="smash">Paddle Smash</option><option value="slot">Slot Machine</option><option value="wheel">Spin Wheel</option><option value="mix">Mix (random per team)</option></select></div>
+<div><label for="s">Speed</label><select id="s"><option value=".7">Slow</option><option value="1" selected>Normal</option><option value="1.7">Fast</option><option value="3">Very fast</option></select></div>
+<div><label for="so">Sound</label><select id="so"><option value="1">On</option><option value="0">Off</option></select></div></div>
+<p class="msg" id="pm"></p></div>
+<div class="card"><h2>Run the draw</h2><p class="msg" id="sc"></p><p class="msg">Save settings first. The draw plays on the screen that has draw.html open.</p><div class="bar"><button id="go" disabled>Start draw</button><button class="g" id="stop" disabled>Stop draw</button><button class="g" id="rs">Reset</button><button class="g" id="exp" disabled>Export CSV</button></div><p class="msg" id="ds"></p></div>
+<div class="bar"><button id="save" disabled>Save settings</button><button class="g" id="clr">Delete saved draw</button><a href="draw.html"><button class="g" type="button">Open draw</button></a></div>
+<p class="msg" id="st" role="status"></p></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const $=s=>document.querySelector(s);let names=[];
+const parse=t=>{const r=t.split(/\r?\n/).map(l=>{l=l.trim();const m=l.match(/^"((?:[^"]|"")*)"/);return(m?m[1].replace(/""/g,'"'):l.split(',')[0]).trim()}).filter(Boolean);if(r.length&&/^(team|name)/i.test(r[0]))r.shift();return r};
+function check(){names=parse($('#csv').value);const n=+$('#n').value,c=$('#cm'),k=names.length,
+ dup=names.filter((a,i)=>names.findIndex(b=>b.toLowerCase()===a.toLowerCase())!==i),good=[16,20,24].includes(k)&&!dup.length&&n>=2&&n<=8;
+ c.className='msg'+(good?'':' bad');c.textContent=dup.length?`Duplicate names: ${[...new Set(dup)].join(', ')}`:`${k} teams found. Allowed: 16, 20 or 24.`;
+ const sz=Array.from({length:n},(_,i)=>Math.floor(k/n)+(i<k%n?1:0));$('#pm').textContent=k?`${n} pools of ${[...new Set(sz)].join(' or ')} teams`:'';$('#save').disabled=!good}
+$('#csv').oninput=$('#n').oninput=check;
+$('#f').onchange=async e=>{const f=e.target.files[0];if(f){$('#csv').value=await f.text();check()}};
+$('#save').onclick=async()=>{try{await db.ref('mpo').update({teams:names,config:{title:$('#t').value.trim()||'Mindoro Pickleball Org Cup 2026',pools:+$('#n').value,effect:$('#e').value,speed:+$('#s').value,sound:$('#so').value==='1'}});$('#st').textContent='Settings saved'}catch(e){$('#st').textContent='Error: '+e.message}};
+$('#clr').onclick=async()=>{if(confirm('Delete the saved draw result? Teams stay.')){await db.ref('mpo/draw').remove();$('#st').textContent='Saved draw deleted'}};
+db.ref('mpo').once('value').then(s=>{const v=s.val()||{},c=v.config||{};if(v.teams)$('#csv').value=v.teams.join('\n');
+ if(c.title)$('#t').value=c.title;if(c.pools)$('#n').value=c.pools;if(c.effect)$('#e').value=c.effect;if(c.speed)$('#s').value=String(c.speed);if(c.sound===false)$('#so').value='0';check()}).catch(e=>$('#st').textContent='Cannot reach Firebase. Check firebase-config.js');
+let scr=false,run=false,tn=0,draw=null;
+const upd=()=>{$('#sc').textContent=scr?'Display connected':'No display. Open draw.html on the screen first.';$('#go').disabled=!scr||run||![16,20,24].includes(tn);$('#stop').disabled=!run};
+db.ref('mpo/screen').on('value',s=>{scr=!!s.val();upd()});
+db.ref('mpo/teams').on('value',s=>{tn=(s.val()||[]).length;upd()});
+db.ref('mpo/status').on('value',s=>{const v=s.val();$('#ds').textContent=v?v.text:'';$('#ds').className='msg'+(v&&v.state==='error'?' bad':'');run=!!v&&v.state==='running'&&Date.now()-v.at<120000;upd()});
+db.ref('mpo/draw').on('value',s=>{draw=(s.val()||{}).pools||null;$('#exp').disabled=!draw});
+$('#go').onclick=()=>{if(draw&&!confirm('A draw is already saved. Draw again and overwrite it?'))return;db.ref('mpo/cmd').set({id:Date.now()})};
+$('#stop').onclick=()=>{if(confirm('Stop the draw? Nothing will be saved.'))db.ref('mpo/cmd').set({id:Date.now(),action:'stop'})};
+$('#rs').onclick=async()=>{if(!confirm('Reset? This clears the board and the saved draw result. Teams stay.'))return;await db.ref('mpo').update({draw:null,status:null});db.ref('mpo/cmd').set({id:Date.now(),action:'reset'})};
+$('#exp').onclick=()=>{const q=s=>'"'+s.replace(/"/g,'""')+'"',rows=['Pool,Slot,Team'];Object.entries(draw).forEach(([p,r])=>r.forEach((t,i)=>rows.push(`Pool ${p},${i+1},${q(t)}`)));
+ const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));l.download='mpo-cup-2026-pools.csv';l.click()};
+</script></body></html>
